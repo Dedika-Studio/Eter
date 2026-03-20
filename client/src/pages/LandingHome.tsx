@@ -15,6 +15,9 @@ import {
   ChevronDown,
   Lightbulb,
   Newspaper,
+  Instagram,
+  Youtube,
+  Facebook,
 } from "lucide-react";
 import { RAFFLE_CONFIG } from "@shared/raffle";
 
@@ -320,9 +323,30 @@ export default function LandingHome() {
               Síguenos en nuestras redes sociales para no perderte ningún sorteo, noticia o lanzamiento exclusivo de tus artistas favoritos.
             </p>
             <div className="flex justify-center gap-4 pt-4">
-              <Button variant="outline" className="rounded-full px-6">Instagram</Button>
-              <Button variant="outline" className="rounded-full px-6">TikTok</Button>
-              <Button variant="outline" className="rounded-full px-6">Facebook</Button>
+              <Button 
+                variant="outline" 
+                className="rounded-full px-6 gap-2"
+                onClick={() => window.open("https://www.instagram.com/eter_k_pop?igsh=bWJ2OXN6YmQxY2x4", "_blank")}
+              >
+                <Instagram className="size-4" />
+                Instagram
+              </Button>
+              <Button 
+                variant="outline" 
+                className="rounded-full px-6 gap-2"
+                onClick={() => window.open("https://youtube.com/@eterk-popmx?si=MpXtkvdB9AhLHk1N", "_blank")}
+              >
+                <Youtube className="size-4" />
+                YouTube
+              </Button>
+              <Button 
+                variant="outline" 
+                className="rounded-full px-6 gap-2"
+                onClick={() => window.open("https://www.facebook.com/share/1Dqv6F9NhW/", "_blank")}
+              >
+                <Facebook className="size-4" />
+                Facebook
+              </Button>
             </div>
           </div>
         </div>
