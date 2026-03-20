@@ -1,0 +1,77 @@
+# Project TODO - Rifa Automatizada ETER KPOP MX
+
+- [x] Database schema: tickets table, orders table, raffle_config table
+- [x] Stripe integration setup (add feature + secrets)
+- [x] Backend: tRPC procedures for ticket availability check
+- [x] Backend: tRPC procedures for ticket selection and temporary reservation
+- [x] Backend: Stripe Checkout session creation
+- [x] Backend: Stripe webhook handler for payment confirmation
+- [x] Backend: Google Sheets sync on successful payment
+- [x] Frontend: Modern iPhone/glassmorphism design with Inter font
+- [x] Frontend: Hero section with raffle info
+- [x] Frontend: Product carousel (album images)
+- [x] Frontend: Ticket selection UI with search and auto-generate
+- [x] Frontend: Real-time availability check
+- [x] Frontend: Integrated Stripe Checkout flow
+- [x] Frontend: Post-payment confirmation modal (Success/Cancel pages)
+- [x] Frontend: Responsive design (mobile-first)
+- [x] Footer with legal info and raffle terms
+- [x] Vitest tests for backend procedures (7 tests passing)
+- [x] Final checkpoint and delivery
+- [x] Bug fix: "Boletos no disponibles" error - Added try/catch to release tickets if Stripe fails, cleaned up orphaned order
+- [x] Validación de formato de teléfono MX (10 dígitos)
+- [x] Notificaciones WhatsApp automáticas al confirmar pago
+- [x] Página "Revisa tus boletos" para consultar por teléfono
+- [x] Botón en header para acceder a "Revisa tus boletos"
+- [x] Documentación de configuración para producción (README_CONFIGURACION.md)
+- [x] Estructura lista para desplegar (Stripe Live Mode, .env.example template)
+- [x] Bug fix: "Error al crear la sesión de pago" - Actualizado precio mínimo a $10 MXN (requisito de Stripe)
+- [x] Feature: Validación de compra mínima de 4 boletos con aviso claro
+- [x] Configurar Stripe en modo LIVE (producción) - Conectado a cuenta acct_1TBTa79QDrRw4dR0 (Dedika Studio)
+- [x] Validación de teléfono: Restricción a exactamente 10 dígitos (maxLength/minLength) en frontend
+- [x] Remover validación de teléfono en servidor - responsabilidad del usuario
+- [x] Crear Landing Home con secciones: Rifas, Tienda, Galerías, Biografías
+- [x] Conectar rifa del álbum BTS a /rifa
+- [x] Placeholders "Próximamente" para otras secciones
+- [x] Aplicar estilo glassmorphism consistente con la rifa actual
+- [x] Responsive design en todas las secciones
+- [x] Integrar imágenes de alta resolución en cada sección
+- [x] Agregar sección de estadísticas con números clave
+- [x] Integrar imágenes personalizadas de Canva: Tienda, Galerías, Biografías
+- [x] Remover apartado de estadísticas morado
+- [x] Reducir espaciado entre secciones y Rifa Destacada para móvil
+- [x] Ajustar posición de imágenes (object-top) para enfocar parte superior y no cortar rostros
+- [x] Remover apartado de cantidad de boletos disponibles y totales en página de rifa - solo mostrar precio
+- [x] Reemplazar imagen de Tienda con versión actualizada
+- [x] Remover cantidad de boletos (1000 Boletos) de la sección Rifa Destacada en Landing Home
+- [x] Crear página de Tienda en React con glassmorphism
+- [x] Crear panel Admin protegido con contraseña "panochonas12"
+- [x] Botón discreto en footer para acceder a Admin
+- [x] Integrar productos con base de datos (local state)
+- [x] Conectar Tienda al Landing Home
+- [x] Ajustar grid de productos a 3 columnas en móvil
+- [x] Cambiar Store a 2 columnas en móvil con productos más compactos
+- [x] Ajustar Landing Home a 2 secciones por línea en móvil
+- [x] Aplicar ajustes de responsividad a Landing Home para móvil (reducir tamaños, ocultar descripciones, ajustar espaciados)
+- [x] Agregar logo de Mercado Libre con leyenda "Afiliados Oficiales" en Tienda
+- [x] Agregar botón Volver a todas las páginas (Tienda, Rifa, Admin)
+- [x] Cambiar botones Volver para usar history.back() en lugar de navigate("/")
+- [x] Reorganizar header en página Rifa (remover "Revisa tus boletos" y "Pago Seguro")
+- [x] Agregar botón "Ya compraste tus boletos? Revísalos aquí" debajo del precio
+- [x] Mover badge "Pago Seguro" a esquina superior del Hero
+- [x] Ajustar espaciados en móvil para evitar desajustes
+- [x] Reorganizar header en Tienda: Volver a la derecha, Afiliados en el medio
+- [x] Estandarizar altura de cards en Tienda: truncar descripciones y alinear precio, calificaciones y botón al pie
+- [x] Reducir altura del hero section en Tienda: más compacto en móvil, solo título y descripción
+- [x] Arreglar botón "Explorar" en Landing Home: convertido a menú expandible
+- [x] Arreglar botón Volver en CheckTickets para ir a /rifa
+- [x] Menú expandible con Tienda, Galerías, Biografías
+- [x] Sistema de temas dinámicos por categoría de rifa
+- [x] Generación de URLs de webhook para rifas
+- [x] Persistencia de rifas en BD con tRPC
+- [x] Conectar rifas a Stripe con sistema de pago completo
+- [x] Crear página de listado de rifas públicas
+- [x] Crear página de Galerías
+- [x] Crear página de Biografías
+- [x] Implementar historial de compras de usuario
+- [x] Pulir detalles y UX final
