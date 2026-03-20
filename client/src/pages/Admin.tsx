@@ -4,7 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Plus, Trash2, Eye, Calendar, Copy, Check } from "lucide-react";
+import { 
+  ArrowLeft, Plus, Trash2, Eye, Calendar, Copy, Check, 
+  LayoutDashboard, Ticket, ShoppingBag, ClipboardList, 
+  Users, TrendingUp, AlertTriangle, Search, RefreshCw
+} from "lucide-react";
 import { raffleThemes, type RaffleCategory } from "@shared/raffleThemes";
 import { trpc } from "@/lib/trpc";
 import {
@@ -15,6 +19,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Product {
   id: string;
@@ -47,37 +53,10 @@ export default function Admin() {
   const [, navigate] = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
-  const [activeTab, setActiveTab] = useState<"products" | "raffles" | "view-raffles">("products");
+  const [activeTab, setActiveTab] = useState("dashboard");
 
   // Products state
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: "1",
-      title: "Kit Fiesta Bts/bt21 Globos De Cumpleaños Decoración K-pop",
-      description:
-        "Set de 18 globos. 1 juego completo de banderola, 18 globos de látex, 1 inserto de tarta grande (2 palos), 14 insertos de tarta pequeños",
-      price: 213.84,
-      image:
-        "https://http2.mlstatic.com/D_NQ_NP_2X_730858-CBT84152775940_052025-F-kit-fiesta-btsbt21-globos-de-cumpleanos-decoracion-k-pop.webp",
-      link: "https://meli.la/14ifKUh",
-      rating: 4.9,
-      reviews: 63,
-      badge: "Nuevo",
-    },
-    {
-      id: "2",
-      title: "Bts Kpop Bangtan Boys Muñecas De Dibujos Animados 7 Pcs",
-      description: "La edad mínima recomendada para utilizarla es 5 años.",
-      price: 398,
-      image:
-        "https://http2.mlstatic.com/D_NQ_NP_2X_747539-MLA107426879435_022026-F.webp",
-      link: "https://meli.la/2EASF4B",
-      rating: 5,
-      reviews: 4,
-      badge: "Nuevo",
-    },
-  ]);
-
+  const [products, setProducts] = useState<Product[]>([]);
   const [productFormData, setProductFormData] = useState<Partial<Product>>({
     title: "",
     description: "",
@@ -89,13 +68,11 @@ export default function Admin() {
     badge: "",
   });
 
-  // Products state
   const { data: dbProducts, refetch: refetchProducts } = trpc.products.list.useQuery();
   const createProductMutation = trpc.products.create.useMutation();
   const updateProductMutation = trpc.products.update.useMutation();
   const deleteProductMutation = trpc.products.delete.useMutation();
 
-  // Update local state when DB products load
   useEffect(() => {
     if (dbProducts) {
       setProducts(
@@ -121,7 +98,6 @@ export default function Admin() {
   const updateRaffleMutation = trpc.raffles.update.useMutation();
   const deleteRaffleMutation = trpc.raffles.delete.useMutation();
 
-  // Update local state when DB raffles load
   useEffect(() => {
     if (dbRaffles) {
       setRaffles(dbRaffles.map(r => ({
@@ -135,7 +111,6 @@ export default function Admin() {
         webhookUrl: r.webhookUrl || "",
         category: r.category as RaffleCategory,
       })));
-      // Update nextRaffleNumber based on the highest raffleNumber in the database
       const maxRaffleNumber = Math.max(...dbRaffles.map(r => r.raffleNumber || 0), 0);
       setNextRaffleNumber(maxRaffleNumber + 1);
     }
@@ -152,14 +127,30 @@ export default function Admin() {
     category: "otro",
   });
 
+  // Tickets & Orders state
+  const { data: ticketStats, refetch: refetchTicketStats } = trpc.tickets.getStats.useQuery();
+  const { data: allTickets, refetch: refetchAllTickets } = trpc.tickets.getAll.useQuery();
+  const { data: allOrders, refetch: refetchAllOrders } = trpc.orders.getAll.useQuery();
+  const createManualOrderMutation = trpc.orders.createManual.useMutation();
+  const deleteOrderMutation = trpc.orders.delete.useMutation();
+
   const [showProductPreview, setShowProductPreview] = useState(false);
   const [showRafflePreview, setShowRafflePreview] = useState(false);
+  const [showRaffleWarning, setShowRaffleWarning] = useState(false);
+  const [showRaffleWarningFinal, setShowRaffleWarningFinal] = useState(false);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [editingRaffleId, setEditingRaffleId] = useState<string | null>(null);
   const [copiedWebhookId, setCopiedWebhookId] = useState<string | null>(null);
   const [nextRaffleNumber, setNextRaffleNumber] = useState(1);
   const [copiedRaffleUrl, setCopiedRaffleUrl] = useState<string | null>(null);
   const [generatedWebhookUrl, setGeneratedWebhookUrl] = useState<string | null>(null);
+
+  const [manualOrderData, setManualOrderData] = useState({
+    buyerName: "",
+    buyerPhone: "",
+    buyerEmail: "",
+    ticketNumbers: "",
+  });
 
   const handleLogin = () => {
     if (password === ADMIN_PASSWORD) {
@@ -171,18 +162,12 @@ export default function Admin() {
     }
   };
 
-  // Product handlers
+  // Handlers
   const handleAddProduct = async () => {
-    if (
-      !productFormData.title ||
-      !productFormData.image ||
-      !productFormData.link ||
-      productFormData.price === undefined
-    ) {
+    if (!productFormData.title || !productFormData.image || !productFormData.link || productFormData.price === undefined) {
       alert("Llena los campos obligatorios");
       return;
     }
-
     try {
       if (editingProductId) {
         await updateProductMutation.mutateAsync({
@@ -209,77 +194,35 @@ export default function Admin() {
           badge: productFormData.badge,
         });
       }
-
       await refetchProducts();
-
-      setProductFormData({
-        title: "",
-        description: "",
-        price: undefined,
-        image: "",
-        link: "",
-        rating: undefined,
-        reviews: undefined,
-        badge: "",
-      });
+      setProductFormData({ title: "", description: "", price: undefined, image: "", link: "", rating: undefined, reviews: undefined, badge: "" });
     } catch (error) {
-      console.error("Error saving product:", error);
       alert("Error al guardar el producto");
     }
   };
 
   const handleDeleteProduct = async (id: string) => {
     if (confirm("¿Eliminar este producto?")) {
-      try {
-        await deleteProductMutation.mutateAsync({
-          id: parseInt(id),
-        });
-        await refetchProducts();
-      } catch (error) {
-        console.error("Error deleting product:", error);
-        alert("Error al eliminar el producto");
-      }
+      await deleteProductMutation.mutateAsync({ id: parseInt(id) });
+      await refetchProducts();
     }
   };
 
-  const handleEditProduct = (product: Product) => {
-    setProductFormData(product);
-    setEditingProductId(product.id);
-  };
-
-  // Raffle handlers
-  const handleAddRaffle = async () => {
-    console.log("[handleAddRaffle] Form data:", raffleFormData);
-    
-    if (
-      !raffleFormData.title ||
-      !raffleFormData.image ||
-      !raffleFormData.drawDate ||
-      raffleFormData.totalTickets === undefined ||
-      raffleFormData.pricePerTicket === undefined
-    ) {
-      console.log("[handleAddRaffle] Missing required fields");
+  const handleAddRaffle = () => {
+    if (!raffleFormData.title || !raffleFormData.image || !raffleFormData.drawDate || raffleFormData.totalTickets === undefined || raffleFormData.pricePerTicket === undefined) {
       alert("Llena los campos obligatorios");
       return;
     }
+    setShowRaffleWarning(true);
+  };
 
-    // Validate that image is a URL, not base64 data
-    const imageStr = String(raffleFormData.image).trim();
-    if (!imageStr.startsWith('http://') && !imageStr.startsWith('https://')) {
-      console.log("[handleAddRaffle] Invalid image URL:", imageStr.substring(0, 50));
-      alert("La imagen debe ser una URL que comience con http:// o https://");
-      return;
-    }
+  const confirmAddRaffle = async () => {
+    setShowRaffleWarning(false);
+    setShowRaffleWarningFinal(true);
+  };
 
-    // Prevent base64 data from being submitted
-    if (imageStr.startsWith('data:')) {
-      console.log("[handleAddRaffle] Base64 data detected");
-      alert("No se permiten datos en base64. Por favor, usa una URL de imagen.");
-      return;
-    }
-    
-    console.log("[handleAddRaffle] Validation passed, proceeding with mutation");
-
+  const finalConfirmAddRaffle = async () => {
+    setShowRaffleWarningFinal(false);
     try {
       if (editingRaffleId) {
         await updateRaffleMutation.mutateAsync({
@@ -308,32 +251,55 @@ export default function Admin() {
         });
       }
       await refetchRaffles();
+      await refetchTicketStats();
+      await refetchAllTickets();
     } catch (error) {
-      console.error("Error saving raffle:", error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      alert(`Error al guardar la rifa: ${errorMessage}`);
+      alert("Error al guardar la rifa");
     }
-
-    setRaffleFormData({
-      title: "",
-      description: "",
-      image: "",
-      totalTickets: undefined,
-      pricePerTicket: undefined,
-      drawDate: "",
-      webhookUrl: "",
-      category: "otro",
-    });
   };
 
-  const generateWebhookUrl = (raffleNumber: number) => {
-    const baseUrl = "https://dedika-studio-eter-rifa.manus.space";
-    return `${baseUrl}/api/stripe/webhook/rifa${raffleNumber}`;
+  const handleDeleteRaffle = async (id: string) => {
+    if (confirm("¿Eliminar esta rifa? Esto NO borrará los boletos actuales.")) {
+      await deleteRaffleMutation.mutateAsync({ id: parseInt(id) });
+      await refetchRaffles();
+    }
+  };
+
+  const handleCreateManualOrder = async () => {
+    if (!manualOrderData.buyerName || !manualOrderData.buyerPhone || !manualOrderData.ticketNumbers) {
+      alert("Llena los campos obligatorios");
+      return;
+    }
+    const tickets = manualOrderData.ticketNumbers.split(",").map(t => t.trim());
+    try {
+      await createManualOrderMutation.mutateAsync({
+        buyerName: manualOrderData.buyerName,
+        buyerPhone: manualOrderData.buyerPhone,
+        buyerEmail: manualOrderData.buyerEmail || null,
+        ticketNumbers: tickets,
+      });
+      alert("Orden manual creada con éxito");
+      setManualOrderData({ buyerName: "", buyerPhone: "", buyerEmail: "", ticketNumbers: "" });
+      await refetchAllOrders();
+      await refetchAllTickets();
+      await refetchTicketStats();
+    } catch (error: any) {
+      alert(error.message || "Error al crear orden manual");
+    }
+  };
+
+  const handleDeleteOrder = async (id: number) => {
+    if (confirm("¿Eliminar esta orden? Los boletos volverán a estar disponibles.")) {
+      await deleteOrderMutation.mutateAsync({ id });
+      await refetchAllOrders();
+      await refetchAllTickets();
+      await refetchTicketStats();
+    }
   };
 
   const handleGenerateWebhook = () => {
-    const webhookUrl = generateWebhookUrl(nextRaffleNumber);
-    setGeneratedWebhookUrl(webhookUrl);
+    const url = `https://dedika-studio-eter-rifa.manus.space/api/stripe-webhook?raffle=${nextRaffleNumber}`;
+    setGeneratedWebhookUrl(url);
   };
 
   const handleCopyWebhook = () => {
@@ -344,50 +310,33 @@ export default function Admin() {
     }
   };
 
-  const handleDeleteRaffle = (id: string) => {
-    if (confirm("¿Eliminar esta rifa?")) {
-      setRaffles(raffles.filter((r) => r.id !== id));
-    }
-  };
-
-  const handleEditRaffle = (raffle: Raffle) => {
-    setRaffleFormData(raffle);
-    setEditingRaffleId(raffle.id);
-  };
-
-  const renderStars = (rating: number) => {
-    let stars = "";
-    for (let i = 0; i < 5; i++) {
-      if (rating >= i + 1) stars += "★";
-      else if (rating >= i + 0.5) stars += "☆";
-      else stars += "☆";
-    }
-    return stars;
-  };
+  const renderStars = (rating: number = 4.5) => "⭐".repeat(Math.floor(rating));
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-600 via-violet-600 to-fuchsia-500 flex items-center justify-center">
-        <Card className="w-96 bg-white/95 backdrop-blur-xl border-border/50">
-          <CardContent className="p-8">
-            <h1 className="text-2xl font-bold mb-6 text-center">Admin Panel</h1>
-            <input
-              type="password"
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleLogin();
-              }}
-              className="w-full px-4 py-2 border border-border rounded-lg mb-4 bg-background"
-              autoFocus
-            />
-            <Button
-              onClick={handleLogin}
-              className="w-full bg-purple-600 hover:bg-purple-700"
-            >
-              Entrar
-            </Button>
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md bg-white/60 backdrop-blur-xl border-border/50 shadow-2xl">
+          <CardContent className="p-8 space-y-6">
+            <div className="text-center space-y-2">
+              <div className="bg-purple-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <ShieldCheck className="size-8 text-purple-600" />
+              </div>
+              <h1 className="text-2xl font-bold">Panel de Control</h1>
+              <p className="text-muted-foreground text-sm">Ingresa la contraseña maestra</p>
+            </div>
+            <div className="space-y-4">
+              <Input
+                type="password"
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                className="text-center text-lg tracking-widest"
+              />
+              <Button onClick={handleLogin} className="w-full bg-purple-600 hover:bg-purple-700 h-12 text-lg">
+                Acceder
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -395,650 +344,413 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-border/50 shadow-sm">
-        <div className="container flex items-center justify-between h-14">
-          <div className="flex items-center gap-3">
-            <span className="font-bold text-sm tracking-tight">
-              Admin Panel - ETER KPOP MX
-            </span>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/")}
-            className="gap-1 text-xs"
-          >
-            <ArrowLeft className="size-3" />
-            Volver
-          </Button>
-        </div>
-      </header>
-
-      {/* Tabs */}
-      <div className="container py-6">
-        <div className="flex gap-4 border-b border-border/50 mb-8">
-          <button
-            onClick={() => setActiveTab("products")}
-            className={`px-4 py-2 font-medium text-sm transition-colors ${
-              activeTab === "products"
-                ? "text-purple-600 border-b-2 border-purple-600"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Productos
-          </button>
-          <button
-            onClick={() => setActiveTab("raffles")}
-            className={`px-4 py-2 font-medium text-sm transition-colors ${
-              activeTab === "raffles"
-                ? "text-purple-600 border-b-2 border-purple-600"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Crear Rifas
-          </button>
-          <button
-            onClick={() => setActiveTab("view-raffles")}
-            className={`px-4 py-2 font-medium text-sm transition-colors ${
-              activeTab === "view-raffles"
-                ? "text-purple-600 border-b-2 border-purple-600"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Ver Todas las Rifas
-          </button>
-        </div>
-
-        {/* Products Tab */}
-        {activeTab === "products" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Product Form */}
-            <Card className="lg:col-span-1 bg-white/60 backdrop-blur-xl border-border/50">
-              <CardContent className="p-6 space-y-4">
-                <h2 className="font-bold text-lg">
-                  {editingProductId ? "Editar Producto" : "Nuevo Producto"}
-                </h2>
-                <Input
-                  placeholder="Título"
-                  value={productFormData.title || ""}
-                  onChange={(e) =>
-                    setProductFormData({
-                      ...productFormData,
-                      title: e.target.value,
-                    })
-                  }
-                />
-                <Input
-                  placeholder="Descripción"
-                  value={productFormData.description || ""}
-                  onChange={(e) =>
-                    setProductFormData({
-                      ...productFormData,
-                      description: e.target.value,
-                    })
-                  }
-                />
-                <Input
-                  placeholder="Precio"
-                  type="number"
-                  value={productFormData.price || 0}
-                  onChange={(e) =>
-                    setProductFormData({
-                      ...productFormData,
-                      price: parseFloat(e.target.value),
-                    })
-                  }
-                />
-                <Input
-                  placeholder="URL Imagen"
-                  value={productFormData.image || ""}
-                  onChange={(e) =>
-                    setProductFormData({
-                      ...productFormData,
-                      image: e.target.value,
-                    })
-                  }
-                />
-                <Input
-                  placeholder="Link Mercado Libre"
-                  value={productFormData.link || ""}
-                  onChange={(e) =>
-                    setProductFormData({
-                      ...productFormData,
-                      link: e.target.value,
-                    })
-                  }
-                />
-                <Input
-                  placeholder="Rating (0-5)"
-                  type="number"
-                  step="0.1"
-                  value={productFormData.rating || 4.5}
-                  onChange={(e) =>
-                    setProductFormData({
-                      ...productFormData,
-                      rating: parseFloat(e.target.value),
-                    })
-                  }
-                />
-                <Input
-                  placeholder="Reviews"
-                  type="number"
-                  value={productFormData.reviews || 0}
-                  onChange={(e) =>
-                    setProductFormData({
-                      ...productFormData,
-                      reviews: parseInt(e.target.value),
-                    })
-                  }
-                />
-                <Input
-                  placeholder="Badge (ej: Nuevo)"
-                  value={productFormData.badge || ""}
-                  onChange={(e) =>
-                    setProductFormData({
-                      ...productFormData,
-                      badge: e.target.value,
-                    })
-                  }
-                />
-                <div className="flex gap-2">
-                  <Button
-                    onClick={handleAddProduct}
-                    className="flex-1 bg-purple-600 hover:bg-purple-700"
-                  >
-                    <Plus className="size-4 mr-2" />
-                    {editingProductId ? "Actualizar" : "Agregar"}
-                  </Button>
-                  <Button
-                    onClick={() => setShowProductPreview(true)}
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    <Eye className="size-4 mr-2" />
-                    Vista Previa
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Products List */}
-            <div className="lg:col-span-2 space-y-4">
-              <h2 className="font-bold text-lg">Productos ({products.length})</h2>
-              {products.map((product) => (
-                <Card
-                  key={product.id}
-                  className="bg-white/60 backdrop-blur-xl border-border/50 overflow-hidden"
-                >
-                  <CardContent className="p-4 flex gap-4">
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className="w-24 h-24 object-cover rounded-lg"
-                    />
-                    <div className="flex-1">
-                      <h3 className="font-bold text-sm line-clamp-2">
-                        {product.title}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mb-2">
-                        ${product.price} MXN
-                      </p>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEditProduct(product)}
-                          className="text-xs"
-                        >
-                          Editar
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleDeleteProduct(product.id)}
-                          className="text-xs"
-                        >
-                          <Trash2 className="size-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+    <div className="min-h-screen bg-slate-50">
+      {/* Sidebar / Navigation */}
+      <div className="flex flex-col md:flex-row min-h-screen">
+        <aside className="w-full md:w-64 bg-white border-r border-slate-200 p-6 space-y-8">
+          <div className="flex items-center gap-3 px-2">
+            <div className="bg-purple-600 p-2 rounded-lg">
+              <LayoutDashboard className="size-5 text-white" />
             </div>
+            <span className="font-bold text-xl tracking-tight">ETER Admin</span>
           </div>
-        )}
+          
+          <nav className="space-y-1">
+            {[
+              { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+              { id: "raffles", label: "Rifas", icon: Ticket },
+              { id: "tickets", label: "Boletos", icon: ClipboardList },
+              { id: "orders", label: "Órdenes", icon: ShoppingBag },
+              { id: "products", label: "Productos", icon: Store },
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                  activeTab === item.id 
+                    ? "bg-purple-50 text-purple-700 shadow-sm" 
+                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                }`}
+              >
+                <item.icon className="size-5" />
+                {item.label}
+              </button>
+            ))}
+          </nav>
 
-        {/* Raffles Tab */}
-        {activeTab === "raffles" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Raffle Form */}
-            <Card className="lg:col-span-1 bg-white/60 backdrop-blur-xl border-border/50">
-              <CardContent className="p-6 space-y-4">
-                <h2 className="font-bold text-lg">
-                  {editingRaffleId ? "Editar Rifa" : "Nueva Rifa"}
-                </h2>
-                <Input
-                  placeholder="Título de la Rifa"
-                  value={raffleFormData.title || ""}
-                  onChange={(e) =>
-                    setRaffleFormData({
-                      ...raffleFormData,
-                      title: e.target.value,
-                    })
-                  }
-                />
-                <Input
-                  placeholder="Descripción"
-                  value={raffleFormData.description || ""}
-                  onChange={(e) =>
-                    setRaffleFormData({
-                      ...raffleFormData,
-                      description: e.target.value,
-                    })
-                  }
-                />
-                <Input
-                  placeholder="URL Imagen"
-                  value={raffleFormData.image || ""}
-                  onChange={(e) =>
-                    setRaffleFormData({
-                      ...raffleFormData,
-                      image: e.target.value,
-                    })
-                  }
-                />
-                <Input
-                  placeholder="Total de Boletos"
-                  type="number"
-                  value={raffleFormData.totalTickets || 1000}
-                  onChange={(e) =>
-                    setRaffleFormData({
-                      ...raffleFormData,
-                      totalTickets: parseInt(e.target.value),
-                    })
-                  }
-                />
-                <Input
-                  placeholder="Precio por Boleto (MXN)"
-                  type="number"
-                  step="0.01"
-                  value={raffleFormData.pricePerTicket ?? ""}
-                  onChange={(e) =>
-                    setRaffleFormData({
-                      ...raffleFormData,
-                      pricePerTicket: e.target.value === "" ? undefined : parseFloat(e.target.value),
-                    })
-                  }
-                />
-                <div className="flex items-center gap-2">
-                  <Calendar className="size-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Fecha del Sorteo"
-                    type="datetime-local"
-                    value={raffleFormData.drawDate || ""}
-                    onChange={(e) =>
-                      setRaffleFormData({
-                        ...raffleFormData,
-                        drawDate: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <select
-                  value={raffleFormData.category || "otro"}
-                  onChange={(e) =>
-                    setRaffleFormData({
-                      ...raffleFormData,
-                      category: e.target.value as RaffleCategory,
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm"
-                >
-                  <option value="dinero">💰 Dinero</option>
-                  <option value="electronica">📱 Electrónica</option>
-                  <option value="herramientas">🔧 Herramientas</option>
-                  <option value="kpop">🎤 K-POP</option>
-                  <option value="moda">👗 Moda</option>
-                  <option value="otro">🎁 Otro</option>
-                </select>
-                <div className="space-y-2">
-                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 space-y-2">
-                    <p className="text-xs font-bold text-purple-900">URL de la Rifa:</p>
-                    <div className="flex gap-2">
-                      <code className="flex-1 text-xs bg-white border border-purple-200 rounded px-2 py-1 overflow-x-auto break-all">
-                        https://dedika-studio-eter-rifa.manus.space/rifa{nextRaffleNumber}
-                      </code>
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={() => {
-                          navigator.clipboard.writeText(`https://dedika-studio-eter-rifa.manus.space/rifa${nextRaffleNumber}`);
-                          setCopiedRaffleUrl("url");
-                          setTimeout(() => setCopiedRaffleUrl(null), 2000);
-                        }}
-                        className="bg-purple-600 hover:bg-purple-700"
-                      >
-                        {copiedRaffleUrl === "url" ? (
-                          <Check className="size-4" />
-                        ) : (
-                          <Copy className="size-4" />
-                        )}
-                      </Button>
-                    </div>
-                    <p className="text-xs text-purple-700">
-                      Esta será la URL pública de tu rifa
-                    </p>
-                  </div>
-                  <Button
-                    type="button"
-                    onClick={handleGenerateWebhook}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                  >
-                    Generar URL de Webhook
-                  </Button>
-                  {generatedWebhookUrl && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 space-y-2">
-                      <p className="text-xs font-bold text-blue-900">URL del Webhook:</p>
-                      <div className="flex gap-2">
-                        <code className="flex-1 text-xs bg-white border border-blue-200 rounded px-2 py-1 overflow-x-auto break-all">
-                          {generatedWebhookUrl}
-                        </code>
-                        <Button
-                          type="button"
-                          size="sm"
-                          onClick={handleCopyWebhook}
-                          className="bg-blue-600 hover:bg-blue-700"
-                        >
-                          {copiedWebhookId === "webhook" ? (
-                            <Check className="size-4" />
-                          ) : (
-                            <Copy className="size-4" />
-                          )}
-                        </Button>
+          <div className="pt-8 border-t border-slate-100">
+            <Button variant="ghost" onClick={() => navigate("/")} className="w-full justify-start gap-3 text-slate-500">
+              <ArrowLeft className="size-4" /> Volver a la web
+            </Button>
+          </div>
+        </aside>
+
+        {/* Main Content Area */}
+        <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+          <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900 capitalize">{activeTab}</h1>
+              <p className="text-slate-500 text-sm">Gestiona tu plataforma ETER KPOP MX</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className="bg-white px-3 py-1">
+                <div className="size-2 rounded-full bg-green-500 mr-2 animate-pulse" />
+                Sistema Online
+              </Badge>
+            </div>
+          </header>
+
+          {/* Dashboard Tab */}
+          {activeTab === "dashboard" && (
+            <div className="space-y-8">
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-none shadow-lg">
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-blue-100 text-sm font-medium">Boletos Disponibles</p>
+                        <h3 className="text-3xl font-bold mt-1">{ticketStats?.available ?? 0}</h3>
                       </div>
-                      <p className="text-xs text-blue-700">
-                        Copia esta URL y registrala en Stripe para obtener el webhook secret
-                      </p>
+                      <div className="bg-white/20 p-2 rounded-lg"><Ticket className="size-6" /></div>
                     </div>
-                  )}
-                </div>
-                <Input
-                  placeholder="Webhook Secret (de Stripe)"
-                  value={raffleFormData.webhookUrl || ""}
-                  onChange={(e) =>
-                    setRaffleFormData({
-                      ...raffleFormData,
-                      webhookUrl: e.target.value,
-                    })
-                  }
-                />
-                <div className="flex gap-2">
-                  <Button
-                    onClick={handleAddRaffle}
-                    className="flex-1 bg-purple-600 hover:bg-purple-700"
-                  >
-                    <Plus className="size-4 mr-2" />
-                    {editingRaffleId ? "Actualizar" : "Crear"}
-                  </Button>
-                  <Button
-                    onClick={() => setShowRafflePreview(true)}
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    <Eye className="size-4 mr-2" />
-                    Vista Previa
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Raffles List */}
-            <div className="lg:col-span-2 space-y-4">
-              <h2 className="font-bold text-lg">Rifas ({raffles.length})</h2>
-              {raffles.length === 0 ? (
-                <Card className="bg-white/60 backdrop-blur-xl border-border/50">
-                  <CardContent className="p-8 text-center text-muted-foreground">
-                    No hay rifas creadas aún
                   </CardContent>
                 </Card>
-              ) : (
-                raffles.map((raffle) => (
-                  <Card
-                    key={raffle.id}
-                    className="bg-white/60 backdrop-blur-xl border-border/50 overflow-hidden"
-                  >
-                    <CardContent className="p-4 flex gap-4">
-                      <img
-                        src={raffle.image}
-                        alt={raffle.title}
-                        className="w-24 h-24 object-cover rounded-lg"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-bold text-sm line-clamp-2">
-                          {raffle.title}
-                        </h3>
-                        <p className="text-xs text-muted-foreground mb-1">
-                          ${raffle.pricePerTicket} MXN • {raffle.totalTickets}{" "}
-                          boletos
-                        </p>
-                        <p className="text-xs text-muted-foreground mb-2">
-                          Sorteo: {new Date(raffle.drawDate).toLocaleDateString()}
-                        </p>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEditRaffle(raffle)}
-                            className="text-xs"
-                          >
-                            Editar
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleDeleteRaffle(raffle.id)}
-                            className="text-xs"
-                          >
-                            <Trash2 className="size-3" />
-                          </Button>
+                <Card className="bg-gradient-to-br from-amber-500 to-amber-600 text-white border-none shadow-lg">
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-amber-100 text-sm font-medium">Reservados</p>
+                        <h3 className="text-3xl font-bold mt-1">{ticketStats?.reserved ?? 0}</h3>
+                      </div>
+                      <div className="bg-white/20 p-2 rounded-lg"><Clock className="size-6" /></div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-none shadow-lg">
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-emerald-100 text-sm font-medium">Vendidos</p>
+                        <h3 className="text-3xl font-bold mt-1">{ticketStats?.sold ?? 0}</h3>
+                      </div>
+                      <div className="bg-white/20 p-2 rounded-lg"><TrendingUp className="size-6" /></div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-none shadow-lg">
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-purple-100 text-sm font-medium">Total Boletos</p>
+                        <h3 className="text-3xl font-bold mt-1">{ticketStats?.total ?? 0}</h3>
+                      </div>
+                      <div className="bg-white/20 p-2 rounded-lg"><ClipboardList className="size-6" /></div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <Card className="bg-white border-slate-200 shadow-sm">
+                  <CardContent className="p-6">
+                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                      <Ticket className="size-5 text-purple-600" /> Rifa Activa
+                    </h3>
+                    {raffles.length > 0 ? (
+                      <div className="flex gap-4 items-center">
+                        <img src={raffles[0].image} className="size-20 rounded-xl object-cover" />
+                        <div>
+                          <p className="font-bold text-slate-900">{raffles[0].title}</p>
+                          <p className="text-sm text-slate-500">Sorteo: {new Date(raffles[0].drawDate).toLocaleDateString()}</p>
+                          <Badge className="mt-2 bg-green-100 text-green-700 border-none">Activa</Badge>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* View Raffles Tab */}
-        {activeTab === "view-raffles" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-6">Todas las Rifas</h2>
-            {raffles.length === 0 ? (
-              <Card className="bg-white/60 backdrop-blur-xl border-border/50">
-                <CardContent className="p-8 text-center">
-                  <p className="text-muted-foreground">No hay rifas creadas aún</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {raffles.map((raffle) => {
-                  const theme = raffleThemes[raffle.category || "otro"];
-                  return (
-                    <Card
-                      key={raffle.id}
-                      className="bg-white/60 backdrop-blur-xl border-border/50 overflow-hidden hover:shadow-lg transition-shadow"
-                    >
-                      <div
-                        className={`h-32 bg-gradient-to-br ${theme.gradient}`}
-                        style={{
-                          backgroundImage: `url(${raffle.image})`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                        }}
-                      >
-                        <div className="w-full h-full bg-black/20 flex items-end p-4">
-                          <Badge className="bg-white/90 text-black text-xs">
-                            {theme.icon} {raffle.category}
+                    ) : (
+                      <p className="text-slate-400 text-sm italic">No hay rifas activas</p>
+                    )}
+                  </CardContent>
+                </Card>
+                <Card className="bg-white border-slate-200 shadow-sm">
+                  <CardContent className="p-6">
+                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                      <ShoppingBag className="size-5 text-blue-600" /> Últimas Órdenes
+                    </h3>
+                    <div className="space-y-3">
+                      {allOrders?.slice(0, 3).map(order => (
+                        <div key={order.id} className="flex justify-between items-center text-sm border-b border-slate-50 pb-2">
+                          <div>
+                            <p className="font-medium text-slate-900">{order.buyerName}</p>
+                            <p className="text-xs text-slate-500">{order.ticketCount} boletos</p>
+                          </div>
+                          <Badge variant={order.status === 'paid' ? 'default' : 'secondary'}>
+                            {order.status}
                           </Badge>
                         </div>
-                      </div>
-                      <CardContent className="p-4 space-y-3">
-                        <div>
-                          <h3 className="font-bold text-sm line-clamp-2">{raffle.title}</h3>
-                          <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
-                            {raffle.description}
-                          </p>
-                        </div>
-                        <div className="space-y-1 text-xs">
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Boletos:</span>
-                            <span className="font-bold">{raffle.totalTickets}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Precio:</span>
-                            <span className="font-bold">${raffle.pricePerTicket} MXN</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Sorteo:</span>
-                            <span className="font-bold">
-                              {new Date(raffle.drawDate).toLocaleDateString()}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex gap-2 pt-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEditRaffle(raffle)}
-                            className="text-xs flex-1"
-                          >
-                            Editar
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleDeleteRaffle(raffle.id)}
-                            className="text-xs"
-                          >
-                            <Trash2 className="size-3" />
-                          </Button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {/* Raffles Tab */}
+          {activeTab === "raffles" && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <Card className="lg:col-span-1 bg-white border-slate-200 shadow-sm">
+                <CardContent className="p-6 space-y-4">
+                  <h2 className="font-bold text-lg flex items-center gap-2">
+                    <Plus className="size-5 text-purple-600" /> {editingRaffleId ? "Editar Rifa" : "Nueva Rifa"}
+                  </h2>
+                  <div className="space-y-3">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Información Básica</label>
+                    <Input placeholder="Título de la Rifa" value={raffleFormData.title || ""} onChange={(e) => setRaffleFormData({...raffleFormData, title: e.target.value})} />
+                    <Input placeholder="Descripción" value={raffleFormData.description || ""} onChange={(e) => setRaffleFormData({...raffleFormData, description: e.target.value})} />
+                    <Input placeholder="URL Imagen" value={raffleFormData.image || ""} onChange={(e) => setRaffleFormData({...raffleFormData, image: e.target.value})} />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Configuración</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input placeholder="Boletos" type="number" value={raffleFormData.totalTickets || 1000} onChange={(e) => setRaffleFormData({...raffleFormData, totalTickets: parseInt(e.target.value)})} />
+                      <Input placeholder="Precio $" type="number" step="0.01" value={raffleFormData.pricePerTicket ?? ""} onChange={(e) => setRaffleFormData({...raffleFormData, pricePerTicket: e.target.value === "" ? undefined : parseFloat(e.target.value)})} />
+                    </div>
+                    <Input type="datetime-local" value={raffleFormData.drawDate || ""} onChange={(e) => setRaffleFormData({...raffleFormData, drawDate: e.target.value})} />
+                    <select value={raffleFormData.category || "otro"} onChange={(e) => setRaffleFormData({...raffleFormData, category: e.target.value as RaffleCategory})} className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-sm">
+                      <option value="dinero">💰 Dinero</option>
+                      <option value="electronica">📱 Electrónica</option>
+                      <option value="herramientas">🔧 Herramientas</option>
+                      <option value="kpop">🎤 K-POP</option>
+                      <option value="moda">👗 Moda</option>
+                      <option value="otro">🎁 Otro</option>
+                    </select>
+                  </div>
+                  <Button onClick={handleAddRaffle} className="w-full bg-purple-600 hover:bg-purple-700 h-11">
+                    {editingRaffleId ? "Actualizar Rifa" : "Crear Nueva Rifa"}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <div className="lg:col-span-2 space-y-4">
+                <h2 className="font-bold text-lg">Rifas Registradas ({raffles.length})</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {raffles.map((raffle) => (
+                    <Card key={raffle.id} className="bg-white border-slate-200 overflow-hidden hover:shadow-md transition-all">
+                      <img src={raffle.image} className="h-32 w-full object-cover" />
+                      <CardContent className="p-4">
+                        <h3 className="font-bold text-slate-900 line-clamp-1">{raffle.title}</h3>
+                        <p className="text-xs text-slate-500 mt-1">${raffle.pricePerTicket} MXN • {raffle.totalTickets} boletos</p>
+                        <div className="flex gap-2 mt-4">
+                          <Button size="sm" variant="outline" onClick={() => {setRaffleFormData(raffle); setEditingRaffleId(raffle.id);}} className="flex-1">Editar</Button>
+                          <Button size="sm" variant="destructive" onClick={() => handleDeleteRaffle(raffle.id)} className="size-9 p-0"><Trash2 className="size-4" /></Button>
                         </div>
                       </CardContent>
                     </Card>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+
+          {/* Tickets Tab */}
+          {activeTab === "tickets" && (
+            <div className="space-y-6">
+              <Card className="bg-white border-slate-200 shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="font-bold text-lg">Listado Maestro de Boletos</h2>
+                    <Button variant="outline" size="sm" onClick={() => refetchAllTickets()} className="gap-2">
+                      <RefreshCw className="size-4" /> Actualizar
+                    </Button>
+                  </div>
+                  <div className="rounded-xl border border-slate-100 overflow-hidden">
+                    <Table>
+                      <TableHeader className="bg-slate-50">
+                        <TableRow>
+                          <TableHead className="w-24">Número</TableHead>
+                          <TableHead>Estado</TableHead>
+                          <TableHead>Comprador</TableHead>
+                          <TableHead>Teléfono</TableHead>
+                          <TableHead className="text-right">ID Orden</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {allTickets?.slice(0, 50).map((ticket) => (
+                          <TableRow key={ticket.id}>
+                            <TableCell className="font-mono font-bold">{ticket.number}</TableCell>
+                            <TableCell>
+                              <Badge className={
+                                ticket.status === 'sold' ? 'bg-green-100 text-green-700 border-none' :
+                                ticket.status === 'reserved' ? 'bg-amber-100 text-amber-700 border-none' :
+                                'bg-slate-100 text-slate-600 border-none'
+                              }>
+                                {ticket.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-slate-600">{ticket.buyerName || '-'}</TableCell>
+                            <TableCell className="text-slate-600">{ticket.buyerPhone || '-'}</TableCell>
+                            <TableCell className="text-right text-slate-400">#{ticket.orderId || '-'}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    {allTickets && allTickets.length > 50 && (
+                      <div className="p-4 text-center text-xs text-slate-400 bg-slate-50">
+                        Mostrando los primeros 50 boletos de {allTickets.length}
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Orders Tab */}
+          {activeTab === "orders" && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <Card className="lg:col-span-1 bg-white border-slate-200 shadow-sm h-fit">
+                <CardContent className="p-6 space-y-4">
+                  <h2 className="font-bold text-lg flex items-center gap-2">
+                    <Plus className="size-5 text-blue-600" /> Crear Orden Manual
+                  </h2>
+                  <p className="text-xs text-slate-500">Registra ventas realizadas fuera de la plataforma (efectivo, transferencia).</p>
+                  <div className="space-y-3 pt-2">
+                    <Input placeholder="Nombre del Comprador" value={manualOrderData.buyerName} onChange={e => setManualOrderData({...manualOrderData, buyerName: e.target.value})} />
+                    <Input placeholder="Teléfono (10 dígitos)" value={manualOrderData.buyerPhone} onChange={e => setManualOrderData({...manualOrderData, buyerPhone: e.target.value})} />
+                    <Input placeholder="Email (Opcional)" value={manualOrderData.buyerEmail} onChange={e => setManualOrderData({...manualOrderData, buyerEmail: e.target.value})} />
+                    <Input placeholder="Números (ej: 001, 045, 999)" value={manualOrderData.ticketNumbers} onChange={e => setManualOrderData({...manualOrderData, ticketNumbers: e.target.value})} />
+                  </div>
+                  <Button onClick={handleCreateManualOrder} className="w-full bg-blue-600 hover:bg-blue-700 h-11">
+                    Registrar Venta Manual
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="lg:col-span-2 bg-white border-slate-200 shadow-sm">
+                <CardContent className="p-6">
+                  <h2 className="font-bold text-lg mb-6">Historial de Órdenes</h2>
+                  <div className="space-y-4">
+                    {allOrders?.map(order => (
+                      <div key={order.id} className="p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <span className="text-xs font-bold text-slate-400 uppercase">Orden #{order.id}</span>
+                            <h4 className="font-bold text-slate-900">{order.buyerName}</h4>
+                          </div>
+                          <Badge className={order.status === 'paid' ? 'bg-green-100 text-green-700 border-none' : 'bg-slate-100 text-slate-600 border-none'}>
+                            {order.status}
+                          </Badge>
+                        </div>
+                        <div className="flex flex-wrap gap-4 text-sm text-slate-500">
+                          <div className="flex items-center gap-1"><Ticket className="size-3" /> {order.ticketCount} boletos</div>
+                          <div className="flex items-center gap-1"><TrendingUp className="size-3" /> ${order.totalAmount / 100} MXN</div>
+                          <div className="flex items-center gap-1"><Calendar className="size-3" /> {new Date(order.createdAt).toLocaleDateString()}</div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-slate-50 flex justify-between items-center">
+                          <code className="text-xs bg-white px-2 py-1 rounded border border-slate-100">{JSON.parse(order.ticketNumbers).join(", ")}</code>
+                          <Button variant="ghost" size="sm" onClick={() => handleDeleteOrder(order.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8">
+                            <Trash2 className="size-4 mr-2" /> Eliminar
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Products Tab */}
+          {activeTab === "products" && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <Card className="lg:col-span-1 bg-white border-slate-200 shadow-sm">
+                <CardContent className="p-6 space-y-4">
+                  <h2 className="font-bold text-lg flex items-center gap-2">
+                    <Plus className="size-5 text-blue-600" /> {editingProductId ? "Editar Producto" : "Nuevo Producto"}
+                  </h2>
+                  <div className="space-y-3">
+                    <Input placeholder="Título del Producto" value={productFormData.title || ""} onChange={(e) => setProductFormData({...productFormData, title: e.target.value})} />
+                    <Input placeholder="Descripción" value={productFormData.description || ""} onChange={(e) => setProductFormData({...productFormData, description: e.target.value})} />
+                    <Input placeholder="Precio (MXN)" type="number" step="0.01" value={productFormData.price ?? ""} onChange={(e) => setProductFormData({...productFormData, price: e.target.value === "" ? undefined : parseFloat(e.target.value)})} />
+                    <Input placeholder="URL Imagen" value={productFormData.image || ""} onChange={(e) => setProductFormData({...productFormData, image: e.target.value})} />
+                    <Input placeholder="Link Mercado Libre" value={productFormData.link || ""} onChange={(e) => setProductFormData({...productFormData, link: e.target.value})} />
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input placeholder="Rating (0-5)" type="number" step="0.1" value={productFormData.rating || 4.5} onChange={(e) => setProductFormData({...productFormData, rating: parseFloat(e.target.value)})} />
+                      <Input placeholder="Reviews" type="number" value={productFormData.reviews || 0} onChange={(e) => setProductFormData({...productFormData, reviews: parseInt(e.target.value)})} />
+                    </div>
+                    <Input placeholder="Badge (ej: Nuevo)" value={productFormData.badge || ""} onChange={(e) => setProductFormData({...productFormData, badge: e.target.value})} />
+                  </div>
+                  <Button onClick={handleAddProduct} className="w-full bg-blue-600 hover:bg-blue-700 h-11">
+                    {editingProductId ? "Actualizar Producto" : "Agregar Producto"}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <div className="lg:col-span-2 space-y-4">
+                <h2 className="font-bold text-lg">Productos en Tienda ({products.length})</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {products.map((product) => (
+                    <Card key={product.id} className="bg-white border-slate-200 overflow-hidden hover:shadow-md transition-all">
+                      <div className="flex p-4 gap-4">
+                        <img src={product.image} className="size-24 rounded-xl object-cover" />
+                        <div className="flex-1">
+                          <h3 className="font-bold text-slate-900 line-clamp-2 text-sm">{product.title}</h3>
+                          <p className="text-sm font-bold text-blue-600 mt-1">${product.price} MXN</p>
+                          <div className="flex gap-2 mt-3">
+                            <Button size="sm" variant="outline" onClick={() => {setProductFormData(product); setEditingProductId(product.id);}} className="flex-1 h-8 text-xs">Editar</Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleDeleteProduct(product.id)} className="size-8 p-0"><Trash2 className="size-4" /></Button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
       </div>
 
-      {/* Product Preview Dialog */}
-      <Dialog open={showProductPreview} onOpenChange={setShowProductPreview}>
+      {/* Warning Dialogs for Raffle Creation */}
+      <Dialog open={showRaffleWarning} onOpenChange={setShowRaffleWarning}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Vista previa del producto</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 text-amber-600">
+              <AlertTriangle className="size-6" /> ¡Advertencia Importante!
+            </DialogTitle>
+            <DialogDescription className="pt-4 text-slate-600">
+              Estás a punto de crear una nueva rifa. Esto **REINICIARÁ** la base de datos de boletos:
+              <ul className="list-disc list-inside mt-3 space-y-1 font-medium">
+                <li>Se borrarán todos los boletos actuales (000-999).</li>
+                <li>Se generarán nuevos boletos para esta rifa.</li>
+                <li>Las órdenes anteriores quedarán como historial pero sin boletos asociados.</li>
+              </ul>
+              <p className="mt-4 font-bold text-slate-900">¿Estás seguro de que quieres continuar?</p>
+            </DialogDescription>
           </DialogHeader>
-          <div className="bg-white/60 backdrop-blur rounded-lg p-4">
-            {productFormData.image && (
-              <img
-                src={productFormData.image}
-                alt={productFormData.title}
-                className="w-full h-40 object-cover rounded-lg mb-3"
-              />
-            )}
-            {productFormData.badge && (
-              <Badge className="bg-red-500 mb-2">{productFormData.badge}</Badge>
-            )}
-            <h3 className="font-bold text-sm mb-2">{productFormData.title}</h3>
-            <p className="text-xs text-muted-foreground mb-3">
-              {productFormData.description}
-            </p>
-            <div className="flex items-center gap-1 mb-3">
-              <span className="text-yellow-500 text-sm">
-                {renderStars(productFormData.rating || 4.5)}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                ({productFormData.rating} • {productFormData.reviews})
-              </span>
-            </div>
-            <div className="text-lg font-bold text-purple-600 mb-3">
-              ${productFormData.price} MXN
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              onClick={() => setShowProductPreview(false)}
-              variant="outline"
-              className="w-full"
-            >
-              Cerrar
-            </Button>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setShowRaffleWarning(false)}>Cancelar</Button>
+            <Button className="bg-amber-600 hover:bg-amber-700" onClick={confirmAddRaffle}>Sí, entiendo los riesgos</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Raffle Preview Dialog */}
-      <Dialog open={showRafflePreview} onOpenChange={setShowRafflePreview}>
-        <DialogContent className="max-w-md">
+      <Dialog open={showRaffleWarningFinal} onOpenChange={setShowRaffleWarningFinal}>
+        <DialogContent className="max-w-md border-2 border-red-500">
           <DialogHeader>
-            <DialogTitle>Vista previa de la rifa</DialogTitle>
-          </DialogHeader>
-          <div className="bg-white/60 backdrop-blur rounded-lg p-4 space-y-3">
-            {raffleFormData.image && (
-              <img
-                src={raffleFormData.image}
-                alt={raffleFormData.title}
-                className="w-full h-40 object-cover rounded-lg"
-              />
-            )}
-            <div>
-              <h3 className="font-bold text-sm mb-1">{raffleFormData.title}</h3>
-              <p className="text-xs text-muted-foreground mb-3">
-                {raffleFormData.description}
+            <DialogTitle className="text-red-600 flex items-center gap-2">
+              <AlertTriangle className="size-6" /> ¿ÚLTIMA PALABRA?
+            </DialogTitle>
+            <DialogDescription className="pt-4 text-slate-900 font-bold text-lg">
+              ¡No digas que no te lo advertí! 😱
+              <p className="text-sm font-normal text-slate-600 mt-2">
+                Si hay gente con boletos reservados o comprados, ¡se van a enojar! Esta acción es irreversible.
               </p>
-            </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Categoría:</span>
-                <span className="font-bold">
-                  {raffleThemes[raffleFormData.category || "otro"].icon}{" "}
-                  {raffleFormData.category}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Boletos:</span>
-                <span className="font-bold">{raffleFormData.totalTickets}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Precio:</span>
-                <span className="font-bold">
-                  ${raffleFormData.pricePerTicket} MXN
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Sorteo:</span>
-                <span className="font-bold">
-                  {raffleFormData.drawDate
-                    ? new Date(raffleFormData.drawDate).toLocaleDateString()
-                    : "N/A"}
-                </span>
-              </div>
-            </div>
-          </div>
+            </DialogDescription>
+          </DialogHeader>
           <DialogFooter>
-            <Button
-              onClick={() => setShowRafflePreview(false)}
-              variant="outline"
-              className="w-full"
-            >
-              Cerrar
-            </Button>
+            <Button variant="outline" onClick={() => setShowRaffleWarningFinal(false)}>¡Esperar, me dio miedo!</Button>
+            <Button variant="destructive" onClick={finalConfirmAddRaffle}>¡DALE, SIN MIEDO AL ÉXITO!</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

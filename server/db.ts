@@ -121,15 +121,13 @@ export async function markTicketsSold(orderId: number, ticketNumbers: string[], 
     now
   });
 
-  // Ensure we are updating based on orderId and status to be safe, 
-  // and explicitly setting the buyer fields.
   const result = await db.update(tickets)
     .set({ 
       status: "sold", 
       buyerName: buyerName || null, 
       buyerPhone: buyerPhone || null, 
       buyerEmail: buyerEmail || null, 
-      orderId: orderId, // Ensure orderId is set
+      orderId: orderId, 
       soldAt: now 
     })
     .where(inArray(tickets.number, ticketNumbers));
@@ -154,6 +152,42 @@ export async function releaseTicketsByOrder(orderId: number) {
     .where(and(eq(tickets.orderId, orderId), eq(tickets.status, "reserved")));
 }
 
+export async function deleteAllTickets() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(tickets);
+}
+
+export async function createTickets(count: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const batchSize = 100;
+  for (let i = 0; i < count; i += batchSize) {
+    const batch = [];
+    for (let j = i; j < Math.min(i + batchSize, count); j++) {
+      batch.push({
+        number: j.toString().padStart(3, '0'),
+        status: 'available' as const
+      });
+    }
+    await db.insert(tickets).values(batch);
+  }
+}
+
+export async function getTicketStats() {
+  const db = await getDb();
+  if (!db) return { available: 0, reserved: 0, sold: 0, total: 0 };
+  
+  const all = await db.select().from(tickets);
+  return {
+    available: all.filter(t => t.status === 'available').length,
+    reserved: all.filter(t => t.status === 'reserved').length,
+    sold: all.filter(t => t.status === 'sold').length,
+    total: all.length
+  };
+}
+
 // ============ ORDER QUERIES ============
 
 export async function createOrder(data: InsertOrder) {
@@ -161,6 +195,12 @@ export async function createOrder(data: InsertOrder) {
   if (!db) throw new Error("Database not available");
   const result = await db.insert(orders).values(data);
   return result[0].insertId;
+}
+
+export async function getAllOrders() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(orders).orderBy(desc(orders.createdAt));
 }
 
 export async function getOrderById(id: number) {
@@ -185,6 +225,21 @@ export async function updateOrderStatus(id: number, status: string, stripePaymen
     .where(eq(orders.id, id));
 }
 
+export async function deleteOrder(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  
+  const order = await getOrderById(id);
+  if (order) {
+    const ticketNumbers = JSON.parse(order.ticketNumbers) as string[];
+    await db.update(tickets)
+      .set({ status: "available", orderId: null, reservedAt: null, soldAt: null, buyerName: null, buyerPhone: null, buyerEmail: null })
+      .where(inArray(tickets.number, ticketNumbers));
+  }
+  
+  await db.delete(orders).where(eq(orders.id, id));
+}
+
 export async function getOrdersByPhone(phone: string) {
   const db = await getDb();
   if (!db) return [];
@@ -202,14 +257,27 @@ export async function getAvailableRandomTickets(count: number) {
 export async function createRaffle(data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(raffles).values(data);
+  
+  // Clean up old tickets and generate new ones for the new raffle
+  await deleteAllTickets();
+  await createTickets(data.totalTickets);
+  
+  // Deactivate other raffles
+  await db.update(raffles).set({ isActive: false });
+  
+  const result = await db.insert(raffles).values({
+    ...data,
+    pricePerTicket: Math.round(data.pricePerTicket * 100), // Convert to cents
+    drawDate: new Date(data.drawDate),
+    isActive: true
+  });
   return result[0].insertId;
 }
 
 export async function getAllRaffles() {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(raffles);
+  return db.select().from(raffles).orderBy(desc(raffles.createdAt));
 }
 
 export async function getRaffleById(id: number) {
@@ -229,7 +297,11 @@ export async function getRaffleByNumber(raffleNumber: number) {
 export async function updateRaffle(id: number, data: any) {
   const db = await getDb();
   if (!db) return;
-  await db.update(raffles).set(data).where(eq(raffles.id, id));
+  await db.update(raffles).set({
+    ...data,
+    pricePerTicket: Math.round(data.pricePerTicket * 100),
+    drawDate: new Date(data.drawDate)
+  }).where(eq(raffles.id, id));
 }
 
 export async function deleteRaffle(id: number) {
@@ -256,14 +328,22 @@ export async function getProductById(id: number) {
 export async function createProduct(data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(products).values(data);
+  const result = await db.insert(products).values({
+    ...data,
+    price: Math.round(data.price * 100),
+    rating: data.rating ? Math.round(data.rating * 10) : null
+  });
   return result[0].insertId;
 }
 
 export async function updateProduct(id: number, data: any) {
   const db = await getDb();
   if (!db) return;
-  await db.update(products).set(data).where(eq(products.id, id));
+  await db.update(products).set({
+    ...data,
+    price: Math.round(data.price * 100),
+    rating: data.rating ? Math.round(data.rating * 10) : null
+  }).where(eq(products.id, id));
 }
 
 export async function deleteProduct(id: number) {

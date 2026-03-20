@@ -14,6 +14,7 @@ import {
   Clock,
   ChevronDown,
   Lightbulb,
+  Newspaper,
 } from "lucide-react";
 import { RAFFLE_CONFIG } from "@shared/raffle";
 
@@ -89,7 +90,7 @@ export default function LandingHome() {
           <div className="flex flex-wrap justify-center gap-2 md:gap-3 mt-4 md:mt-8">
             <Button
               onClick={() => navigate("/rifa")}
-              className="gap-1 md:gap-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-xs md:text-sm py-1 md:py-2"
+              className="hidden gap-1 md:gap-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-xs md:text-sm py-1 md:py-2"
             >
               <Ticket className="size-3 md:size-4" />
               <span className="hidden md:inline">Ir a Rifas</span>
@@ -116,22 +117,29 @@ export default function LandingHome() {
                 {isDropdownOpen && (
                   <div className="border-t border-white/40 divide-y divide-white/20 space-y-0">
                     <button
-                      onClick={() => handleNavigate("/tienda")}
+                      onClick={() => handleNavigate("/noticias")}
                       className="w-full px-4 md:px-5 py-3 md:py-4 text-left text-xs md:text-sm font-medium text-gray-900 hover:bg-white/60 transition-all duration-200 flex items-center gap-3 hover:translate-x-1 animate-in fade-in slide-in-from-top-2 duration-300"
+                    >
+                      <Newspaper className="size-4 md:size-5" />
+                      <span>Noticias</span>
+                    </button>
+                    <button
+                      onClick={() => handleNavigate("/tienda")}
+                      className="w-full px-4 md:px-5 py-3 md:py-4 text-left text-xs md:text-sm font-medium text-gray-900 hover:bg-white/60 transition-all duration-200 flex items-center gap-3 hover:translate-x-1 animate-in fade-in slide-in-from-top-2 duration-300 delay-75"
                     >
                       <Store className="size-4 md:size-5" />
                       <span>Tienda</span>
                     </button>
                     <button
                       onClick={() => handleNavigate("/galerias")}
-                      className="w-full px-4 md:px-5 py-3 md:py-4 text-left text-xs md:text-sm font-medium text-gray-900 hover:bg-white/60 transition-all duration-200 flex items-center gap-3 hover:translate-x-1 animate-in fade-in slide-in-from-top-2 duration-300 delay-75"
+                      className="w-full px-4 md:px-5 py-3 md:py-4 text-left text-xs md:text-sm font-medium text-gray-900 hover:bg-white/60 transition-all duration-200 flex items-center gap-3 hover:translate-x-1 animate-in fade-in slide-in-from-top-2 duration-300 delay-150"
                     >
                       <Images className="size-4 md:size-5" />
                       <span>Galerias</span>
                     </button>
                     <button
                       onClick={() => handleNavigate("/biografias")}
-                      className="w-full px-4 md:px-5 py-3 md:py-4 text-left text-xs md:text-sm font-medium text-gray-900 hover:bg-white/60 transition-all duration-200 flex items-center gap-3 hover:translate-x-1 animate-in fade-in slide-in-from-top-2 duration-300 delay-150"
+                      className="w-full px-4 md:px-5 py-3 md:py-4 text-left text-xs md:text-sm font-medium text-gray-900 hover:bg-white/60 transition-all duration-200 flex items-center gap-3 hover:translate-x-1 animate-in fade-in slide-in-from-top-2 duration-300 delay-200"
                     >
                       <Users className="size-4 md:size-5" />
                       <span>Biografias</span>
@@ -146,9 +154,39 @@ export default function LandingHome() {
 
       {/* Main Content */}
       <section className="container py-8 md:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
-          {/* Rifas Section */}
-          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          {/* Noticias Section - Tarjeta Grande */}
+          <Card className="md:col-span-2 bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+            <CardContent className="p-0 flex flex-col md:flex-row">
+              <div className="relative w-full md:w-1/2 h-48 md:h-64 bg-gradient-to-br from-emerald-400 to-teal-400 overflow-hidden">
+                <img
+                  src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663442540562/eG7tCpxgJHL2beNG2g3VYE/suMDQROvNoqZUbzE.png"
+                  alt="Noticias K-POP"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+              </div>
+              <div className="p-6 flex flex-col justify-center w-full md:w-1/2">
+                <h2 className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-2">
+                  <Newspaper className="size-6 md:size-8 text-emerald-600" />
+                  Noticias
+                </h2>
+                <p className="text-gray-600 text-sm md:text-base mb-6">
+                  Mantente al día con las últimas novedades, regresos y eventos de tus grupos favoritos de K-POP. ¡No te pierdas nada!
+                </p>
+                <Button
+                  onClick={() => navigate("/noticias")}
+                  className="w-full md:w-max gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-sm py-2 px-8"
+                >
+                  <span>Ver Noticias</span>
+                  <ArrowRight className="size-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Rifas Section - OCULTA */}
+          <Card className="hidden bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
             <CardContent className="p-0">
               <div className="relative h-32 md:h-48 bg-gradient-to-br from-purple-400 to-pink-400 overflow-hidden">
                 <img
@@ -230,185 +268,109 @@ export default function LandingHome() {
                   Galerías
                 </h2>
                 <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 hidden md:block">
-                  Galería de fotos de eventos, conciertos y momentos especiales
-                  del mundo K-POP. Revive tus momentos favoritos.
+                  Disfruta de las mejores fotos y momentos de tus idols en
+                  nuestras galerías exclusivas.
                 </p>
                 <Button
-                  disabled
-                  className="w-full gap-2 opacity-60"
-                  variant="outline"
+                  onClick={() => navigate("/galerias")}
+                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white text-xs md:text-sm py-1 md:py-2"
                 >
-                  <Clock className="size-4" />
-                  Próximamente
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Biografías Section */}
-          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-            <CardContent className="p-0">
-              <div className="relative h-32 md:h-48 bg-gradient-to-br from-green-400 to-emerald-400 overflow-hidden">
-                <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663442540562/eG7tCpxgJHL2beNG2g3VYE/BIOGRAFIAS_d6416b1b.png"
-                  alt="BLACKPINK Members"
-                  className="w-full h-full object-cover object-top"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-              </div>
-              <div className="p-2 md:p-6">
-                <h2 className="text-lg md:text-2xl font-bold mb-1 md:mb-2 flex items-center gap-2">
-                  <Users className="size-4 md:size-5 text-green-600" />
-                  Biografías
-                </h2>
-                <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 hidden md:block">
-                  Conoce las historias de tus artistas K-POP favoritos. Desde
-                  sus inicios hasta sus mayores logros.
-                </p>
-                <Button
-                  disabled
-                  className="w-full gap-2 opacity-60"
-                  variant="outline"
-                >
-                  <Clock className="size-4" />
-                  Próximamente
+                  <Images className="size-3 md:size-4" />
+                  <span className="hidden md:inline">Ver Galerías</span>
+                  <span className="md:hidden">Galerías</span>
                 </Button>
               </div>
             </CardContent>
           </Card>
         </div>
-      </section>
 
-      {/* Featured Raffle */}
-      <section className="container py-6">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-2">Rifa Destacada</h2>
-          <p className="text-gray-600">Participa ahora en nuestra rifa principal</p>
-        </div>
-
-        <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200 overflow-hidden">
-          <CardContent className="p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div>
-                <img
-                  src="https://http2.mlstatic.com/D_NQ_NP_2X_867895-MLA99578718932_122025-F.webp"
-                  alt={RAFFLE_CONFIG.name}
-                  className="w-full rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
-                />
-              </div>
-              <div>
-                <div className="inline-flex items-center gap-2 bg-purple-100 rounded-full px-4 py-2 mb-4">
-                  <Sparkles className="size-4 text-purple-600" />
-                  <span className="text-sm font-medium text-purple-700">
-                    Sorteo Oficial
-                  </span>
-                </div>
-                <h3 className="text-3xl font-bold mb-3">{RAFFLE_CONFIG.name}</h3>
-                <p className="text-gray-600 mb-6">
-                  Participa en la rifa del álbum BTS - Skool Luv Affair. Selecciona
-                  tus boletos y asegura tu oportunidad de ganar este increíble
-                  artículo.
-                </p>
-
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-white/60 backdrop-blur rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-purple-600">
-                      {RAFFLE_CONFIG.priceDisplay}
-                    </div>
-                    <div className="text-xs text-gray-600">Por boleto</div>
-                  </div>
-                  <div className="bg-white/60 backdrop-blur rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-purple-600">31 Mar</div>
-                    <div className="text-xs text-gray-600">Sorteo</div>
-                  </div>
-                </div>
-
-                <Button
-                  onClick={() => navigate("/rifa")}
-                  className="w-full gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
-                >
-                  <Ticket className="size-4" />
-                  Participar Ahora
-                  <ArrowRight className="size-4" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
-
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white">
-        <div className="container py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h4 className="font-bold mb-4 flex items-center gap-2">
-                <img
-                  src={RAFFLE_CONFIG.logoUrl}
-                  alt="Logo"
-                  className="h-6 w-6 rounded"
-                />
-                {RAFFLE_CONFIG.storeName}
-              </h4>
-              <p className="text-gray-400 text-sm">
-                Tu destino para rifas, productos y contenido K-POP exclusivo.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Enlaces</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li>
-                  <button
-                    onClick={() => navigate("/rifa")}
-                    className="hover:text-white transition"
-                  >
-                    Rifas
-                  </button>
-                </li>
-                <li>
-                  <button
-                    disabled
-                    className="opacity-50 cursor-not-allowed"
-                  >
-                    Tienda
-                  </button>
-                </li>
-                <li>
-                  <button
-                    disabled
-                    className="opacity-50 cursor-not-allowed"
-                  >
-                    Galerías
-                  </button>
-                </li>
-                <li>
-                  <button
-                    disabled
-                    className="opacity-50 cursor-not-allowed"
-                  >
-                    Biografías
-                  </button>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Legal</h4>
-              <p className="text-gray-400 text-sm">
-                © 2026 DEDIKA STUDIO. Todos los derechos reservados.
-              </p>
-            </div>
+        {/* Featured Raffle - OCULTA */}
+        <div className="hidden mt-8 md:mt-16">
+          <div className="flex items-center justify-between mb-4 md:mb-8">
+            <h2 className="text-xl md:text-3xl font-bold flex items-center gap-2 md:gap-3">
+              <Ticket className="size-5 md:size-8 text-purple-600" />
+              Rifa Destacada
+            </h2>
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/rifa")}
+              className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 text-xs md:text-sm"
+            >
+              Ver todas <ArrowRight className="ml-1 md:ml-2 size-3 md:size-4" />
+            </Button>
           </div>
 
-          <div className="border-t border-gray-800 pt-8">
-            <p className="text-gray-400 text-xs text-center">
-              Este sitio web tiene fines informativos y de entretenimiento. El
-              contenido mostrado puede incluir artículos, opiniones, enlaces
-              externos, recomendaciones de productos y material relacionado con
-              la cultura K-POP. ETER KPOP MX no se responsabiliza por compras,
-              envíos, garantías o políticas de plataformas externas.
-            </p>
+          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-xl overflow-hidden">
+            <CardContent className="p-0 flex flex-col md:flex-row">
+              <div className="w-full md:w-1/2 h-48 md:h-auto relative">
+                <img
+                  src={RAFFLE_CONFIG.images[0]}
+                  alt={RAFFLE_CONFIG.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-2 md:top-4 left-2 md:left-4">
+                  <Badge className="bg-purple-600 text-white px-2 md:px-3 py-0.5 md:py-1 text-[10px] md:text-xs">
+                    ACTIVA
+                  </Badge>
+                </div>
+              </div>
+              <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center">
+                <h3 className="text-lg md:text-3xl font-bold mb-2 md:mb-4">
+                  {RAFFLE_CONFIG.name}
+                </h3>
+                <div className="space-y-2 md:space-y-4 mb-4 md:mb-8">
+                  <div className="flex items-center gap-2 md:gap-3 text-gray-600">
+                    <Clock className="size-4 md:size-5 text-purple-500" />
+                    <span className="text-xs md:text-base">
+                      Sorteo: {RAFFLE_CONFIG.drawDate}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 md:gap-3 text-gray-600">
+                    <Ticket className="size-4 md:size-5 text-purple-500" />
+                    <span className="text-xs md:text-base">
+                      Costo: {RAFFLE_CONFIG.priceDisplay} por boleto
+                    </span>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => navigate("/rifa")}
+                  className="w-full md:w-max gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-sm md:text-lg py-4 md:py-6 px-6 md:px-12 shadow-lg hover:shadow-purple-200 transition-all"
+                >
+                  Participar Ahora <ArrowRight className="size-4 md:size-5" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-border/50 py-8 md:py-12">
+        <div className="container text-center">
+          <div className="flex items-center justify-center gap-2 mb-4 md:mb-6">
+            <img
+              src={RAFFLE_CONFIG.logoUrl}
+              alt={RAFFLE_CONFIG.storeName}
+              className="h-6 w-6 md:h-8 md:w-8 rounded-lg"
+            />
+            <span className="font-bold text-sm md:text-xl">
+              {RAFFLE_CONFIG.storeName}
+            </span>
+          </div>
+          <p className="text-gray-500 text-[10px] md:text-sm max-w-md mx-auto mb-4 md:mb-8">
+            Tu destino favorito para todo lo relacionado con el K-POP en México.
+            Productos oficiales, noticias y eventos exclusivos.
+          </p>
+          <div className="flex justify-center gap-4 md:gap-8 text-[10px] md:text-sm text-gray-400">
+            <a href="#" className="hover:text-purple-600 transition-colors">
+              Términos
+            </a>
+            <a href="#" className="hover:text-purple-600 transition-colors">
+              Privacidad
+            </a>
+            <a href="#" className="hover:text-purple-600 transition-colors">
+              Contacto
+            </a>
           </div>
         </div>
       </footer>
