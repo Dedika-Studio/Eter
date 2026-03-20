@@ -707,16 +707,16 @@ export default function Admin() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-amber-600">
-              <AlertTriangle className="size-6" /> ¡Advertencia Importante!
+              <AlertTriangle className="size-6" /> 🚨 ¡OYE, TONTUELO! 🚨
             </DialogTitle>
             <DialogDescription className="pt-4 text-slate-600">
-              Estás a punto de crear una nueva rifa. Esto **REINICIARÁ** la base de datos de boletos:
+              ¿ESTÁS SEGURO DE QUE QUIERES BORRAR TODA LA RIFA ANTERIOR?
               <ul className="list-disc list-inside mt-3 space-y-1 font-medium">
-                <li>Se borrarán todos los boletos actuales (000-999).</li>
-                <li>Se generarán nuevos boletos para esta rifa.</li>
-                <li>Las órdenes anteriores quedarán como historial pero sin boletos asociados.</li>
+                <li>Se borrarán TODOS los boletos de la rifa anterior.</li>
+                <li>Se creará una NUEVA rifa desde cero.</li>
+                <li>¡NO HAY VUELTA ATRÁS! 💥</li>
               </ul>
-              <p className="mt-4 font-bold text-slate-900">¿Estás seguro de que quieres continuar?</p>
+              <p className="mt-4 font-bold text-slate-900">¿Sigues queriendo continuar o ya te dio miedo?</p>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
@@ -730,18 +730,18 @@ export default function Admin() {
         <DialogContent className="max-w-md border-2 border-red-500">
           <DialogHeader>
             <DialogTitle className="text-red-600 flex items-center gap-2">
-              <AlertTriangle className="size-6" /> ¿ÚLTIMA PALABRA?
+              <AlertTriangle className="size-6" /> ⚠️ SEGUNDA ADVERTENCIA (porque eres muy atrevido) ⚠️
             </DialogTitle>
             <DialogDescription className="pt-4 text-slate-900 font-bold text-lg">
-              ¡No digas que no te lo advertí! 😱
+              ¡No digas que no te lo advertí, tontuelo! 😱
               <p className="text-sm font-normal text-slate-600 mt-2">
-                Si hay gente con boletos reservados o comprados, ¡se van a enojar! Esta acción es irreversible.
+                Si hay gente con boletos pagados, ¡se van a enojar mucho! (Si dices que sí, no me culpes después 😏).
               </p>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRaffleWarningFinal(false)}>¡Esperar, me dio miedo!</Button>
-            <Button variant="destructive" onClick={finalConfirmAddRaffle}>¡DALE, SIN MIEDO AL ÉXITO!</Button>
+            <Button variant="outline" onClick={() => setShowRaffleWarningFinal(false)}>¡Esperar, me dio miedo! 😅</Button>
+            <Button variant="destructive" onClick={finalConfirmAddRaffle}>¡DALE, SIN MIEDO AL ÉXITO! 🔥</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
