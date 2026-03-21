@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Star, ChevronDown, Music, Award, BookOpen, Heart, Shield } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Star, ChevronDown, Music, Award, BookOpen, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useRef, useEffect } from "react";
@@ -20,67 +20,160 @@ export default function TwiceBiographies() {
   }, [expandedMemberId]);
 
   const members = [
-  {
-    id: "nayeon",
-    name: "Nayeon",
-    realName: "Im Na-yeon",
-    position: "Vocalista Líder, Bailarina Líder, Centro",
-    birth: "22 de septiembre de 1995",
-    origin: "Seúl, Corea del Sur",
-    mbti: "ISTP",
-    image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "La integrante mayor de TWICE y la primera en debutar como solista. Es conocida por su energía brillante y su 'bunny smile'.",
-      soloCareer: "Mini-álbumes 'IM NAYEON' (2022) y 'NA' (2024).",
-      achievements: "Primera integrante de TWICE en entrar al Billboard 200 como solista.",
-      curiosities: "Es muy amiga de Jisoo y Jennie de BLACKPINK. Su número favorito es el 9."
+    {
+      id: "nayeon",
+      stageName: "Nayeon",
+      realName: "Im Na-yeon",
+      position: "Vocalista Líder, Bailarina Líder, Centro",
+      birthday: "22 de septiembre de 1995",
+      birthplace: "Seúl, Corea del Sur",
+      mbti: "ISTP",
+      image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1000&auto=format&fit=crop",
+      color: "bg-sky-400",
+      fullBio: {
+        preDebut: "Nayeon se unió a JYP en 2010 tras una audición secreta. Antes de SIXTEEN, era parte del grupo planeado 6MIX. Es conocida por ser la 'cara' de TWICE y por su energía vibrante que define el sonido del grupo.",
+        soloCareer: "Fue la primera en debutar como solista con 'IM NAYEON' (2022) y su éxito 'POP!'. En 2024 lanzó su segundo mini álbum 'NA'.",
+        achievements: "Primera solista de K-pop en entrar al Top 10 del Billboard 200. Ganadora de múltiples premios a Mejor Artista Femenina.",
+        curiosities: "Tiene una cicatriz en la pierna izquierda por un accidente de coche en su infancia. Es muy fan de Oh My Girl."
+      }
+    },
+    {
+      id: "jeongyeon",
+      stageName: "Jeongyeon",
+      realName: "Yoo Jeong-yeon",
+      position: "Vocalista Líder",
+      birthday: "1 de noviembre de 1996",
+      birthplace: "Suwon, Corea del Sur",
+      mbti: "ISFJ",
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      color: "bg-lime-400",
+      fullBio: {
+        preDebut: "Jeongyeon audicionó para JYP y SM el mismo día, siendo aceptada en ambas pero eligiendo JYP. Es conocida por su voz estable y su imagen carismática.",
+        soloCareer: "Ha participado en OSTs y es muy activa en programas de variedades. Es conocida por su amor por los animales y su trabajo voluntario.",
+        achievements: "Ganadora del Female Rookie Award en los SBS Entertainment Awards junto a su hermana, la actriz Gong Seung-yeon.",
+        curiosities: "Le encanta limpiar y es la encargada del orden en el dormitorio. Sabe tocar el saxofón."
+      }
+    },
+    {
+      id: "momo",
+      stageName: "Momo",
+      realName: "Hirai Momo",
+      position: "Bailarina Principal, Rapera, Vocalista",
+      birthday: "9 de noviembre de 1996",
+      birthplace: "Kyotanabe, Kioto, Japón",
+      mbti: "INFP",
+      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1000&auto=format&fit=crop",
+      color: "bg-pink-400",
+      fullBio: {
+        preDebut: "Momo fue reclutada por JYP tras ver un video de ella bailando con su hermana. Fue eliminada en SIXTEEN pero J.Y. Park la trajo de vuelta por su increíble habilidad de baile.",
+        soloCareer: "Miembro de la subunidad MISAMO. Es embajadora de marcas de lujo como Miu Miu y Onitsuka Tiger.",
+        achievements: "Considerada una de las mejores bailarinas de la historia del K-pop. Sus videos de baile tienen millones de vistas.",
+        curiosities: "Le encanta comer, especialmente jokbal (manitas de cerdo). Tiene tres perros: Boo, Dobby y Petco."
+      }
+    },
+    {
+      id: "sana",
+      stageName: "Sana",
+      realName: "Minatozaki Sana",
+      position: "Vocalista",
+      birthday: "29 de diciembre de 1996",
+      birthplace: "Tennoji-ku, Osaka, Japón",
+      mbti: "ENFP",
+      image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000&auto=format&fit=crop",
+      color: "bg-purple-400",
+      fullBio: {
+        preDebut: "Sana fue reclutada mientras estaba de compras con sus amigas en Japón. Se mudó a Corea en 2012. Se hizo viral por su icónica línea 'Shy Shy Shy' en 'Cheer Up'.",
+        soloCareer: "Miembro de MISAMO. Es embajadora global de Prada y Graff. Es una de las idols extranjeras más queridas en Corea.",
+        achievements: "Ha encabezado las listas de reputación de marca múltiples veces. Es un ícono de la moda y la belleza.",
+        curiosities: "Es hija única. Le gusta coleccionar perfumes y es conocida por su personalidad extremadamente optimista."
+      }
+    },
+    {
+      id: "jihyo",
+      stageName: "Jihyo",
+      realName: "Park Ji-hyo",
+      position: "Líder, Vocalista Principal",
+      birthday: "1 de febrero de 1997",
+      birthplace: "Guri, Gyeonggi, Corea del Sur",
+      mbti: "ESFP",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop",
+      color: "bg-amber-400",
+      fullBio: {
+        preDebut: "Jihyo entrenó durante 10 años en JYP antes de debutar. Vio debutar a grupos como Wonder Girls y 2PM mientras ella seguía siendo aprendiz.",
+        soloCareer: "Debut como solista en 2023 con el álbum 'ZONE' y el tema 'Killin' Me Good'. Es conocida por su potente voz y presencia escénica.",
+        achievements: "Ganadora de premios a Mejor Vocalista. Es respetada como una de las mejores líderes de la industria.",
+        curiosities: "Su nombre de nacimiento era Park Ji-soo. Le encanta el surf y el gimnasio. Es ambidiestra."
+      }
+    },
+    {
+      id: "mina",
+      stageName: "Mina",
+      realName: "Myoui Mina",
+      position: "Bailarina Principal, Vocalista",
+      birthday: "24 de marzo de 1997",
+      birthplace: "San Antonio, Texas, EE.UU. (Criada en Kobe, Japón)",
+      mbti: "ISFP",
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      color: "bg-teal-400",
+      fullBio: {
+        preDebut: "Mina estudió ballet durante 11 años antes de unirse a JYP. Fue reclutada mientras compraba con su madre en Osaka. Tuvo el periodo de entrenamiento más corto de TWICE.",
+        soloCareer: "Miembro de MISAMO. Es embajadora de SK-II y Fendi. Es conocida por su elegancia natural y su aura 'real'.",
+        achievements: "Reconocida por su técnica de baile fluida y elegante. Es una de las visuales más aclamadas del K-pop.",
+        curiosities: "Le encantan los videojuegos y tejer. Nació en EE.UU. por lo que tuvo doble nacionalidad hasta los 22 años."
+      }
+    },
+    {
+      id: "dahyun",
+      stageName: "Dahyun",
+      realName: "Kim Da-hyun",
+      position: "Rapera Líder, Vocalista",
+      birthday: "28 de mayo de 1998",
+      birthplace: "Seongnam, Corea del Sur",
+      mbti: "ISFJ",
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      color: "bg-white",
+      fullBio: {
+        preDebut: "Dahyun se hizo viral antes de debutar por su 'baile del águila' en la iglesia. Es conocida por su piel extremadamente blanca y su habilidad para encontrar cámaras.",
+        soloCareer: "Debutará como actriz en el remake coreano de 'You Are the Apple of My Eye'. Es embajadora global de Michael Kors.",
+        achievements: "Es una de las idols más populares en programas de variedades por su ingenio y carisma.",
+        curiosities: "Toca el piano con maestría. Tiene miedo a los animales grandes pero ama a su perro Ari."
+      }
+    },
+    {
+      id: "chaeyoung",
+      stageName: "Chaeyoung",
+      realName: "Son Chae-young",
+      position: "Rapera Principal, Vocalista",
+      birthday: "23 de abril de 1999",
+      birthplace: "Seúl, Corea del Sur",
+      mbti: "INFP",
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      color: "bg-red-500",
+      fullBio: {
+        preDebut: "Chaeyoung se unió a JYP en 2012. Es una artista completa que escribe sus propios raps y diseña arte para los álbumes del grupo.",
+        soloCareer: "Es embajadora de Etro. Ha colaborado en proyectos artísticos y es conocida por su estilo indie y alternativo.",
+        achievements: "Primera integrante de TWICE en tener créditos de escritura en una canción del grupo. Es un ícono de la autoexpresión.",
+        curiosities: "Le encanta dibujar y tiene muchos tatuajes pequeños. Es fan de Justin Bieber y Vincent van Gogh."
+      }
+    },
+    {
+      id: "tzuyu",
+      stageName: "Tzuyu",
+      realName: "Chou Tzuyu",
+      position: "Bailarina Líder, Vocalista, Visual, Maknae",
+      birthday: "14 de junio de 1999",
+      birthplace: "Tainan, Taiwán",
+      mbti: "ISFP",
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      color: "bg-blue-600",
+      fullBio: {
+        preDebut: "Tzuyu fue descubierta en un taller de danza en Taiwán y se mudó a Corea en 2012. Fue añadida a TWICE por votación del público debido a su inmensa popularidad.",
+        soloCareer: "Debut como solista en 2024 con el álbum 'abouTZU'. Es embajadora de marcas como Pond's y Zooc.",
+        achievements: "Nombrada la 'Mujer Más Hermosa del Mundo' por TC Candler en 2019. Es un ícono visual global.",
+        curiosities: "Le encantan los perros y tiene uno llamado Kaya. Es conocida por su honestidad brutal y su altura."
+      }
     }
-  },
-  {
-    id: "jihyo",
-    name: "Jihyo",
-    realName: "Park Ji-hyo",
-    position: "Líder, Vocalista Principal",
-    birth: "1 de febrero de 1997",
-    origin: "Guri, Gyeonggi, Corea del Sur",
-    mbti: "ESFP",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "Entrenó durante 10 años en JYP antes de debutar. Es admirada por su potente voz y su liderazgo ejemplar.",
-      soloCareer: "Debut solista con el mini-álbum 'ZONE' en 2023.",
-      achievements: "Reconocida como una de las mejores vocalistas de su generación.",
-      curiosities: "Su nombre de nacimiento era Park Jisoo. Le gusta nadar y hacer ejercicio."
-    }
-  },
-  {
-    id: "momo",
-    name: "Momo",
-    realName: "Hirai Momo",
-    position: "Bailarina Principal, Vocalista, Rapera",
-    birth: "9 de noviembre de 1996",
-    origin: "Kyotanabe, Kioto, Japón",
-    mbti: "INFP",
-    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "Considerada una de las mejores bailarinas de la industria del K-Pop. Fue añadida a TWICE al final de SIXTEEN por su talento excepcional.",
-      soloCareer: "Miembro de la sub-unidad MISAMO. Múltiples colaboraciones de baile.",
-      achievements: "Reconocida globalmente por su técnica de baile y presencia escénica.",
-      curiosities: "Le encanta comer, especialmente jokbal. Tiene tres perros llamados Petco, Pudding y Lucky."
-    }
-  },
-  {
-    id: "sana",
-    name: "Sana",
-    realName: "Minatozaki Sana",
-    position: "Vocalista",
-    birth: "29 de diciembre de 1996",
-    origin: "Tennoji-ku, Osaka, Japón",
-    mbti: "ENFP",
-    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "Famosa por su personalidad optimista y su icónico 'Shy Shy Shy'. Es una de las integrantes más queridas por su carisma natural.",
-      soloCareer: "Miembro de la sub-unidad MISAMO. Embajadora de Prada.",
-      achievements: "Icono viral en múltiples ocasiones por su encanto y visuales.",
-      curiosities: "Es hija única. Le gusta coleccionar perfumes y lociones corporales."
-    }
-  }
-];
+  ];
 
   const toggleMember = (memberId: string) => {
     setExpandedMemberId(expandedMemberId === memberId ? null : memberId);
@@ -102,16 +195,16 @@ export default function TwiceBiographies() {
             </Button>
             <h1 className="font-bold text-xl tracking-tight text-slate-900">TWICE: Biografía Completa</h1>
           </div>
-          <Badge className="bg-purple-600 hover:bg-purple-700 text-white border-none px-3 py-1">
-            9 Leyendas
+          <Badge className="bg-pink-500 hover:bg-pink-600 text-white border-none px-3 py-1">
+            9 Estrellas
           </Badge>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative h-[45vh] md:h-[60vh] overflow-hidden">
+      <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=1600&q=80"
+          src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=80"
           alt="TWICE Group"
           className="w-full h-full object-cover"
         />
@@ -119,17 +212,16 @@ export default function TwiceBiographies() {
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 text-white p-6 text-center">
           <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter drop-shadow-2xl">TWICE</h2>
           <p className="max-w-3xl text-lg md:text-2xl text-slate-200 font-medium leading-relaxed">
-            Nueve integrantes que conquistaron el mundo con su carisma, talento y la frase que define su legado: "Twice, Once, Forever".
+            El grupo de la nación que ha conquistado el mundo con su talento, carisma y una discografía llena de éxitos inolvidables.
           </p>
         </div>
       </section>
 
       {/* Main Content */}
       <main className="container py-16 px-4 max-w-6xl mx-auto">
-        {/* Members Grid - Accordion Style */}
         <div className="space-y-6">
           {/* Grid de Miembros */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
             {members.map((member) => (
               <Card
                 key={member.id}
@@ -139,13 +231,13 @@ export default function TwiceBiographies() {
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <img
                     src={member.image}
-                    alt={member.name}
+                    alt={member.stageName}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className={`absolute inset-0 opacity-20 ${member.color}`} />
                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent text-white">
                     <p className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">{member.position}</p>
-                    <h4 className="text-xl font-black">{member.name}</h4>
+                    <h4 className="text-xl font-black">{member.stageName}</h4>
                   </div>
                   <div className="absolute top-3 right-3 bg-white/90 backdrop-blur rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <ChevronDown className={`size-5 text-slate-900 transition-transform ${expandedMemberId === member.id ? 'rotate-180' : ''}`} />
@@ -169,19 +261,19 @@ export default function TwiceBiographies() {
                           <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[3/4] mb-6">
                             <img
                               src={member.image}
-                              alt={member.name}
+                              alt={member.stageName}
                               className="w-full h-full object-cover"
                             />
                             <div className={`absolute inset-0 opacity-30 ${member.color}`} />
                             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent text-white">
-                              <h3 className="text-3xl font-black mb-1">{member.name}</h3>
-                              <p className="text-purple-300 font-bold tracking-widest uppercase text-xs">{member.position}</p>
+                              <h3 className="text-3xl font-black mb-1">{member.stageName}</h3>
+                              <p className="text-pink-300 font-bold tracking-widest uppercase text-xs">{member.position}</p>
                             </div>
                           </div>
 
                           <div className="space-y-3">
                             <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                              <Calendar className="size-4 text-purple-600 shrink-0" />
+                              <Calendar className="size-4 text-pink-600 shrink-0" />
                               <div>
                                 <p className="text-xs text-slate-400 font-bold uppercase">Nacimiento</p>
                                 <p className="text-xs font-bold text-slate-700">{member.birthday}</p>
@@ -225,19 +317,12 @@ export default function TwiceBiographies() {
                             <div className="space-y-6 min-h-[350px]">
                               <TabsContent value="bio" className="mt-0 space-y-4 animate-in fade-in duration-500">
                                 <div className="flex items-center gap-3 mb-4">
-                                  <div className="h-6 w-1 bg-purple-600 rounded-full" />
+                                  <div className="h-6 w-1 bg-pink-600 rounded-full" />
                                   <h4 className="text-lg font-bold text-slate-900">Trayectoria y Origen</h4>
                                 </div>
                                 <p className="text-slate-600 text-sm md:text-base leading-relaxed">
                                   {member.fullBio.preDebut}
                                 </p>
-                                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-start gap-3">
-                                  <Shield className="size-5 text-purple-600 mt-0.5 shrink-0" />
-                                  <div>
-                                    <h5 className="font-bold text-slate-900 text-sm mb-1">Servicio Militar</h5>
-                                    <p className="text-slate-600 text-xs md:text-sm">{member.fullBio.military}</p>
-                                  </div>
-                                </div>
                               </TabsContent>
 
                               <TabsContent value="solo" className="mt-0 space-y-4 animate-in fade-in duration-500">
@@ -281,17 +366,17 @@ export default function TwiceBiographies() {
         </div>
 
         {/* Final Group Section */}
-        <section className="mt-16 bg-gradient-to-br from-purple-900 to-slate-900 rounded-3xl p-10 md:p-16 text-white shadow-2xl overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/20 blur-[100px] rounded-full -mr-48 -mt-48" />
+        <section className="mt-16 bg-gradient-to-br from-pink-900 to-slate-900 rounded-3xl p-10 md:p-16 text-white shadow-2xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-pink-500/20 blur-[100px] rounded-full -mr-48 -mt-48" />
           <div className="relative z-10 max-w-3xl">
-            <h3 className="text-3xl md:text-5xl font-black mb-6 leading-tight">TWICE: El Legado de la Eternidad</h3>
+            <h3 className="text-3xl md:text-5xl font-black mb-6 leading-tight">TWICE: One in a Million</h3>
             <p className="text-lg text-slate-300 leading-relaxed mb-6">
-              Desde su debut en 2015, TWICE ha conquistado el mundo con su carisma, talento y la frase que define su legado: "Twice, Once, Forever". Han unido a millones de fans bajo un mismo nombre: ONCE.
+              Desde su debut en 2015, TWICE ha demostrado que la unión y el trabajo duro pueden llevarte a la cima del mundo. Con su mensaje de alegría y amor, han creado un vínculo inquebrantable con ONCE.
             </p>
             <div className="flex flex-wrap gap-3">
               <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#TWICE</Badge>
               <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#ONCE</Badge>
-              <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#KPOP_LEGENDS</Badge>
+              <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#KPOP_QUEENS</Badge>
             </div>
           </div>
         </section>

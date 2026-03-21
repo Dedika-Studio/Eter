@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Star, ChevronDown, Music, Award, BookOpen, Heart, Shield } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Star, ChevronDown, Music, Award, BookOpen, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useRef, useEffect } from "react";
@@ -20,67 +20,92 @@ export default function TxtBiographies() {
   }, [expandedMemberId]);
 
   const members = [
-  {
-    id: "soobin",
-    name: "Soobin",
-    realName: "Choi Soo-bin",
-    position: "Líder",
-    birth: "5 de diciembre de 2000",
-    origin: "Ansan, Gyeonggi, Corea del Sur",
-    mbti: "ISFP",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "El líder amable y carismático de TXT. Es conocido por su altura impresionante y sus visuales de 'flower boy'.",
-      soloCareer: "MC de Music Bank junto a Arin de Oh My Girl (2020-2021).",
-      achievements: "Lideró a TXT a ser el primer grupo de cuarta generación en encabezar Lollapalooza.",
-      curiosities: "Es un gran fan de la música K-Pop. Le encanta el pan y la leche de almendras."
+    {
+      id: "yeonjun",
+      stageName: "Yeonjun",
+      realName: "Choi Yeon-jun",
+      position: "Rapero Principal, Bailarín Principal, Vocalista",
+      birthday: "13 de septiembre de 1999",
+      birthplace: "Seongbuk-gu, Seúl, Corea del Sur",
+      mbti: "ENFP",
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      color: "bg-red-500",
+      fullBio: {
+        preDebut: "Yeonjun fue aprendiz en Big Hit Entertainment durante 5 años. Es conocido como el 'Legendary Trainee' de Big Hit y fue el primer miembro en ser revelado.",
+        soloCareer: "Ha participado en desfiles de moda para marcas como Concept Korea y ha sido modelo para la revista Dazed Korea. Es conocido por su estilo único y su influencia en la moda.",
+        achievements: "Considerado el '4th Gen It Boy'. Ha sido MC especial en programas musicales y es muy popular en redes sociales.",
+        curiosities: "Le encanta bailar y es muy bueno en eso. Es el miembro más antiguo del grupo y el 'mood maker'."
+      }
+    },
+    {
+      id: "soobin",
+      stageName: "Soobin",
+      realName: "Choi Soo-bin",
+      position: "Líder, Vocalista, Rapero",
+      birthday: "5 de diciembre de 2000",
+      birthplace: "Ansan, Gyeonggi, Corea del Sur",
+      mbti: "ISFJ",
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      color: "bg-blue-500",
+      fullBio: {
+        preDebut: "Soobin fue el segundo miembro en ser revelado. Es conocido por su personalidad tímida pero encantadora y su voz suave.",
+        soloCareer: "Fue MC de Music Bank junto a Arin de Oh My Girl, ganando mucha popularidad por su química. Ha participado en OSTs de dramas.",
+        achievements: "Líder de TXT, guiando al grupo a través de su rápido ascenso a la fama. Es reconocido por su estabilidad vocal y su presencia en el escenario.",
+        curiosities: "Le encanta el pan y es conocido por ser un 'amante de la comida'. Tiene un erizo de mascota llamado Odi."
+      }
+    },
+    {
+      id: "beomgyu",
+      stageName: "Beomgyu",
+      realName: "Choi Beom-gyu",
+      position: "Vocalista, Bailarín, Rapero, Centro, Visual",
+      birthday: "13 de marzo de 2001",
+      birthplace: "Daegu, Corea del Sur",
+      mbti: "ENFJ",
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      color: "bg-green-500",
+      fullBio: {
+        preDebut: "Beomgyu fue el quinto y último miembro en ser revelado. Fue reclutado en Daegu y tuvo que viajar a Seúl para entrenar. Es conocido por su energía y su personalidad brillante.",
+        soloCareer: "Ha participado en la producción de canciones de TXT, mostrando su talento como compositor. Es un gran guitarrista.",
+        achievements: "Es el 'mood maker' del grupo y siempre trae alegría. Reconocido por su carisma en el escenario y su habilidad para interactuar con los fans.",
+        curiosities: "Le encanta la fotografía y es muy bueno tomando fotos. Tiene un apodo de 'BAMgyu' por su energía."
+      }
+    },
+    {
+      id: "taehyun",
+      stageName: "Taehyun",
+      realName: "Kang Tae-hyun",
+      position: "Vocalista",
+      birthday: "5 de febrero de 2002",
+      birthplace: "Gangnam-gu, Seúl, Corea del Sur",
+      mbti: "ESTP",
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      color: "bg-purple-500",
+      fullBio: {
+        preDebut: "Taehyun fue el cuarto miembro en ser revelado. Fue un modelo infantil y apareció en varios anuncios antes de unirse a Big Hit.",
+        soloCareer: "Es conocido por su voz potente y estable, siendo uno de los vocalistas principales del grupo. Ha participado en la composición de letras.",
+        achievements: "Reconocido por su madurez y su pensamiento lógico. Es el 'cerebro' del grupo y siempre ofrece consejos útiles.",
+        curiosities: "Le encanta el boxeo y es muy bueno en los deportes. Es un gran fan de BTS y de la magia."
+      }
+    },
+    {
+      id: "hueningkai",
+      stageName: "Huening Kai",
+      realName: "Kai Kamal Huening",
+      position: "Vocalista, Bailarín, Rapero, Maknae",
+      birthday: "14 de agosto de 2002",
+      birthplace: "Honolulu, Hawái, EE.UU.",
+      mbti: "ENFP",
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      color: "bg-yellow-500",
+      fullBio: {
+        preDebut: "Huening Kai es el primer idol extranjero en debutar bajo Big Hit Entertainment. Es de ascendencia coreana, alemana y brasileña. Fue el tercer miembro en ser revelado.",
+        soloCareer: "Ha participado en la composición de canciones para TXT. Es conocido por su habilidad para tocar varios instrumentos musicales como el piano y la guitarra.",
+        achievements: "Es el 'maknae' (miembro más joven) del grupo y es muy querido por los fans. Reconocido por su talento musical y su personalidad alegre.",
+        curiosities: "Tiene dos hermanas, una de las cuales es la idol Bahiyyih de Kep1er. Le encanta comer y es muy bueno en los juegos."
+      }
     }
-  },
-  {
-    id: "yeonjun",
-    name: "Yeonjun",
-    realName: "Choi Yeon-jun",
-    position: "Rapero, Bailarín, Vocalista",
-    birth: "13 de septiembre de 1999",
-    origin: "Seúl, Corea del Sur",
-    mbti: "ENFP",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "Conocido como el '4th Gen It Boy'. Fue el aprendiz número 1 en JYP y BigHit en todas las categorías.",
-      soloCareer: "Debut solista con 'GGUM' en 2024. Embajador de Privé Alliance.",
-      achievements: "Primer integrante de TXT en debutar oficialmente como solista.",
-      curiosities: "Vivió en EE. UU. durante 2 años. Es un apasionado de la moda."
-    }
-  },
-  {
-    id: "beomgyu",
-    name: "Beomgyu",
-    realName: "Choi Beom-gyu",
-    position: "Vocalista, Bailarín, Visual",
-    birth: "13 de marzo de 2001",
-    origin: "Daegu, Corea del Sur",
-    mbti: "ISFJ",
-    image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "El creador de ambiente del grupo. Es conocido por su energía inagotable y su habilidad para tocar la guitarra.",
-      soloCareer: "Participación activa en la composición y producción de canciones del grupo.",
-      achievements: "Reconocido por su carisma en programas de variedades y su presencia escénica.",
-      curiosities: "Fue reclutado en su ciudad natal, Daegu. Le gusta mucho la fotografía."
-    }
-  },
-  {
-    id: "taehyun",
-    name: "Taehyun",
-    realName: "Kang Tae-hyun",
-    position: "Vocalista Principal",
-    birth: "5 de febrero de 2002",
-    origin: "Seúl, Corea del Sur",
-    mbti: "ESTP",
-    image: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "Conocido por su inteligencia y su voz potente y estable. Es uno de los vocalistas más técnicos de su generación.",
-      soloCareer: "Colaboraciones vocales y participación en la escritura de letras.",
-      achievements: "Elogiado por su madurez y profesionalismo desde el debut.",
-      curiosities: "Habla inglés con fluidez. Le gusta la magia y el boxeo."
-    }
-  }
-];
+  ];
 
   const toggleMember = (memberId: string) => {
     setExpandedMemberId(expandedMemberId === memberId ? null : memberId);
@@ -100,36 +125,35 @@ export default function TxtBiographies() {
             >
               <ArrowLeft className="size-5" />
             </Button>
-            <h1 className="font-bold text-xl tracking-tight text-slate-900">TOMORROW X TOGETHER: Biografía Completa</h1>
+            <h1 className="font-bold text-xl tracking-tight text-slate-900">TXT: Biografía Completa</h1>
           </div>
-          <Badge className="bg-purple-600 hover:bg-purple-700 text-white border-none px-3 py-1">
-            5 Leyendas
+          <Badge className="bg-blue-500 hover:bg-blue-600 text-white border-none px-3 py-1">
+            5 Estrellas
           </Badge>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative h-[45vh] md:h-[60vh] overflow-hidden">
+      <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=1600&q=80"
-          alt="TOMORROW X TOGETHER Group"
+          src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=80"
+          alt="TXT Group"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 text-white p-6 text-center">
-          <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter drop-shadow-2xl">TOMORROW X TOGETHER</h2>
+          <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter drop-shadow-2xl">TXT</h2>
           <p className="max-w-3xl text-lg md:text-2xl text-slate-200 font-medium leading-relaxed">
-            Cinco jóvenes talentos que escriben el futuro del K-Pop con su creatividad, autenticidad y conexión emocional con sus seguidores.
+            Tomorrow X Together, el grupo que te invita a soñar y a explorar un mundo de fantasía y crecimiento.
           </p>
         </div>
       </section>
 
       {/* Main Content */}
       <main className="container py-16 px-4 max-w-6xl mx-auto">
-        {/* Members Grid - Accordion Style */}
         <div className="space-y-6">
           {/* Grid de Miembros */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
             {members.map((member) => (
               <Card
                 key={member.id}
@@ -139,13 +163,13 @@ export default function TxtBiographies() {
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <img
                     src={member.image}
-                    alt={member.name}
+                    alt={member.stageName}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className={`absolute inset-0 opacity-20 ${member.color}`} />
                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent text-white">
                     <p className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">{member.position}</p>
-                    <h4 className="text-xl font-black">{member.name}</h4>
+                    <h4 className="text-xl font-black">{member.stageName}</h4>
                   </div>
                   <div className="absolute top-3 right-3 bg-white/90 backdrop-blur rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <ChevronDown className={`size-5 text-slate-900 transition-transform ${expandedMemberId === member.id ? 'rotate-180' : ''}`} />
@@ -169,19 +193,19 @@ export default function TxtBiographies() {
                           <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[3/4] mb-6">
                             <img
                               src={member.image}
-                              alt={member.name}
+                              alt={member.stageName}
                               className="w-full h-full object-cover"
                             />
                             <div className={`absolute inset-0 opacity-30 ${member.color}`} />
                             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent text-white">
-                              <h3 className="text-3xl font-black mb-1">{member.name}</h3>
-                              <p className="text-purple-300 font-bold tracking-widest uppercase text-xs">{member.position}</p>
+                              <h3 className="text-3xl font-black mb-1">{member.stageName}</h3>
+                              <p className="text-blue-300 font-bold tracking-widest uppercase text-xs">{member.position}</p>
                             </div>
                           </div>
 
                           <div className="space-y-3">
                             <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                              <Calendar className="size-4 text-purple-600 shrink-0" />
+                              <Calendar className="size-4 text-blue-600 shrink-0" />
                               <div>
                                 <p className="text-xs text-slate-400 font-bold uppercase">Nacimiento</p>
                                 <p className="text-xs font-bold text-slate-700">{member.birthday}</p>
@@ -225,19 +249,12 @@ export default function TxtBiographies() {
                             <div className="space-y-6 min-h-[350px]">
                               <TabsContent value="bio" className="mt-0 space-y-4 animate-in fade-in duration-500">
                                 <div className="flex items-center gap-3 mb-4">
-                                  <div className="h-6 w-1 bg-purple-600 rounded-full" />
+                                  <div className="h-6 w-1 bg-blue-600 rounded-full" />
                                   <h4 className="text-lg font-bold text-slate-900">Trayectoria y Origen</h4>
                                 </div>
                                 <p className="text-slate-600 text-sm md:text-base leading-relaxed">
                                   {member.fullBio.preDebut}
                                 </p>
-                                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-start gap-3">
-                                  <Shield className="size-5 text-purple-600 mt-0.5 shrink-0" />
-                                  <div>
-                                    <h5 className="font-bold text-slate-900 text-sm mb-1">Servicio Militar</h5>
-                                    <p className="text-slate-600 text-xs md:text-sm">{member.fullBio.military}</p>
-                                  </div>
-                                </div>
                               </TabsContent>
 
                               <TabsContent value="solo" className="mt-0 space-y-4 animate-in fade-in duration-500">
@@ -281,17 +298,17 @@ export default function TxtBiographies() {
         </div>
 
         {/* Final Group Section */}
-        <section className="mt-16 bg-gradient-to-br from-purple-900 to-slate-900 rounded-3xl p-10 md:p-16 text-white shadow-2xl overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/20 blur-[100px] rounded-full -mr-48 -mt-48" />
+        <section className="mt-16 bg-gradient-to-br from-blue-900 to-slate-900 rounded-3xl p-10 md:p-16 text-white shadow-2xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 blur-[100px] rounded-full -mr-48 -mt-48" />
           <div className="relative z-10 max-w-3xl">
-            <h3 className="text-3xl md:text-5xl font-black mb-6 leading-tight">TOMORROW X TOGETHER: El Legado del Futuro</h3>
+            <h3 className="text-3xl md:text-5xl font-black mb-6 leading-tight">TXT: Dream Together</h3>
             <p className="text-lg text-slate-300 leading-relaxed mb-6">
-              Desde su debut en 2019, TOMORROW X TOGETHER escribe el futuro del K-Pop con su creatividad, autenticidad y conexión emocional. Han unido a millones de fans bajo un mismo nombre: MOA.
+              TXT, o Tomorrow X Together, es un grupo que te invita a soñar y a explorar un mundo de fantasía y crecimiento. Son un faro de esperanza y sueños para la nueva generación.
             </p>
             <div className="flex flex-wrap gap-3">
               <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#TXT</Badge>
               <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#MOA</Badge>
-              <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#KPOP_LEGENDS</Badge>
+              <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#TOMORROW_X_TOGETHER</Badge>
             </div>
           </div>
         </section>
@@ -301,7 +318,7 @@ export default function TxtBiographies() {
       <footer className="py-12 bg-white border-t border-slate-200 text-center">
         <div className="container px-4">
           <p className="font-bold text-slate-900 mb-2">ETER K-POP MX</p>
-          <p className="text-slate-400 text-sm">© 2026 - Biografías Oficiales de TOMORROW X TOGETHER. Todos los derechos reservados.</p>
+          <p className="text-slate-400 text-sm">© 2026 - Biografías Oficiales de TXT. Todos los derechos reservados.</p>
         </div>
       </footer>
     </div>

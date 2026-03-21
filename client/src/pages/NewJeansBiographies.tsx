@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Star, ChevronDown, Music, Award, BookOpen, Heart, Shield } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Star, ChevronDown, Music, Award, BookOpen, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useRef, useEffect } from "react";
@@ -20,67 +20,92 @@ export default function NewJeansBiographies() {
   }, [expandedMemberId]);
 
   const members = [
-  {
-    id: "minji",
-    name: "Minji",
-    realName: "Kim Min-ji",
-    position: "Rapera, Vocalista",
-    birth: "7 de mayo de 2004",
-    origin: "Chuncheon, Gangwon, Corea del Sur",
-    mbti: "ESTJ",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "Considerada la líder de facto del grupo. Es conocida por su belleza clásica y su fluidez en inglés tras estudiar en Canadá.",
-      soloCareer: "Embajadora global de Chanel (Moda, Relojería y Belleza).",
-      achievements: "Lideró el ranking de reputación de marca de integrantes de grupos femeninos múltiples veces.",
-      curiosities: "Le encantan las novelas de misterio. Es la 'reina de la limpieza' en el grupo."
+    {
+      id: "minji",
+      stageName: "Minji",
+      realName: "Kim Min-ji",
+      position: "Líder, Vocalista, Bailarina",
+      birthday: "7 de mayo de 2004",
+      birthplace: "Chuncheon, Gangwon, Corea del Sur",
+      mbti: "ESTJ",
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop",
+      color: "bg-blue-400",
+      fullBio: {
+        preDebut: "Minji fue aprendiz de Source Music y apareció en el video musical 'Permission to Dance' de BTS antes de su debut. Es conocida por su belleza clásica coreana y su papel como la 'hermana mayor' del grupo.",
+        soloCareer: "Es embajadora global de Chanel (Moda, Relojería y Belleza). Ha participado en numerosas sesiones de fotos para revistas de alto perfil como Vogue y Elle.",
+        achievements: "Ha encabezado las listas de reputación de marca de idols individuales múltiples veces. Es reconocida por su fluidez en inglés y su carisma natural.",
+        curiosities: "Le encanta el color azul y las estaciones frías. Es muy organizada y le gusta planificar todo con antelación."
+      }
+    },
+    {
+      id: "hanni",
+      stageName: "Hanni",
+      realName: "Hanni Pham / Pham Ngoc Han",
+      position: "Vocalista, Bailarina",
+      birthday: "6 de octubre de 2004",
+      birthplace: "Melbourne, Australia",
+      mbti: "INFP",
+      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1000&auto=format&fit=crop",
+      color: "bg-pink-400",
+      fullBio: {
+        preDebut: "Hanni es de ascendencia vietnamita pero nació y creció en Australia. También apareció en el MV 'Permission to Dance' de BTS. Es la primera idol vietnamita bajo HYBE.",
+        soloCareer: "Es embajadora global de Gucci y Armani Beauty. Ha co-escrito letras para canciones de NewJeans como 'Hype Boy' y 'ASAP'.",
+        achievements: "Reconocida por su tono vocal único y su versatilidad en el baile. Es una de las idols extranjeras más influyentes de la actualidad.",
+        curiosities: "Habla fluido vietnamita, inglés y coreano. Le encanta ver películas y es fan de las comedias románticas."
+      }
+    },
+    {
+      id: "danielle",
+      stageName: "Danielle",
+      realName: "Danielle Marsh / Mo Ji-hye",
+      position: "Vocalista, Bailarina",
+      birthday: "11 de abril de 2005",
+      birthplace: "Newcastle, Nueva Gales del Sur, Australia",
+      mbti: "ENFP",
+      image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000&auto=format&fit=crop",
+      color: "bg-yellow-400",
+      fullBio: {
+        preDebut: "Danielle es de ascendencia coreana-australiana. De niña, apareció en varios programas de televisión coreanos como 'Rainbow Kindergarten'.",
+        soloCareer: "Prestó su voz para el doblaje coreano de Ariel en la película 'La Sirenita' (2023) y cantó el tema principal. Es embajadora global de Burberry y YSL Beauty.",
+        achievements: "Elogiada por su talento vocal y su capacidad para transmitir emociones. Su participación en Disney fue un hito para su carrera.",
+        curiosities: "Le encanta surfear y dibujar. Es conocida por su personalidad brillante y 'soleada' que siempre anima al grupo."
+      }
+    },
+    {
+      id: "haerin",
+      stageName: "Haerin",
+      realName: "Kang Hae-rin",
+      position: "Vocalista, Bailarina",
+      birthday: "15 de mayo de 2006",
+      birthplace: "Seúl, Corea del Sur",
+      mbti: "ISTP",
+      image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1000&auto=format&fit=crop",
+      color: "bg-green-400",
+      fullBio: {
+        preDebut: "Haerin practicaba pansori (música tradicional coreana) antes de convertirse en aprendiz. Es conocida por sus rasgos faciales que recuerdan a un gato.",
+        soloCareer: "Es embajadora global de Dior (Joyas, Moda y Belleza). Es un ícono de estilo para la Generación Z.",
+        achievements: "Sus visuales únicos y su precisión en el baile la han hecho destacar rápidamente. Es una de las idols más buscadas en internet.",
+        curiosities: "Le gusta aprender cosas nuevas y es muy curiosa. Es conocida por ser un poco reservada pero muy divertida con sus compañeras."
+      }
+    },
+    {
+      id: "hyein",
+      stageName: "Hyein",
+      realName: "Lee Hye-in",
+      position: "Vocalista, Bailarina, Maknae",
+      birthday: "21 de abril de 2008",
+      birthplace: "Incheon, Corea del Sur",
+      mbti: "INFP",
+      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      color: "bg-purple-400",
+      fullBio: {
+        preDebut: "Hyein fue modelo infantil y miembro del grupo infantil U.SSO Girl. También apareció en contenidos de YouTube antes de unirse a ADOR.",
+        soloCareer: "Es la embajadora global más joven de Louis Vuitton. Ha demostrado una madurez increíble para su edad en la industria de la moda.",
+        achievements: "A pesar de ser la menor, tiene una voz potente y una presencia escénica imponente. Es considerada una 'prodigio' del K-pop.",
+        curiosities: "Es una gran fan de BTS. Le gusta tomar fotos y caminar mientras escucha música. Es muy alta para su edad."
+      }
     }
-  },
-  {
-    id: "hanni",
-    name: "Hanni",
-    realName: "Hanni Pham / Pham Ngoc Han",
-    position: "Vocalista, Bailarina",
-    birth: "6 de octubre de 2004",
-    origin: "Melbourne, Australia",
-    mbti: "INFP",
-    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "Primera ídolo vietnamita bajo HYBE. Es conocida por su voz dulce y su gran habilidad para el baile.",
-      soloCareer: "Embajadora global de Gucci y Armani Beauty.",
-      achievements: "Participó en la escritura de letras para éxitos como 'Hype Boy' y 'OMG'.",
-      curiosities: "Habla vietnamita, inglés y coreano. Toca el ukelele."
-    }
-  },
-  {
-    id: "danielle",
-    name: "Danielle",
-    realName: "Danielle Marsh / Mo Ji-hye",
-    position: "Vocalista, Bailarina",
-    birth: "11 de abril de 2005",
-    origin: "Newcastle, Australia",
-    mbti: "ENFP",
-    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "Conocida por su personalidad radiante y su voz angelical. Creció entre Australia y Corea, lo que le da una perspectiva multicultural.",
-      soloCareer: "Embajadora global de Burberry e YSL Beauty. Dio voz a Ariel en el doblaje coreano de 'La Sirenita'.",
-      achievements: "Reconocida por su versatilidad artística y carisma natural.",
-      curiosities: "Apareció en programas de televisión coreanos cuando era niña. Le encanta nadar y surfear."
-    }
-  },
-  {
-    id: "haerin",
-    name: "Haerin",
-    realName: "Kang Hae-rin",
-    position: "Vocalista, Bailarina",
-    birth: "15 de mayo de 2006",
-    origin: "Seúl, Corea del Sur",
-    mbti: "ISTP",
-    image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1000&auto=format&fit=crop",    fullBio: {
-      preDebut: "Famosa por sus visuales que recuerdan a un gato y su técnica de baile precisa. Es una de las integrantes más tranquilas y observadoras.",
-      soloCareer: "Embajadora global de Dior (Joyas, Moda y Belleza).",
-      achievements: "Icono de estilo para la generación Z global.",
-      curiosities: "Le gusta aprender cosas nuevas y es muy curiosa. Su apodo es 'Kitty Kang'."
-    }
-  }
-];
+  ];
 
   const toggleMember = (memberId: string) => {
     setExpandedMemberId(expandedMemberId === memberId ? null : memberId);
@@ -102,16 +127,16 @@ export default function NewJeansBiographies() {
             </Button>
             <h1 className="font-bold text-xl tracking-tight text-slate-900">NewJeans: Biografía Completa</h1>
           </div>
-          <Badge className="bg-purple-600 hover:bg-purple-700 text-white border-none px-3 py-1">
-            5 Leyendas
+          <Badge className="bg-blue-500 hover:bg-blue-600 text-white border-none px-3 py-1">
+            5 Conejos
           </Badge>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative h-[45vh] md:h-[60vh] overflow-hidden">
+      <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=1600&q=80"
+          src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=80"
           alt="NewJeans Group"
           className="w-full h-full object-cover"
         />
@@ -119,17 +144,16 @@ export default function NewJeansBiographies() {
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 text-white p-6 text-center">
           <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter drop-shadow-2xl">NewJeans</h2>
           <p className="max-w-3xl text-lg md:text-2xl text-slate-200 font-medium leading-relaxed">
-            El grupo más fresco y moderno del K-Pop que redefinió la estética y el sonido de una generación con su innovación audaz.
+            La frescura y el estilo retro que han revolucionaron la industria musical con su concepto innovador y auténtico.
           </p>
         </div>
       </section>
 
       {/* Main Content */}
       <main className="container py-16 px-4 max-w-6xl mx-auto">
-        {/* Members Grid - Accordion Style */}
         <div className="space-y-6">
           {/* Grid de Miembros */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
             {members.map((member) => (
               <Card
                 key={member.id}
@@ -139,13 +163,13 @@ export default function NewJeansBiographies() {
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <img
                     src={member.image}
-                    alt={member.name}
+                    alt={member.stageName}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className={`absolute inset-0 opacity-20 ${member.color}`} />
                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent text-white">
                     <p className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">{member.position}</p>
-                    <h4 className="text-xl font-black">{member.name}</h4>
+                    <h4 className="text-xl font-black">{member.stageName}</h4>
                   </div>
                   <div className="absolute top-3 right-3 bg-white/90 backdrop-blur rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <ChevronDown className={`size-5 text-slate-900 transition-transform ${expandedMemberId === member.id ? 'rotate-180' : ''}`} />
@@ -169,19 +193,19 @@ export default function NewJeansBiographies() {
                           <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[3/4] mb-6">
                             <img
                               src={member.image}
-                              alt={member.name}
+                              alt={member.stageName}
                               className="w-full h-full object-cover"
                             />
                             <div className={`absolute inset-0 opacity-30 ${member.color}`} />
                             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent text-white">
-                              <h3 className="text-3xl font-black mb-1">{member.name}</h3>
-                              <p className="text-purple-300 font-bold tracking-widest uppercase text-xs">{member.position}</p>
+                              <h3 className="text-3xl font-black mb-1">{member.stageName}</h3>
+                              <p className="text-blue-300 font-bold tracking-widest uppercase text-xs">{member.position}</p>
                             </div>
                           </div>
 
                           <div className="space-y-3">
                             <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                              <Calendar className="size-4 text-purple-600 shrink-0" />
+                              <Calendar className="size-4 text-blue-600 shrink-0" />
                               <div>
                                 <p className="text-xs text-slate-400 font-bold uppercase">Nacimiento</p>
                                 <p className="text-xs font-bold text-slate-700">{member.birthday}</p>
@@ -225,19 +249,12 @@ export default function NewJeansBiographies() {
                             <div className="space-y-6 min-h-[350px]">
                               <TabsContent value="bio" className="mt-0 space-y-4 animate-in fade-in duration-500">
                                 <div className="flex items-center gap-3 mb-4">
-                                  <div className="h-6 w-1 bg-purple-600 rounded-full" />
+                                  <div className="h-6 w-1 bg-blue-600 rounded-full" />
                                   <h4 className="text-lg font-bold text-slate-900">Trayectoria y Origen</h4>
                                 </div>
                                 <p className="text-slate-600 text-sm md:text-base leading-relaxed">
                                   {member.fullBio.preDebut}
                                 </p>
-                                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-start gap-3">
-                                  <Shield className="size-5 text-purple-600 mt-0.5 shrink-0" />
-                                  <div>
-                                    <h5 className="font-bold text-slate-900 text-sm mb-1">Servicio Militar</h5>
-                                    <p className="text-slate-600 text-xs md:text-sm">{member.fullBio.military}</p>
-                                  </div>
-                                </div>
                               </TabsContent>
 
                               <TabsContent value="solo" className="mt-0 space-y-4 animate-in fade-in duration-500">
@@ -281,17 +298,17 @@ export default function NewJeansBiographies() {
         </div>
 
         {/* Final Group Section */}
-        <section className="mt-16 bg-gradient-to-br from-purple-900 to-slate-900 rounded-3xl p-10 md:p-16 text-white shadow-2xl overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/20 blur-[100px] rounded-full -mr-48 -mt-48" />
+        <section className="mt-16 bg-gradient-to-br from-blue-900 to-slate-900 rounded-3xl p-10 md:p-16 text-white shadow-2xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 blur-[100px] rounded-full -mr-48 -mt-48" />
           <div className="relative z-10 max-w-3xl">
-            <h3 className="text-3xl md:text-5xl font-black mb-6 leading-tight">NewJeans: El Legado de la Modernidad</h3>
+            <h3 className="text-3xl md:text-5xl font-black mb-6 leading-tight">NewJeans: We Are NewJeans</h3>
             <p className="text-lg text-slate-300 leading-relaxed mb-6">
-              Desde su debut en 2022, NewJeans ha redefinido la estética y el sonido del K-Pop moderno. Con su innovación audaz y frescura, han unido a millones de fans bajo un mismo nombre: HYBE.
+              Desde su debut sorpresa en 2022, NewJeans ha cambiado las reglas del juego. Como un par de jeans nuevos que quieres usar todos los días, su música es atemporal y esencial para esta nueva era.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#NEWJEANS</Badge>
-              <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#HYBE</Badge>
-              <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#KPOP_LEGENDS</Badge>
+              <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#NewJeans</Badge>
+              <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#Bunnies</Badge>
+              <Badge variant="outline" className="text-white border-white/20 px-3 py-1 text-sm">#Ditto</Badge>
             </div>
           </div>
         </section>
