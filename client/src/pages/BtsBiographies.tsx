@@ -4,11 +4,20 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, MapPin, Star, ChevronDown, Music, Award, BookOpen, Heart, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function BtsBiographies() {
   const [, navigate] = useLocation();
   const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null);
+  const bioContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (expandedMemberId && bioContainerRef.current) {
+      setTimeout(() => {
+        bioContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [expandedMemberId]);
 
   const members = [
     {
@@ -214,7 +223,7 @@ export default function BtsBiographies() {
 
           {/* Expanded Biography Section */}
           {expandedMemberId && (
-            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+            <div ref={bioContainerRef} className="animate-in fade-in slide-in-from-top-4 duration-500">
               <Card className="border-none shadow-2xl bg-white overflow-hidden">
                 <CardContent className="p-0">
                   {members
