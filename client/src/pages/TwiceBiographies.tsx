@@ -108,14 +108,14 @@ export default function TwiceBiographies() {
       <section className="relative h-[45vh] md:h-[60vh] overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=1600&q=80"
-          alt="BTS Group"
+          alt="TWICE Group"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 text-white p-6 text-center">
-          <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter drop-shadow-2xl">BTS</h2>
+          <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter drop-shadow-2xl">TWICE</h2>
           <p className="max-w-3xl text-lg md:text-2xl text-slate-200 font-medium leading-relaxed">
-            La historia de siete jóvenes que cambiaron el mundo a través de la música, el amor propio y la perseverancia.
+            Nueve integrantes que conquistaron el mundo con su carisma, talento y la frase que define su legado: "Twice, Once, Forever".
           </p>
         </div>
       </section>
