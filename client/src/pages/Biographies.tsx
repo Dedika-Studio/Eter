@@ -12,55 +12,71 @@ export default function Biographies() {
       name: "BTS",
       group: "Grupo de 7 miembros",
       description: "Bangtan Sonyeondan, conocidos como BTS, es un grupo surcoreano de música pop que revolucionó la industria musical global.",
-      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=500&fit=crop",
+      image: "https://images.unsplash.com/photo-1612833603922-3bb74c1288b3?q=80&w=1000&auto=format&fit=crop",
       debut: "2013",
       members: 7,
+      path: "/biografias/bts"
     },
     {
       id: 2,
       name: "BLACKPINK",
       group: "Grupo de 4 miembros",
       description: "BLACKPINK es un grupo femenino surcoreano que se ha convertido en un fenómeno global con su música y estilo único.",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&h=500&fit=crop",
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop",
       debut: "2016",
       members: 4,
+      path: "/biografias/blackpink"
     },
     {
       id: 3,
       name: "STRAY KIDS",
       group: "Grupo de 8 miembros",
       description: "STRAY KIDS es un grupo masculino surcoreano conocido por su talento en danza, canto y producción musical.",
-      image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&h=500&fit=crop",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop",
       debut: "2018",
       members: 8,
+      path: "/biografias/straykids"
     },
     {
       id: 4,
       name: "TWICE",
       group: "Grupo de 9 miembros",
       description: "TWICE es un grupo femenino surcoreano que ha ganado múltiples premios internacionales y millones de seguidores.",
-      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=500&fit=crop",
+      image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1000&auto=format&fit=crop",
       debut: "2015",
       members: 9,
+      path: "/biografias/twice"
     },
     {
       id: 5,
       name: "NewJeans",
       group: "Grupo de 5 miembros",
       description: "NewJeans es el grupo femenino más nuevo de HYBE, conocido por su concepto fresco y moderno.",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&h=500&fit=crop",
+      image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000&auto=format&fit=crop",
       debut: "2022",
       members: 5,
+      path: "/biografias/newjeans"
     },
     {
       id: 6,
       name: "IVE",
       group: "Grupo de 6 miembros",
       description: "IVE es un grupo femenino surcoreano que ha ganado popularidad rápidamente con sus éxitos musicales.",
-      image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&h=500&fit=crop",
+      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1000&auto=format&fit=crop",
       debut: "2021",
       members: 6,
+      path: "/biografias/ive"
     },
+    {
+      id: 7,
+      name: "TXT",
+      group: "Grupo de 5 miembros",
+      description: "TOMORROW X TOGETHER es un grupo masculino surcoreano conocido por sus narrativas mágicas y crecimiento artístico.",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
+      debut: "2019",
+      members: 5,
+      path: "/biografias/txt"
+    }
   ];
 
   return (
@@ -133,13 +149,7 @@ export default function Biographies() {
 
                 <Button
                   className="w-full gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                  onClick={() => {
-                    if (artist.name === "BTS") {
-                      navigate("/biografias/bts");
-                    } else {
-                      // Placeholder for other artist details
-                    }
-                  }}
+                  onClick={() => navigate(artist.path)}
                 >
                   Ver Biografía Completa
                 </Button>
