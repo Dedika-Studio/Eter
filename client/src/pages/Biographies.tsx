@@ -134,7 +134,11 @@ export default function Biographies() {
                 <Button
                   className="w-full gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                   onClick={() => {
-                    // Placeholder for artist details
+                    if (artist.name === "BTS") {
+                      navigate("/biografias/bts");
+                    } else {
+                      // Placeholder for other artist details
+                    }
                   }}
                 >
                   Ver Biografía Completa

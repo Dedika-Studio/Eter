@@ -16,6 +16,7 @@ import Admin from "./pages/Admin";
 import Raffles from "./pages/Raffles";
 import Galleries from "./pages/Galleries";
 import Biographies from "./pages/Biographies";
+import BtsBiographies from "./pages/BtsBiographies";
 import PurchaseHistory from "./pages/PurchaseHistory";
 import { NewsPage } from "./pages/News";
 
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/rifas" component={Raffles} />
       <Route path="/galerias" component={Galleries} />
       <Route path="/biografias" component={Biographies} />
+      <Route path="/biografias/bts" component={BtsBiographies} />
       <Route path="/mi-historial" component={PurchaseHistory} />
       <Route path="/noticias" component={NewsPage} />
       <Route path="/admin" component={Admin} />
