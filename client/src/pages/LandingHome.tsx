@@ -1,25 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { useLocation } from "wouter";
 import { useState, useRef, useEffect } from "react";
 import {
   Sparkles,
   ShieldCheck,
-  Ticket,
   Store,
   Images,
   Users,
   ArrowRight,
-  Clock,
   ChevronDown,
   Lightbulb,
   Newspaper,
   Instagram,
   Youtube,
   Facebook,
-  Download,
   Award,
 } from "lucide-react";
 import { RAFFLE_CONFIG } from "@shared/raffle";
@@ -28,8 +24,6 @@ export default function LandingHome() {
   const [, navigate] = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -96,16 +90,6 @@ export default function LandingHome() {
             <span className="md:hidden">Rifas, productos y contenido K-POP</span>
           </p>
           <div className="flex flex-wrap justify-center gap-2 md:gap-3 mt-4 md:mt-8">
-            {/* 
-            <Button
-              onClick={() => navigate("/rifa")}
-              className="hidden gap-1 md:gap-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-xs md:text-sm py-1 md:py-2"
-            >
-              <Ticket className="size-3 md:size-4" />
-              <span className="hidden md:inline">Ir a Rifas</span>
-              <span className="md:hidden">Rifas</span>
-            </Button>
-            */}
             <div className="relative" ref={dropdownRef}>
               <div
                 className={`bg-white/20 border border-white/40 text-white rounded-lg overflow-hidden transition-all duration-300 ${
@@ -163,40 +147,7 @@ export default function LandingHome() {
       </section>
 
       {/* Main Content */}
-      <section className="container py-8 md:py-16        {/* Diploma Generator Section - Removida, ahora está en página exclusiva */}rlo.
-                </p>
-                
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 ml-1">Tu Nombre</label>
-                    <Input
-                      type="text"
-                      placeholder="Escribe tu nombre aquí..."
-                      value={diplomaName}
-                      onChange={(e) => setDiplomaName(e.target.value)}
-                      className="h-12 border-slate-200 focus:border-purple-500 focus:ring-purple-500 rounded-xl text-lg"
-                      maxLength={25}
-                    />
-                  </div>
-                  
-                  <Button
-                    onClick={handleDownloadDiploma}
-                    disabled={!diplomaName.trim() || !imageLoaded}
-                    className="w-full gap-3 bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-700 hover:to-violet-800 text-white font-bold py-6 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    <Download className="size-5" />
-                    <span>Descargar mi Diploma</span>
-                  </Button>
-                  
-                  <p className="text-[10px] text-center text-slate-400 mt-4 italic">
-                    * El diploma se generará automáticamente con el nombre que ingreses.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
+      <section className="container py-8 md:py-16">
         {/* Noticias Section - Tarjeta Grande */}
         <div className="mb-8 md:mb-12">
           <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
