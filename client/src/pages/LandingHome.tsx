@@ -29,55 +29,7 @@ export default function LandingHome() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Diploma state
-  const [diplomaName, setDiplomaName] = useState("");
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const diplomaImageRef = useRef<HTMLImageElement | null>(null);
 
-  useEffect(() => {
-    const img = new Image();
-    img.src = "/assets/certificadoARMYBTS.jpeg";
-    img.onload = () => {
-      diplomaImageRef.current = img;
-      setImageLoaded(true);
-    };
-  }, []);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const img = diplomaImageRef.current;
-    if (!canvas || !img || !imageLoaded) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Set canvas size to match image
-    canvas.width = img.width;
-    canvas.height = img.height;
-
-    // Draw image
-    ctx.drawImage(img, 0, 0);
-
-    // Draw name if exists
-    if (diplomaName) {
-      ctx.font = "italic 40px 'Georgia', serif"; // Estilo elegante para el diploma
-      ctx.fillStyle = "#1a1a1a";
-      ctx.textAlign = "center";
-      // Posición aproximada sobre la línea del nombre en el diploma
-      ctx.fillText(diplomaName, canvas.width / 2, canvas.height / 2 - 10);
-    }
-  }, [diplomaName, imageLoaded]);
-
-  const handleDownloadDiploma = () => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const link = document.createElement("a");
-      link.download = `Diploma_ARMY_${diplomaName || "BTS"}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    }
-  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -211,35 +163,7 @@ export default function LandingHome() {
       </section>
 
       {/* Main Content */}
-      <section className="container py-8 md:py-16">
-        {/* Diploma Generator Section - NUEVA SECCIÓN */}
-        <div className="mb-12 md:mb-20">
-          <Card className="bg-white/80 backdrop-blur-xl border-purple-200 shadow-2xl overflow-hidden border-2">
-            <CardContent className="p-0 flex flex-col lg:flex-row">
-              <div className="w-full lg:w-3/5 p-4 md:p-8 bg-slate-50 flex items-center justify-center">
-                <div className="relative w-full max-w-2xl shadow-2xl rounded-lg overflow-hidden border border-slate-200">
-                  <canvas 
-                    ref={canvasRef} 
-                    className="w-full h-auto block bg-white"
-                    style={{ aspectRatio: '1/1' }}
-                  />
-                  {!imageLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="p-6 md:p-10 flex flex-col justify-center w-full lg:w-2/5 bg-white">
-                <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 rounded-full px-4 py-1.5 mb-6 text-sm font-bold w-fit">
-                  <Award className="size-4" />
-                  EXCLUSIVO ARMY
-                </div>
-                <h2 className="text-3xl md:text-4xl font-black mb-4 text-slate-900 leading-tight">
-                  Genera tu Diploma ARMY
-                </h2>
-                <p className="text-slate-600 text-sm md:text-base mb-8 leading-relaxed">
-                  ¡Obtén tu reconocimiento oficial como ARMY! Ingresa tu nombre abajo para personalizar tu diploma de BTS, visualízalo en tiempo real y descárgalo para compartirlo.
+      <section className="container py-8 md:py-16        {/* Diploma Generator Section - Removida, ahora está en página exclusiva */}rlo.
                 </p>
                 
                 <div className="space-y-4">
@@ -305,8 +229,8 @@ export default function LandingHome() {
           </Card>
         </div>
 
-        {/* Grid de Secciones: 4 por línea en PC, 2 por línea en móvil */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
+        {/* Grid de Secciones: 2 por línea en móvil, 4 por línea en PC */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12">
           {/* Tienda Section */}
           <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
             <CardContent className="p-0">
@@ -400,37 +324,36 @@ export default function LandingHome() {
             </CardContent>
           </Card>
 
-          {/* Rifas Section - Temporalmente oculto 
+          {/* Diploma Section */}
           <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
             <CardContent className="p-0">
-              <div className="relative h-32 md:h-48 bg-gradient-to-br from-pink-400 to-rose-400 overflow-hidden">
+              <div className="relative h-32 md:h-48 bg-gradient-to-br from-purple-400 to-violet-400 overflow-hidden">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663442540562/eG7tCpxgJHL2beNG2g3VYE/RIFAS_66068630.png"
-                  alt="K-POP Raffles"
-                  className="w-full h-full object-cover object-top"
+                  src={RAFFLE_CONFIG.logoUrl}
+                  alt="Diploma ARMY"
+                  className="w-full h-full object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
               <div className="p-3 md:p-6">
                 <h2 className="text-base md:text-2xl font-bold mb-1 md:mb-2 flex items-center gap-2">
-                  <Ticket className="size-4 md:size-5 text-pink-600" />
-                  Rifas
+                  <Award className="size-4 md:size-5 text-purple-600" />
+                  Diploma
                 </h2>
                 <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 hidden md:block">
-                  Participa en nuestros sorteos y gana premios increíbles de tus artistas.
+                  Crea tu diploma ARMY personalizado y descárgalo.
                 </p>
                 <Button
-                  onClick={() => navigate("/rifa")}
-                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-xs md:text-sm py-1 md:py-2"
+                  onClick={() => navigate("/diploma")}
+                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white text-xs md:text-sm py-1 md:py-2"
                 >
-                  <Ticket className="size-3 md:size-4" />
-                  <span className="hidden md:inline">Ir a Rifas</span>
-                  <span className="md:hidden">Rifas</span>
+                  <Award className="size-3 md:size-4" />
+                  <span className="hidden md:inline">Ir a Diplomas</span>
+                  <span className="md:hidden">Diplomas</span>
                 </Button>
               </div>
             </CardContent>
           </Card>
-          */}
         </div>
       </section>
 

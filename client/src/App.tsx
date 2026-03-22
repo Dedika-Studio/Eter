@@ -25,6 +25,7 @@ import IveBiographies from "./pages/IveBiographies";
 import TxtBiographies from "./pages/TxtBiographies";
 import PurchaseHistory from "./pages/PurchaseHistory";
 import { NewsPage } from "./pages/News";
+import Diploma from "./pages/Diploma";
 
 
 function Router() {
@@ -61,6 +62,7 @@ function Router() {
       <Route path="/biografias/txt" component={TxtBiographies} />
       <Route path="/mi-historial" component={PurchaseHistory} />
       <Route path="/noticias" component={NewsPage} />
+      <Route path="/diploma" component={Diploma} />
       <Route path="/admin" component={Admin} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
