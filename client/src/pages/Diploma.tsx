@@ -76,7 +76,7 @@ const DIPLOMA_TEMPLATES: DiplomaTemplate[] = [
     description: "Diploma oficial ARMY BTS",
     namePosition: {
       x: 50,
-      y: 35, // Ajustado de 37 a 35
+      y: 35,
       fontSize: 42,
       maxWidth: 70,
       color: "#1a1a1a",
@@ -92,7 +92,7 @@ const DIPLOMA_TEMPLATES: DiplomaTemplate[] = [
     description: "Diploma de la ONCE",
     namePosition: {
       x: 50,
-      y: 45, // Ajustado de 47 a 45
+      y: 45,
       fontSize: 40,
       maxWidth: 70,
       color: "#000000",
@@ -108,7 +108,7 @@ const DIPLOMA_TEMPLATES: DiplomaTemplate[] = [
     description: "Diploma BLINK",
     namePosition: {
       x: 50,
-      y: 34, // Ajustado de 37 a 34
+      y: 34,
       fontSize: 38,
       maxWidth: 70,
       color: "#ff69b4",
@@ -124,7 +124,7 @@ const DIPLOMA_TEMPLATES: DiplomaTemplate[] = [
     description: "Diploma MOA",
     namePosition: {
       x: 50,
-      y: 40, // Ajustado de 42 a 40
+      y: 40,
       fontSize: 40,
       maxWidth: 70,
       color: "#000000",
@@ -140,7 +140,7 @@ const DIPLOMA_TEMPLATES: DiplomaTemplate[] = [
     description: "Certificate of Stay",
     namePosition: {
       x: 50,
-      y: 50, // Ajustado de 47 a 50
+      y: 50,
       fontSize: 36,
       maxWidth: 70,
       color: "#000000",
@@ -156,7 +156,7 @@ const DIPLOMA_TEMPLATES: DiplomaTemplate[] = [
     description: "Diploma de Honor ARMY",
     namePosition: {
       x: 50,
-      y: 38, // Ajustado de 40 a 38
+      y: 38,
       fontSize: 40,
       maxWidth: 70,
       color: "#1a1a1a",
@@ -172,6 +172,7 @@ export default function Diploma() {
   const [diplomaName, setDiplomaName] = useState("");
   const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(0);
   const [selectedFont, setSelectedFont] = useState<FontStyle>("cursive");
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const diplomaImageRef = useRef<HTMLImageElement | null>(null);
@@ -180,7 +181,7 @@ export default function Diploma() {
 
   // Cargar la imagen del template seleccionado
   useEffect(() => {
-    setImageLoaded(false); // Reset loading state when changing template
+    setImageLoaded(false);
     const img = new Image();
     img.src = selectedTemplate.imagePath;
     img.onload = () => {
@@ -217,7 +218,6 @@ export default function Diploma() {
       const y = (canvas.height * selectedTemplate.namePosition.y) / 100;
       const maxWidth = (canvas.width * selectedTemplate.namePosition.maxWidth) / 100;
 
-      // Aplicar estilo de fuente (cursiva si se selecciona)
       ctx.font = `${selectedFont === "professional" ? "" : "italic"} ${fontSize}px ${fontFamily}`;
       ctx.fillStyle = selectedTemplate.namePosition.color;
       ctx.textAlign = "center";
@@ -227,15 +227,25 @@ export default function Diploma() {
   }, [diplomaName, imageLoaded, selectedTemplateIndex, selectedFont]);
 
   const handlePreviousDiploma = () => {
-    setSelectedTemplateIndex((prev) =>
-      prev === 0 ? DIPLOMA_TEMPLATES.length - 1 : prev - 1
-    );
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setSelectedTemplateIndex((prev) =>
+        prev === 0 ? DIPLOMA_TEMPLATES.length - 1 : prev - 1
+      );
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const handleNextDiploma = () => {
-    setSelectedTemplateIndex((prev) =>
-      prev === DIPLOMA_TEMPLATES.length - 1 ? 0 : prev + 1
-    );
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setSelectedTemplateIndex((prev) =>
+        prev === DIPLOMA_TEMPLATES.length - 1 ? 0 : prev + 1
+      );
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const handleDownloadDiploma = () => {
@@ -293,23 +303,29 @@ export default function Diploma() {
         <div className="mb-12 md:mb-20">
           <Card className="bg-white/80 backdrop-blur-xl border-purple-200 shadow-2xl overflow-hidden border-2">
             <CardContent className="p-0 flex flex-col lg:flex-row">
-              {/* Carrusel 3D Corregido */}
+              {/* Carrusel 3D con Animación Suave */}
               <div className="w-full lg:w-3/5 p-4 md:p-8 bg-slate-50 flex flex-col items-center justify-center overflow-hidden">
-                <div className="relative w-full max-w-2xl h-[350px] md:h-[450px] mb-8 flex items-center justify-center">
-                  {/* Diploma Anterior (Secuencial) */}
-                  <button 
+                <div className="relative w-full max-w-2xl h-[350px] md:h-[450px] mb-8 flex items-center justify-center perspective">
+                  {/* Diploma Anterior (Deslizamiento desde la izquierda) */}
+                  <div 
+                    className={`absolute left-0 w-24 h-32 md:w-40 md:h-56 opacity-40 scale-90 transform transition-all duration-700 ease-out z-0 cursor-pointer hover:opacity-60 ${
+                      isTransitioning ? "translate-x-0" : "-translate-x-1/4"
+                    }`}
                     onClick={handlePreviousDiploma}
-                    className="absolute left-0 w-24 h-32 md:w-40 md:h-56 opacity-40 scale-90 transform -translate-x-1/4 transition-all duration-500 z-0 hover:opacity-60"
                   >
                     <img
                       src={DIPLOMA_TEMPLATES[getPrevIndex()].imagePath}
                       alt="Anterior"
                       className="w-full h-full object-cover rounded-lg shadow-lg border border-slate-300"
                     />
-                  </button>
+                  </div>
 
-                  {/* Diploma Actual (Centro) */}
-                  <div className="relative w-full max-w-sm h-auto shadow-2xl rounded-lg overflow-hidden border-4 border-purple-400 z-10 transform transition-all duration-500 scale-100">
+                  {/* Diploma Actual (Centro con zoom) */}
+                  <div 
+                    className={`relative w-full max-w-sm h-auto shadow-2xl rounded-lg overflow-hidden border-4 border-purple-400 z-10 transform transition-all duration-700 ease-out ${
+                      isTransitioning ? "scale-95 opacity-50" : "scale-100 opacity-100"
+                    }`}
+                  >
                     <canvas 
                       ref={canvasRef} 
                       className="w-full h-auto block bg-white"
@@ -322,26 +338,29 @@ export default function Diploma() {
                     )}
                   </div>
 
-                  {/* Diploma Siguiente (Secuencial) */}
-                  <button 
+                  {/* Diploma Siguiente (Deslizamiento hacia la derecha) */}
+                  <div 
+                    className={`absolute right-0 w-24 h-32 md:w-40 md:h-56 opacity-40 scale-90 transform transition-all duration-700 ease-out z-0 cursor-pointer hover:opacity-60 ${
+                      isTransitioning ? "translate-x-0" : "translate-x-1/4"
+                    }`}
                     onClick={handleNextDiploma}
-                    className="absolute right-0 w-24 h-32 md:w-40 md:h-56 opacity-40 scale-90 transform translate-x-1/4 transition-all duration-500 z-0 hover:opacity-60"
                   >
                     <img
                       src={DIPLOMA_TEMPLATES[getNextIndex()].imagePath}
                       alt="Siguiente"
                       className="w-full h-full object-cover rounded-lg shadow-lg border border-slate-300"
                     />
-                  </button>
+                  </div>
                 </div>
 
                 {/* Controles del Carrusel */}
                 <div className="flex items-center justify-center gap-6 mb-6">
                   <Button
                     onClick={handlePreviousDiploma}
+                    disabled={isTransitioning}
                     variant="outline"
                     size="icon"
-                    className="rounded-full shadow-md hover:bg-purple-50"
+                    className="rounded-full shadow-md hover:bg-purple-50 disabled:opacity-50"
                   >
                     <ChevronLeft className="size-6" />
                   </Button>
@@ -355,9 +374,10 @@ export default function Diploma() {
                   </div>
                   <Button
                     onClick={handleNextDiploma}
+                    disabled={isTransitioning}
                     variant="outline"
                     size="icon"
-                    className="rounded-full shadow-md hover:bg-purple-50"
+                    className="rounded-full shadow-md hover:bg-purple-50 disabled:opacity-50"
                   >
                     <ChevronRight className="size-6" />
                   </Button>
@@ -368,11 +388,20 @@ export default function Diploma() {
                   {DIPLOMA_TEMPLATES.map((_, index) => (
                     <button
                       key={index}
-                      onClick={() => setSelectedTemplateIndex(index)}
+                      onClick={() => {
+                        if (!isTransitioning && index !== selectedTemplateIndex) {
+                          setIsTransitioning(true);
+                          setTimeout(() => {
+                            setSelectedTemplateIndex(index);
+                            setIsTransitioning(false);
+                          }, 300);
+                        }
+                      }}
+                      disabled={isTransitioning}
                       className={`h-2.5 rounded-full transition-all ${
                         index === selectedTemplateIndex
                           ? "w-10 bg-purple-600"
-                          : "w-2.5 bg-slate-300 hover:bg-slate-400"
+                          : "w-2.5 bg-slate-300 hover:bg-slate-400 disabled:opacity-50"
                       }`}
                     />
                   ))}
@@ -445,7 +474,7 @@ export default function Diploma() {
                   <Button
                     onClick={handleDownloadDiploma}
                     disabled={!diplomaName.trim() || !imageLoaded}
-                    className="w-full gap-3 bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-700 hover:to-violet-800 text-white font-bold py-7 rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] text-lg"
+                    className="w-full gap-3 bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-700 hover:to-violet-800 text-white font-bold py-7 rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] text-lg disabled:opacity-50"
                   >
                     <Download className="size-6" />
                     <span>Descargar Diploma</span>
@@ -496,6 +525,53 @@ export default function Diploma() {
           </div>
         </div>
       </footer>
+
+      {/* Estilos CSS para transiciones suaves */}
+      <style>{`
+        @keyframes slideInFromLeft {
+          from {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideInFromRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideOutToLeft {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+        }
+
+        @keyframes slideOutToRight {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 }
