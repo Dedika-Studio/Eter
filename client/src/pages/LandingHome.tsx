@@ -218,7 +218,7 @@ export default function LandingHome() {
             <CardContent className="p-0">
               <div className="relative h-32 md:h-48 bg-gradient-to-br from-orange-400 to-red-400 overflow-hidden">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663442540562/eG7tCpxgJHL2beNG2g3VYE/GALERIA_64697330.png"
+                  src="/assets/galerias.png"
                   alt="K-POP Gallery"
                   className="w-full h-full object-cover object-top"
                 />
@@ -249,7 +249,7 @@ export default function LandingHome() {
             <CardContent className="p-0">
               <div className="relative h-32 md:h-48 bg-gradient-to-br from-purple-400 to-indigo-400 overflow-hidden">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663442540562/eG7tCpxgJHL2beNG2g3VYE/BIOGRAFIA_37994860.png"
+                  src="/assets/BIOGRAFIAS.png"
                   alt="K-POP Biographies"
                   className="w-full h-full object-cover object-top"
                 />
@@ -280,7 +280,7 @@ export default function LandingHome() {
             <CardContent className="p-0">
               <div className="relative h-32 md:h-48 bg-gradient-to-br from-purple-400 to-violet-400 overflow-hidden">
                 <img
-                  src={RAFFLE_CONFIG.logoUrl}
+                  src="/assets/certificadoARMYBTS.jpeg"
                   alt="Diploma ARMY"
                   className="w-full h-full object-cover object-center"
                 />
