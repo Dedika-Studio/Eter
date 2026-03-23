@@ -14,6 +14,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { RAFFLE_CONFIG } from "@shared/raffle";
+import { jsPDF } from "jspdf";
 
 // Tipos de fuentes disponibles
 type FontStyle = "professional" | "cursive" | "creative" | "playwrite";
@@ -155,8 +156,7 @@ export default function Diploma() {
       else setIsDownloading(true);
 
       try {
-        // Para impresión, creamos un canvas temporal de mayor resolución si es necesario
-        // O simplemente nos aseguramos de que el canvas actual tenga la calidad máxima
+        // Crear un canvas temporal de alta resolución
         const downloadCanvas = document.createElement("canvas");
         const ctx = downloadCanvas.getContext("2d");
         if (!ctx) return;
@@ -181,11 +181,24 @@ export default function Diploma() {
         ctx.textBaseline = "bottom";
         ctx.fillText(diplomaName, x, y, maxWidth);
 
-        const link = document.createElement("a");
-        link.download = `Diploma_BTS_ARMY_${diplomaName}${isForPrint ? "_Para_Imprimir" : ""}.png`;
-        // Para impresión usamos calidad máxima (1.0)
-        link.href = downloadCanvas.toDataURL("image/png", 1.0);
-        link.click();
+        if (isForPrint) {
+          // Generar PDF para impresión
+          const pdf = new jsPDF({
+            orientation: "landscape",
+            unit: "px",
+            format: [downloadCanvas.width, downloadCanvas.height]
+          });
+          
+          const imgData = downloadCanvas.toDataURL("image/png", 1.0);
+          pdf.addImage(imgData, "PNG", 0, 0, downloadCanvas.width, downloadCanvas.height);
+          pdf.save(`Diploma_BTS_ARMY_${diplomaName}_Para_Imprimir.pdf`);
+        } else {
+          // Generar PNG para redes sociales
+          const link = document.createElement("a");
+          link.download = `Diploma_BTS_ARMY_${diplomaName}.png`;
+          link.href = downloadCanvas.toDataURL("image/png", 1.0);
+          link.click();
+        }
       } finally {
         if (isForPrint) setIsPrinting(false);
         else setIsDownloading(false);
