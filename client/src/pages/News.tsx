@@ -24,30 +24,36 @@ export default function News() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch news articles
+  // Fetch news articles using tRPC query hook for better integration
+  const newsQuery = trpc.news.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+    retry: 1
+  });
+
   useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        setLoading(true);
-        const result = await trpc.news.getAll.query();
-        setArticles(result as NewsArticle[]);
-      } catch (error) {
-        console.error("Error fetching news:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (newsQuery.data) {
+      setArticles(newsQuery.data as NewsArticle[]);
+      setLoading(false);
+    } else if (newsQuery.isError) {
+      console.error("Error fetching news:", newsQuery.error);
+      setLoading(false);
+    } else if (!newsQuery.isLoading) {
+      setLoading(false);
+    }
+  }, [newsQuery.data, newsQuery.isError, newsQuery.isLoading, newsQuery.error]);
 
-    fetchNews();
-  }, []);
-
-  const formatDate = (date: Date | string) => {
-    const d = new Date(date);
-    return d.toLocaleDateString("es-ES", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+  const formatDate = (date: any) => {
+    try {
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return "Fecha no disponible";
+      return d.toLocaleDateString("es-ES", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch (e) {
+      return "Fecha no disponible";
+    }
   };
 
   return (
