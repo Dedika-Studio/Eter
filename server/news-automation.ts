@@ -1,14 +1,14 @@
 /**
- * News Automation Script (Enhanced with HTML Cleaning)
+ * News Automation Script (Enhanced with Duplicate Detection)
  * Recopila noticias de K-pop de Soompi y Allkpop, las traduce gratuitamente y las publica automáticamente.
  * Extrae imágenes reales de los artículos originales usando Open Graph y selectores específicos.
  * Limpia etiquetas HTML para que el texto sea puro y profesional.
- * Solo procesa UNA noticia por ejecución para evitar saturar la base de datos.
+ * Solo procesa UNA noticia por ejecución, buscando siempre una que no haya sido publicada antes.
  */
 
 import { getDb } from "./db";
 import { news as newsTable, type InsertNews } from "../drizzle/schema";
-import { eq, lt, desc } from "drizzle-orm";
+import { eq, lt, desc, or } from "drizzle-orm";
 import Parser from "rss-parser";
 import { load } from "cheerio";
 import { translate } from "@vitalets/google-translate-api";
@@ -41,7 +41,6 @@ interface RawNewsItem {
  */
 function stripHtml(html: string): string {
   if (!html) return "";
-  // Use cheerio to load and get text, which handles entities and tags correctly
   const $ = load(html);
   return $.text().trim();
 }
@@ -55,15 +54,12 @@ async function extractImageFromUrl(url: string): Promise<string | null> {
     const html = await response.text();
     const $ = load(html);
 
-    // 1. Try Open Graph Image (Standard for social sharing)
     const ogImage = $('meta[property="og:image"]').attr("content");
     if (ogImage) return ogImage;
 
-    // 2. Try Twitter Image
     const twitterImage = $('meta[name="twitter:image"]').attr("content");
     if (twitterImage) return twitterImage;
 
-    // 3. Source specific selectors
     if (url.includes("soompi.com")) {
       const soompiImg = $(".article-header img, .article-content img").first().attr("src");
       if (soompiImg) return soompiImg;
@@ -85,7 +81,7 @@ async function extractImageFromUrl(url: string): Promise<string | null> {
 async function fetchSoompiNews(): Promise<RawNewsItem[]> {
   try {
     const feed = await parser.parseURL("https://www.soompi.com/feed");
-    return feed.items.slice(0, 5).map((item) => ({
+    return feed.items.slice(0, 15).map((item) => ({
       title: item.title || "",
       link: item.link || "",
       pubDate: item.pubDate,
@@ -108,7 +104,7 @@ async function fetchAllkpopNews(): Promise<RawNewsItem[]> {
     const $ = load(html);
 
     const articles: RawNewsItem[] = [];
-    $("article").slice(0, 5).each((_: number, el: any) => {
+    $("article").slice(0, 15).each((_: number, el: any) => {
       const title = $(el).find("h2, h3").first().text().trim();
       const link = $(el).find("a").first().attr("href") || "";
       const content = $(el).find("p").first().text().trim();
@@ -138,7 +134,6 @@ async function translateNews(
   content: string
 ): Promise<{ title: string; content: string }> {
   try {
-    // Clean HTML before translation to avoid issues
     const cleanTitle = stripHtml(title);
     const cleanContent = stripHtml(content);
 
@@ -186,7 +181,7 @@ async function cleanupOldNews(): Promise<void> {
  * Main automation function
  */
 async function automateNews(): Promise<void> {
-  console.log("[News] Starting news automation (HTML Cleaning Mode)...");
+  console.log("[News] Starting news automation (Smart Duplicate Detection Mode)...");
 
   try {
     const soompiNews = await fetchSoompiNews();
@@ -201,30 +196,42 @@ async function automateNews(): Promise<void> {
     const db = await getDb();
     if (!db) return;
 
-    // Get the most recent news item from DB to avoid immediate duplicates
-    const lastNews = await db.select().from(newsTable).orderBy(desc(newsTable.createdAt)).limit(5);
-    const existingTitles = lastNews.map(n => n.title.toLowerCase());
+    // Get ALL recent news from DB to check for duplicates (both by title and sourceUrl)
+    const recentNews = await db.select().from(newsTable).orderBy(desc(newsTable.createdAt)).limit(50);
+    const existingTitles = new Set(recentNews.map(n => n.title.toLowerCase()));
+    const existingUrls = new Set(recentNews.map(n => n.sourceUrl?.toLowerCase()));
 
-    // Find the first news item that isn't already in the last 5 entries
-    const item = allNews.find(n => !existingTitles.includes(stripHtml(n.title).toLowerCase()));
+    // Find the first news item that isn't already in the DB
+    let itemToProcess = null;
+    for (const item of allNews) {
+      const cleanTitle = stripHtml(item.title).toLowerCase();
+      const cleanUrl = item.link.toLowerCase();
+      
+      if (!existingTitles.has(cleanTitle) && !existingUrls.has(cleanUrl)) {
+        itemToProcess = item;
+        break;
+      }
+    }
 
-    if (!item) {
-      console.log("[News] No new unique news found in this round.");
+    if (!itemToProcess) {
+      console.log("[News] All recent news from sources are already published.");
       return;
     }
 
+    console.log(`[News] Found new unique item: "${itemToProcess.title}"`);
+
     // 1. Extract real image from the article URL
-    let imageUrl = await extractImageFromUrl(item.link);
+    let imageUrl = await extractImageFromUrl(itemToProcess.link);
     
-    // 2. Translate content (now with HTML cleaning)
+    // 2. Translate content
     const { title: translatedTitle, content: translatedContent } = await translateNews(
-      item.title,
-      item.content || ""
+      itemToProcess.title,
+      itemToProcess.content || ""
     );
 
     // 3. If no real image found, use backup
     if (!imageUrl) {
-      imageUrl = selectBackupImage(item.title, item.content || "");
+      imageUrl = selectBackupImage(itemToProcess.title, itemToProcess.content || "");
     }
     
     const slug = translatedTitle
@@ -238,13 +245,13 @@ async function automateNews(): Promise<void> {
       content: translatedContent,
       summary: translatedContent.substring(0, 200),
       image: imageUrl || undefined,
-      sourceUrl: item.link || "",
-      source: item.source || "unknown",
+      sourceUrl: itemToProcess.link || "",
+      source: itemToProcess.source || "unknown",
       isPublished: true,
     };
 
     await db.insert(newsTable).values(newsRecord);
-    console.log(`[News] Published Clean Item: "${translatedTitle}"`);
+    console.log(`[News] Published Smart Item: "${translatedTitle}"`);
 
     await cleanupOldNews();
   } catch (error) {
