@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { LegalFooter } from "@/components/LegalFooter";
 import { useLocation } from "wouter";
 import { useState, useRef, useEffect } from "react";
 import {
@@ -322,28 +323,12 @@ export default function Diploma() {
         </div>
       </section>
 
-      {/* Privacy Notice */}
-      <section className="py-6 md:py-8 bg-gradient-to-r from-red-50 to-orange-50 border-t-2 border-red-200">
-        <div className="container px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 mt-1">
-                <div className="flex items-center justify-center h-6 w-6 rounded-full bg-red-600">
-                  <span className="text-white text-sm font-bold">⚠</span>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-red-900 mb-1">
-                  Aviso de Privacidad y Uso Exclusivo
-                </h3>
-                <p className="text-xs text-red-800 leading-relaxed">
-                  El uso de esta herramienta es exclusivo de <span className="font-bold">{RAFFLE_CONFIG.storeName}</span>. Se prohíbe la venta, distribución, reproducción o cualquier uso no autorizado de los diplomas generados. El incumplimiento de estas restricciones puede resultar en acciones legales.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Legal Footer */}
+      <LegalFooter
+        title="Aviso de Privacidad y Uso Exclusivo"
+        description={`El uso de esta herramienta es exclusivo de ${RAFFLE_CONFIG.storeName}. Se prohíbe la venta, distribución, reproducción o cualquier uso no autorizado de los diplomas generados. El incumplimiento de estas restricciones puede resultar en acciones legales.`}
+        storeName={RAFFLE_CONFIG.storeName}
+      />
 
       {/* Footer */}
       <footer className="py-8 md:py-12 bg-white border-t border-border/50">

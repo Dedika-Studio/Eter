@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { LegalFooter } from "@/components/LegalFooter";
 import { useLocation } from "wouter";
 import { useState, useRef, useEffect } from "react";
 import {
@@ -307,6 +308,12 @@ export default function LandingHome() {
           </Card>
         </div>
       </section>
+
+      {/* Legal Footer */}
+      <LegalFooter
+        description={`${RAFFLE_CONFIG.storeName} es una tienda especializada en productos K-POP. Todos los derechos de autor y marcas registradas pertenecen a sus respectivos propietarios. Los contenidos mostrados en este sitio son solo con fines informativos y educativos.`}
+        storeName={RAFFLE_CONFIG.storeName}
+      />
 
       {/* Footer */}
       <footer className="py-8 md:py-12 bg-white border-t border-border/50">
