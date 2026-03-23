@@ -45,7 +45,7 @@ export default function BlackpinkBiographies() {
       birthday: "16 de enero de 1996",
       birthplace: "Seúl, Corea del Sur",
       mbti: "INFJ",
-      image: "https://www.rollingstone.com/wp-content/uploads/2023/07/Blackpink-Jennie-on-Dua-Lipa-Podcast.jpg?w=1581&h=1054&crop=1",
+      image: "https://i.ibb.co/L9g327c/cg-Eh5-I8yj-DPR.jpg",
       color: "bg-slate-900",
       fullBio: {
         preDebut: "Nacida en Seúl, Jennie vivió y estudió en Auckland, Nueva Zelanda, durante cinco años antes de regresar a Corea en 2010. Se unió a YG Entertainment ese mismo año y entrenó durante casi seis años. Fue la primera integrante de BLACKPINK en ser revelada y colaboró pre-debut con artistas como G-Dragon en 'Black' y Lee Hi en 'Special'.",
