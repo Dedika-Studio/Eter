@@ -64,7 +64,7 @@ export default function BtsBiographies() {
       birthday: "9 de Marzo, 1993",
       birthplace: "Buk-gu, Daegu, Corea del Sur",
       mbti: "ISTP",
-      image: "https://media.gettyimages.com/id/1456107690/es/foto/los-angeles-california-suga-of-bts-attends-a-basketball-game-between-the-los-angeles-lakers.jpg?s=2048x2048&w=gi&k=20&c=_YOmTQ6IKvZxhnR_6PAKEi_KT8LdGCxOFcMkF4Z32cw=",
+      image: "https://e0.pxfuel.com/wallpapers/73/102/desktop-wallpaper-bts-suga-bts-suga-min.jpg",
       color: "bg-slate-800",
       fullBio: {
         preDebut: "Comenzó como rapero y productor underground en Daegu bajo el nombre 'Gloss'. Pasó por muchas dificultades económicas antes del debut, llegando a elegir entre comer o pagar el autobús. Se unió a Big Hit originalmente como productor.",
@@ -82,7 +82,7 @@ export default function BtsBiographies() {
       birthday: "18 de Febrero, 1994",
       birthplace: "Gwangju, Corea del Sur",
       mbti: "INFJ",
-      image: "https://media.gettyimages.com/id/2187084299/es/foto/seoul-south-korea-j-hope-of-bts-attends-audemars-piguet-flagship-store-opening-event-at.jpg?s=2048x2048&w=gi&k=20&c=XhUqdnvcLCsay0i7sHr_pK42MBO7j6uYH6ou1zJVB_M=",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGIYYsQ8M1fE3exEy-UtsoN3NVKrQ6SDu--g&s",
       color: "bg-green-600",
       fullBio: {
         preDebut: "Era un bailarín callejero muy famoso en Gwangju con el grupo 'Neuron'. Ganó varios concursos nacionales de baile antes de unirse a Big Hit. Casi deja el grupo antes del debut, pero RM convenció a la empresa de que BTS necesitaba a J-Hope.",
@@ -100,7 +100,7 @@ export default function BtsBiographies() {
       birthday: "13 de Octubre, 1995",
       birthplace: "Busan, Corea del Sur",
       mbti: "ESTP",
-      image: "https://media.gettyimages.com/id/1485895454/es/foto/new-york-new-york-jimin-attends-as-tiffany-co-celebrates-the-reopening-of-nyc-flagship-store.jpg?s=2048x2048&w=gi&k=20&c=GRTt7nPBI2IlzZ_sAwkf4C1eOLwtH_ROtFiq01LfvRs=",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjhINt3dExFXGyQ5J7E8RPVvAZYggXdEG-ZA&s",
       color: "bg-amber-500",
       fullBio: {
         preDebut: "Fue el estudiante estrella de danza contemporánea en la Escuela Secundaria de Artes de Busan. Fue el último miembro en unirse a BTS, entrenando solo por 6 meses antes del debut debido a su talento natural y ética de trabajo extrema.",
@@ -118,7 +118,7 @@ export default function BtsBiographies() {
       birthday: "30 de Diciembre, 1995",
       birthplace: "Daegu, Corea del Sur",
       mbti: "INFP",
-      image: "https://media.gettyimages.com/id/1479893241/es/foto/seoul-south-korea-south-korean-singer-kim-tae-hyung-a-k-a-v-of-bts-is-seen-at-the-celine-pop.jpg?s=2048x2048&w=gi&k=20&c=JQ1hZt99kFpzOWiLrdYq0ht1PdeultdfcAFdxlH-iUw=",
+      image: "https://w0.peakpx.com/wallpaper/547/254/HD-wallpaper-v-bts-kim-taehyung.jpg",
       color: "bg-purple-600",
       fullBio: {
         preDebut: "Acompañó a un amigo a una audición solo por apoyo, pero los agentes le pidieron que audicionara también y fue el único que pasó ese día. Fue mantenido como el 'miembro secreto' de BTS hasta el último momento para generar misterio.",
@@ -136,7 +136,7 @@ export default function BtsBiographies() {
       birthday: "1 de Septiembre, 1997",
       birthplace: "Busan, Corea del Sur",
       mbti: "ISFP",
-      image: "https://media.gettyimages.com/id/1297119024/es/foto/seoul-south-korea-jungkook-of-bts-attends-the-2017-kbs-song-festival-at-kbs-hall-on-december.jpg?s=2048x2048&w=gi&k=20&c=yiKaEsxkVq0hdyrUtfoHUJWPJbE69od0fz3t1ouZ11k=",
+      image: "https://w0.peakpx.com/wallpaper/125/717/HD-wallpaper-jungkook-bts-jungkook-jk-gl.jpg",
       color: "bg-red-600",
       fullBio: {
         preDebut: "Participó en el programa 'Superstar K' y, aunque no ganó, recibió ofertas de 7 agencias diferentes. Eligió Big Hit después de ver a RM rapear, pensando que era 'genial'. Fue enviado a Los Ángeles antes del debut para perfeccionar su baile.",
