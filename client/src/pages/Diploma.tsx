@@ -72,30 +72,7 @@ export default function Diploma() {
   // Diploma state
   const [diplomaName, setDiplomaName] = useState("");
   const [selectedFont, setSelectedFont] = useState<FontStyle>("cursive");
-  const [fontSize, setFontSize] = useState(BTS_DIPLOMA.namePosition.fontSize);
-
-  // Auto-ajuste de tamaño de letra según la longitud del nombre
-  useEffect(() => {
-    if (!diplomaName) {
-      setFontSize(BTS_DIPLOMA.namePosition.fontSize);
-      return;
-    }
-
-    const nameLength = diplomaName.length;
-    let newSize = BTS_DIPLOMA.namePosition.fontSize;
-
-    if (nameLength > 25) {
-      newSize = 32;
-    } else if (nameLength > 20) {
-      newSize = 36;
-    } else if (nameLength > 15) {
-      newSize = 42;
-    } else if (nameLength < 8) {
-      newSize = 56;
-    }
-
-    setFontSize(newSize);
-  }, [diplomaName]);
+  const [fontSize, setFontSize] = useState(71); // Tamaño inicial predefinido de 71px
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const diplomaImageRef = useRef<HTMLImageElement | null>(null);
