@@ -100,6 +100,8 @@ export default function Diploma() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const diplomaImageRef = useRef<HTMLImageElement | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadMessage, setDownloadMessage] = useState("");
   const [isPrinting, setIsPrinting] = useState(false);
 
   // Cargar la imagen del diploma
@@ -152,8 +154,22 @@ export default function Diploma() {
     const canvas = canvasRef.current;
     const img = diplomaImageRef.current;
     if (canvas && img && diplomaName.trim()) {
-      if (isForPrint) setIsPrinting(true);
-      else setIsDownloading(true);
+      if (isForPrint) {
+        setIsPrinting(true);
+      } else {
+        setIsDownloading(true);
+        setDownloadProgress(0);
+        setDownloadMessage("Estamos preparando tu diploma...");
+        
+        // Simulación de progreso de 10 segundos para retención
+        for (let i = 0; i <= 100; i += 2) {
+          await new Promise(resolve => setTimeout(resolve, 200)); // 100/2 * 200ms = 10s
+          setDownloadProgress(i);
+          
+          if (i === 50) setDownloadMessage("Ajustando últimos detalles de calidad...");
+          if (i === 80) setDownloadMessage("¡Casi listo! Generando archivo final...");
+        }
+      }
 
       try {
         // Crear un canvas temporal de alta resolución
@@ -201,7 +217,10 @@ export default function Diploma() {
         }
       } finally {
         if (isForPrint) setIsPrinting(false);
-        else setIsDownloading(false);
+        else {
+          setIsDownloading(false);
+          setDownloadProgress(0);
+        }
       }
     }
   };
@@ -391,16 +410,36 @@ export default function Diploma() {
                     </p>
                     
                     <div className="grid grid-cols-1 gap-3">
-                      <Button
-                        onClick={() => handleDownloadDiploma(false)}
-                        disabled={!diplomaName.trim() || !imageLoaded || isDownloading || isPrinting}
-                        className="w-full gap-3 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold py-6 rounded-xl shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] text-base disabled:opacity-50"
-                      >
-                        <Download className="size-5" />
-                        <span>
-                          {isDownloading ? "Descargando..." : "Descargar Diploma"}
-                        </span>
-                      </Button>
+                      <div className="relative group">
+                        <Button
+                          onClick={() => handleDownloadDiploma(false)}
+                          disabled={!diplomaName.trim() || !imageLoaded || isDownloading || isPrinting}
+                          className={`w-full gap-3 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold py-6 rounded-xl shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] text-base disabled:opacity-50 overflow-hidden ${isDownloading ? 'relative' : ''}`}
+                        >
+                          {isDownloading ? (
+                            <div className="flex flex-col items-center w-full gap-1">
+                              <div className="flex items-center gap-2">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                <span>{downloadProgress}%</span>
+                              </div>
+                              <span className="text-[10px] font-normal opacity-90">{downloadMessage}</span>
+                            </div>
+                          ) : (
+                            <>
+                              <Download className="size-5" />
+                              <span>Descargar Diploma</span>
+                            </>
+                          )}
+                          
+                          {/* Barra de progreso de fondo */}
+                          {isDownloading && (
+                            <div 
+                              className="absolute bottom-0 left-0 h-1 bg-white/30 transition-all duration-300"
+                              style={{ width: `${downloadProgress}%` }}
+                            />
+                          )}
+                        </Button>
+                      </div>
 
                       <Button
                         onClick={() => handleDownloadDiploma(true)}
