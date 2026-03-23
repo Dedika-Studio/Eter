@@ -62,7 +62,7 @@ export default function BlackpinkBiographies() {
       birthday: "11 de febrero de 1997",
       birthplace: "Auckland, Nueva Zelanda",
       mbti: "ENFP",
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBOHu91CXa_ZfCIDgQl0jZWywXOPDBNjz2rA&s",
+      image: "https://media.vogue.mx/photos/636926bf74730ec3e4402100/master/pass/rose%CC%81-blackpink-vestido-negro-lacma-.jpg",
       color: "bg-rose-400",
       fullBio: {
         preDebut: "Nacida en Nueva Zelanda y criada en Melbourne, Australia, Rosé audicionó para YG en 2012 tras quedar en primer lugar entre 700 participantes. Se mudó a Corea sola a los 15 años para comenzar su entrenamiento. Fue la última integrante en ser revelada y colaboró pre-debut en la canción 'Without You' de G-Dragon.",
