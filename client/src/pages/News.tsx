@@ -25,7 +25,7 @@ export default function News() {
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
-  // Fetch news articles using tRPC query hook for better integration
+  // Fetch news articles using tRPC query hook
   const newsQuery = trpc.news.getAll.useQuery(undefined, {
     refetchOnWindowFocus: false,
     retry: 1
@@ -103,22 +103,24 @@ export default function News() {
             </Button>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {articles.map((article) => {
               const isExpanded = expandedId === article.id;
               return (
                 <Card
                   key={article.id}
-                  className={`bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden transition-all duration-300 ${
-                    isExpanded ? "ring-2 ring-emerald-500/20 shadow-xl" : "hover:shadow-xl"
+                  className={`bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden transition-all duration-500 ease-in-out ${
+                    isExpanded 
+                      ? "col-span-full md:col-span-full lg:col-span-full ring-2 ring-emerald-500/20 shadow-2xl scale-[1.02] z-10" 
+                      : "hover:shadow-xl hover:-translate-y-1"
                   }`}
                 >
                   <CardContent className="p-0 flex flex-col">
-                    <div className="flex flex-col md:flex-row">
+                    <div className={`flex flex-col ${isExpanded ? "md:flex-row" : ""}`}>
                       {/* Image Section */}
                       {article.image && (
-                        <div className={`relative w-full md:w-1/3 bg-gradient-to-br from-gray-300 to-gray-400 overflow-hidden transition-all duration-300 ${
-                          isExpanded ? "h-64 md:h-auto" : "h-48 md:h-64"
+                        <div className={`relative bg-gradient-to-br from-gray-300 to-gray-400 overflow-hidden transition-all duration-500 ${
+                          isExpanded ? "w-full md:w-1/3 h-64 md:h-auto" : "w-full h-48"
                         }`}>
                           <img
                             src={article.image}
@@ -133,7 +135,7 @@ export default function News() {
                       )}
 
                       {/* Content Section */}
-                      <div className={`p-6 flex flex-col justify-between ${article.image ? "md:w-2/3" : "w-full"}`}>
+                      <div className={`p-6 flex flex-col justify-between ${isExpanded && article.image ? "md:w-2/3" : "w-full"}`}>
                         <div>
                           <div className="flex items-center gap-2 mb-3">
                             <Calendar className="size-4 text-gray-500" />
@@ -145,21 +147,23 @@ export default function News() {
                             </span>
                           </div>
 
-                          <h2 className="text-xl md:text-2xl font-bold mb-3 text-gray-900">
+                          <h2 className={`font-bold mb-3 text-gray-900 transition-all duration-300 ${
+                            isExpanded ? "text-2xl md:text-3xl" : "text-lg line-clamp-2"
+                          }`}>
                             {article.title}
                           </h2>
 
-                          <div className={`text-gray-600 text-sm md:text-base mb-4 transition-all duration-300 ${
-                            isExpanded ? "" : "line-clamp-3"
+                          <div className={`text-gray-600 text-sm md:text-base mb-4 transition-all duration-500 ${
+                            isExpanded ? "opacity-100" : "line-clamp-3 opacity-80"
                           }`}>
                             {isExpanded ? (
-                              <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
+                              <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-700">
                                 {stripHtml(article.content).split('\n').map((paragraph, idx) => (
                                   paragraph.trim() && <p key={idx}>{paragraph}</p>
                                 ))}
                               </div>
                             ) : (
-                              <p>{stripHtml(article.summary || article.content).substring(0, 200)}...</p>
+                              <p>{stripHtml(article.summary || article.content).substring(0, 120)}...</p>
                             )}
                           </div>
                         </div>
@@ -185,11 +189,11 @@ export default function News() {
                               </>
                             )}
                           </Button>
-                          {article.sourceUrl && (
+                          {article.sourceUrl && isExpanded && (
                             <Button
                               onClick={() => window.open(article.sourceUrl!, "_blank")}
                               variant="outline"
-                              className="gap-2 text-sm"
+                              className="gap-2 text-sm animate-in fade-in zoom-in duration-500"
                             >
                               <ExternalLink className="size-4" />
                               Fuente
