@@ -147,7 +147,6 @@ const DIPLOMA_TEMPLATES: DiplomaTemplate[] = [
       fontWeight: "normal",
     },
   },
-
 ];
 
 export default function Diploma() {
@@ -155,20 +154,23 @@ export default function Diploma() {
 
   // Diploma state
   const [diplomaName, setDiplomaName] = useState("");
-  const [selectedTemplateIndex, setSelectedTemplateIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedFont, setSelectedFont] = useState<FontStyle>("cursive");
   const [isTransitioning, setIsTransitioning] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const diplomaImageRef = useRef<HTMLImageElement | null>(null);
 
-  const selectedTemplate = DIPLOMA_TEMPLATES[selectedTemplateIndex];
+  // Obtener el template actual de forma segura
+  const currentTemplate = DIPLOMA_TEMPLATES[selectedIndex] || DIPLOMA_TEMPLATES[0];
+  const prevIndex = selectedIndex === 0 ? DIPLOMA_TEMPLATES.length - 1 : selectedIndex - 1;
+  const nextIndex = selectedIndex === DIPLOMA_TEMPLATES.length - 1 ? 0 : selectedIndex + 1;
 
   // Cargar la imagen del template seleccionado
   useEffect(() => {
     setImageLoaded(false);
     const img = new Image();
-    img.src = selectedTemplate.imagePath;
+    img.src = currentTemplate.imagePath;
     img.onload = () => {
       diplomaImageRef.current = img;
       setImageLoaded(true);
@@ -176,7 +178,7 @@ export default function Diploma() {
     img.onerror = () => {
       setImageLoaded(false);
     };
-  }, [selectedTemplateIndex]);
+  }, [selectedIndex, currentTemplate.imagePath]);
 
   // Dibujar el diploma en el canvas
   useEffect(() => {
@@ -198,35 +200,37 @@ export default function Diploma() {
     if (diplomaName) {
       const fontOption = FONT_OPTIONS.find((f) => f.id === selectedFont);
       const fontFamily = fontOption?.family || "Arial";
-      const fontSize = selectedTemplate.namePosition.fontSize;
-      const x = (canvas.width * selectedTemplate.namePosition.x) / 100;
-      const y = (canvas.height * selectedTemplate.namePosition.y) / 100;
-      const maxWidth = (canvas.width * selectedTemplate.namePosition.maxWidth) / 100;
+      const fontSize = currentTemplate.namePosition.fontSize;
+      const x = (canvas.width * currentTemplate.namePosition.x) / 100;
+      const y = (canvas.height * currentTemplate.namePosition.y) / 100;
+      const maxWidth = (canvas.width * currentTemplate.namePosition.maxWidth) / 100;
 
       ctx.font = `${selectedFont === "professional" ? "" : "italic"} ${fontSize}px ${fontFamily}`;
-      ctx.fillStyle = selectedTemplate.namePosition.color;
+      ctx.fillStyle = currentTemplate.namePosition.color;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(diplomaName, x, y, maxWidth);
     }
-  }, [diplomaName, imageLoaded, selectedTemplateIndex, selectedFont]);
+  }, [diplomaName, imageLoaded, selectedIndex, selectedFont, currentTemplate]);
 
-  const handlePreviousDiploma = () => {
+  // Navegar al anterior (secuencial)
+  const handlePrevious = () => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setTimeout(() => {
-      setSelectedTemplateIndex((prev) =>
+      setSelectedIndex((prev) =>
         prev === 0 ? DIPLOMA_TEMPLATES.length - 1 : prev - 1
       );
       setIsTransitioning(false);
     }, 300);
   };
 
-  const handleNextDiploma = () => {
+  // Navegar al siguiente (secuencial)
+  const handleNext = () => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setTimeout(() => {
-      setSelectedTemplateIndex((prev) =>
+      setSelectedIndex((prev) =>
         prev === DIPLOMA_TEMPLATES.length - 1 ? 0 : prev + 1
       );
       setIsTransitioning(false);
@@ -237,16 +241,11 @@ export default function Diploma() {
     const canvas = canvasRef.current;
     if (canvas) {
       const link = document.createElement("a");
-      link.download = `Diploma_${selectedTemplate.group}_${diplomaName || "Fan"}.png`;
+      link.download = `Diploma_${currentTemplate.group}_${diplomaName || "Fan"}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     }
   };
-
-  const getPrevIndex = () =>
-    selectedTemplateIndex === 0 ? DIPLOMA_TEMPLATES.length - 1 : selectedTemplateIndex - 1;
-  const getNextIndex = () =>
-    selectedTemplateIndex === DIPLOMA_TEMPLATES.length - 1 ? 0 : selectedTemplateIndex + 1;
 
   return (
     <div className="min-h-screen bg-background">
@@ -291,22 +290,22 @@ export default function Diploma() {
               {/* Carrusel 3D con Animación Suave y Scroll Snap */}
               <div className="w-full lg:w-3/5 p-4 md:p-8 bg-slate-50 flex flex-col items-center justify-center overflow-hidden">
                 <div className="relative w-full max-w-2xl h-[350px] md:h-[450px] mb-8 flex items-center justify-center perspective scroll-snap-x-mandatory scroll-smooth" style={{ scrollSnapType: 'x mandatory', overflowX: 'auto', scrollBehavior: 'smooth' }}>
-                  {/* Diploma Anterior (Deslizamiento desde la izquierda) */}
+                  {/* Diploma Anterior */}
                   <div 
                     className={`absolute left-0 w-24 h-32 md:w-40 md:h-56 opacity-40 scale-90 transform transition-all duration-700 ease-out z-0 cursor-pointer hover:opacity-60 ${
                       isTransitioning ? "translate-x-0" : "-translate-x-1/4"
                     }`}
                     style={{ scrollSnapAlign: 'center' }}
-                    onClick={handlePreviousDiploma}
+                    onClick={handlePrevious}
                   >
                     <img
-                      src={DIPLOMA_TEMPLATES[getPrevIndex()].imagePath}
+                      src={DIPLOMA_TEMPLATES[prevIndex].imagePath}
                       alt="Anterior"
                       className="w-full h-full object-cover rounded-lg shadow-lg border border-slate-300"
                     />
                   </div>
 
-                  {/* Diploma Actual (Centro con zoom) */}
+                  {/* Diploma Actual */}
                   <div 
                     className={`relative w-full max-w-sm h-auto shadow-2xl rounded-lg overflow-hidden border-4 border-purple-400 z-10 transform transition-all duration-700 ease-out ${
                       isTransitioning ? "scale-95 opacity-50" : "scale-100 opacity-100"
@@ -325,16 +324,16 @@ export default function Diploma() {
                     )}
                   </div>
 
-                  {/* Diploma Siguiente (Deslizamiento hacia la derecha) */}
+                  {/* Diploma Siguiente */}
                   <div 
                     className={`absolute right-0 w-24 h-32 md:w-40 md:h-56 opacity-40 scale-90 transform transition-all duration-700 ease-out z-0 cursor-pointer hover:opacity-60 ${
                       isTransitioning ? "translate-x-0" : "translate-x-1/4"
                     }`}
                     style={{ scrollSnapAlign: 'center' }}
-                    onClick={handleNextDiploma}
+                    onClick={handleNext}
                   >
                     <img
-                      src={DIPLOMA_TEMPLATES[getNextIndex()].imagePath}
+                      src={DIPLOMA_TEMPLATES[nextIndex].imagePath}
                       alt="Siguiente"
                       className="w-full h-full object-cover rounded-lg shadow-lg border border-slate-300"
                     />
@@ -344,7 +343,7 @@ export default function Diploma() {
                 {/* Controles del Carrusel */}
                 <div className="flex items-center justify-center gap-6 mb-6">
                   <Button
-                    onClick={handlePreviousDiploma}
+                    onClick={handlePrevious}
                     disabled={isTransitioning}
                     variant="outline"
                     size="icon"
@@ -354,14 +353,14 @@ export default function Diploma() {
                   </Button>
                   <div className="text-center min-w-[150px]">
                     <p className="text-base font-black text-purple-700 uppercase tracking-wider">
-                      {selectedTemplate.name}
+                      {currentTemplate.name}
                     </p>
                     <p className="text-xs font-bold text-slate-500">
-                      {selectedTemplate.group}
+                      {currentTemplate.group}
                     </p>
                   </div>
                   <Button
-                    onClick={handleNextDiploma}
+                    onClick={handleNext}
                     disabled={isTransitioning}
                     variant="outline"
                     size="icon"
@@ -377,17 +376,17 @@ export default function Diploma() {
                     <button
                       key={index}
                       onClick={() => {
-                        if (!isTransitioning && index !== selectedTemplateIndex) {
+                        if (!isTransitioning && index !== selectedIndex) {
                           setIsTransitioning(true);
                           setTimeout(() => {
-                            setSelectedTemplateIndex(index);
+                            setSelectedIndex(index);
                             setIsTransitioning(false);
                           }, 300);
                         }
                       }}
                       disabled={isTransitioning}
                       className={`h-2.5 rounded-full transition-all ${
-                        index === selectedTemplateIndex
+                        index === selectedIndex
                           ? "w-10 bg-purple-600"
                           : "w-2.5 bg-slate-300 hover:bg-slate-400 disabled:opacity-50"
                       }`}
@@ -513,53 +512,6 @@ export default function Diploma() {
           </div>
         </div>
       </footer>
-
-      {/* Estilos CSS para transiciones suaves */}
-      <style>{`
-        @keyframes slideInFromLeft {
-          from {
-            transform: translateX(-100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-
-        @keyframes slideInFromRight {
-          from {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-
-        @keyframes slideOutToLeft {
-          from {
-            transform: translateX(0);
-            opacity: 1;
-          }
-          to {
-            transform: translateX(-100%);
-            opacity: 0;
-          }
-        }
-
-        @keyframes slideOutToRight {
-          from {
-            transform: translateX(0);
-            opacity: 1;
-          }
-          to {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }
