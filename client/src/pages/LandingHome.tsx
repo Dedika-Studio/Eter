@@ -283,7 +283,7 @@ export default function LandingHome() {
                 <img
                   src="/assets/certificadoARMYBTS.jpeg"
                   alt="Diploma ARMY"
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-cover object-top"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
