@@ -1,7 +1,7 @@
 /**
- * News Automation Script
+ * News Automation Script (Enhanced with Image Extraction)
  * Recopila noticias de K-pop de Soompi y Allkpop, las traduce gratuitamente y las publica automáticamente.
- * Se ejecuta dos veces al día (mañana y noche) y elimina noticias de más de 5 días.
+ * Extrae imágenes reales de los artículos originales usando Open Graph y selectores específicos.
  */
 
 import { getDb } from "./db";
@@ -13,25 +13,16 @@ import { translate } from "@vitalets/google-translate-api";
 
 const parser = new Parser();
 
-// Image URLs for different K-pop groups
+// Image URLs for different K-pop groups (Backups)
 const BTS_IMAGES = [
   "https://cdn-images.dzcdn.net/images/artist/b5c64fa8216ca158e52b4d88bd9388ff/1900x1900-000000-80-0-0.jpg",
   "https://ca-times.brightspotcdn.com/dims4/default/d8fd76d/2147483647/strip/true/crop/2348x1565+0+0/resize/2000x1333!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2Fec%2F1f%2Fc794bbdd4509b4a6efb3ef4cc872%2Fap26080466245838.jpg",
   "https://media.glamour.mx/photos/68470e7f3a63b341f062a46d/16:9/w_2560%2Cc_limit/BTS%2520portada.jpg",
-  "https://cdn.forbes.com.mx/2023/06/GettyImages-1389467259-e1686326529384-1280x720.jpg",
-  "https://st1.uvnimg.com/5d/03/1fbaa26ff0c5cf6e7d3daa1cd47b/bts.jpg",
-  "https://www.unicef.org/lac/sites/unicef.org.lac/files/styles/hero_extended/public/UN0237870.JPG.webp?itok=5Z0Go0ct",
-  "https://grupovierci.brightspotcdn.com/dims4/default/61dff43/2147483647/strip/true/crop/1593x897+0+97/resize/1000x563!/quality/90/?url=https%3A%2F%2Fk2-prod-grupo-vierci.s3.us-east-1.amazonaws.com%2Fbrightspot%2F25%2F1a%2F84701b404cb0a48de8299aed4b9a%2Fuharyes20290113-005aviern130625-ph01-23396.jpg",
-  "https://imgmedia.larepublica.pe/1000x590/larepublica/original/2022/05/06/6275aed2a3df7610fa4c9f9e.webp",
 ];
 
 const BLACKPINK_IMAGES = [
   "https://nolae.es/cdn/shop/articles/alles-rund-um-blackpink-alben-erfolge-und-mehr-801238.jpg?v=1629459737&width=1024",
   "https://wallpapers.com/images/hd/blackpink-pictures-qixlwlo1dfbuylad.jpg",
-  "https://www.dondeir.com/wp-content/uploads/2021/09/grupo-blackpink.jpg",
-  "https://www.musicmundial.com/wp-content/uploads/2025/07/JUMP-de-BLACKPINK-consigue-un-nuevo-y-sensacional-hito-en-la-industria-musical.jpg",
-  "https://ichef.bbci.co.uk/ace/ws/640/cpsprodpb/1602A/production/_106345109_5f83eed6-6c2b-495d-ade4-d102ef78803b.jpg.webp",
-  "https://ahoratabasco.com/wp-content/uploads/2026/01/blackpink-1812135.webp",
 ];
 
 interface RawNewsItem {
@@ -41,6 +32,39 @@ interface RawNewsItem {
   content?: string;
   image?: string;
   source: "soompi" | "allkpop";
+}
+
+/**
+ * Extract Open Graph image or main image from a URL
+ */
+async function extractImageFromUrl(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url);
+    const html = await response.text();
+    const $ = load(html);
+
+    // 1. Try Open Graph Image (Standard for social sharing)
+    const ogImage = $('meta[property="og:image"]').attr("content");
+    if (ogImage) return ogImage;
+
+    // 2. Try Twitter Image
+    const twitterImage = $('meta[name="twitter:image"]').attr("content");
+    if (twitterImage) return twitterImage;
+
+    // 3. Source specific selectors
+    if (url.includes("soompi.com")) {
+      const soompiImg = $(".article-header img, .article-content img").first().attr("src");
+      if (soompiImg) return soompiImg;
+    } else if (url.includes("allkpop.com")) {
+      const allkpopImg = $(".article-image img, .entry-content img").first().attr("src");
+      if (allkpopImg) return allkpopImg;
+    }
+
+    return null;
+  } catch (error) {
+    console.error(`[News] Error extracting image from ${url}:`, error);
+    return null;
+  }
 }
 
 /**
@@ -80,7 +104,7 @@ async function fetchAllkpopNews(): Promise<RawNewsItem[]> {
       if (title && link) {
         articles.push({
           title,
-          link,
+          link: link.startsWith("http") ? link : `https://www.allkpop.com${link}`,
           content,
           source: "allkpop" as const,
         });
@@ -102,10 +126,7 @@ async function translateNews(
   content: string
 ): Promise<{ title: string; content: string }> {
   try {
-    // Translate title
     const translatedTitle = await translate(title, { to: "es" });
-    
-    // Translate content (limit to 1000 chars for free API stability)
     const translatedContent = await translate(content.substring(0, 1000), { to: "es" });
 
     return {
@@ -114,26 +135,20 @@ async function translateNews(
     };
   } catch (error) {
     console.error("[News] Error translating with Google Translate:", error);
-    return { title, content }; // Return original if fails
+    return { title, content };
   }
 }
 
 /**
- * Select image based on group mentioned in the news
+ * Select backup image based on group mentioned in the news
  */
-function selectImageForNews(title: string, content: string): string {
+function selectBackupImage(title: string, content: string): string {
   const fullText = `${title} ${content}`.toLowerCase();
-
-  if (
-    fullText.includes("bts") ||
-    fullText.includes("bangtan") ||
-    fullText.includes("army")
-  ) {
+  if (fullText.includes("bts") || fullText.includes("bangtan") || fullText.includes("army")) {
     return BTS_IMAGES[Math.floor(Math.random() * BTS_IMAGES.length)];
   } else if (fullText.includes("blackpink") || fullText.includes("blink")) {
     return BLACKPINK_IMAGES[Math.floor(Math.random() * BLACKPINK_IMAGES.length)];
   }
-
   return "";
 }
 
@@ -144,11 +159,8 @@ async function cleanupOldNews(): Promise<void> {
   try {
     const db = await getDb();
     if (!db) return;
-
     const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
     await db.delete(newsTable).where(lt(newsTable.createdAt, fiveDaysAgo));
-
-    console.log("[News] Old news cleaned up successfully");
   } catch (error) {
     console.error("[News] Error cleaning up old news:", error);
   }
@@ -158,7 +170,7 @@ async function cleanupOldNews(): Promise<void> {
  * Main automation function
  */
 async function automateNews(): Promise<void> {
-  console.log("[News] Starting news automation (Free Version)...");
+  console.log("[News] Starting news automation (Enhanced Version)...");
 
   try {
     const soompiNews = await fetchSoompiNews();
@@ -170,21 +182,26 @@ async function automateNews(): Promise<void> {
       return;
     }
 
-    // Process up to 3 news items to populate the database
-    const newsToProcess = allNews.slice(0, 3);
     const db = await getDb();
     if (!db) return;
 
+    // Process up to 3 news items
+    const newsToProcess = allNews.slice(0, 3);
+
     for (const item of newsToProcess) {
-      // Check if news already exists by sourceUrl
-      // (Simple check to avoid duplicates in the same run)
+      // 1. Extract real image from the article URL
+      let imageUrl = await extractImageFromUrl(item.link);
       
+      // 2. Translate content
       const { title: translatedTitle, content: translatedContent } = await translateNews(
         item.title,
         item.content || ""
       );
 
-      const imageUrl = selectImageForNews(item.title, item.content || "");
+      // 3. If no real image found, use backup
+      if (!imageUrl) {
+        imageUrl = selectBackupImage(item.title, item.content || "");
+      }
       
       const slug = item.title
         .toLowerCase()
@@ -203,7 +220,7 @@ async function automateNews(): Promise<void> {
       };
 
       await db.insert(newsTable).values(newsRecord);
-      console.log(`[News] Published: "${translatedTitle}"`);
+      console.log(`[News] Published with image: "${translatedTitle}"`);
     }
 
     await cleanupOldNews();
