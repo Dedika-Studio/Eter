@@ -9,9 +9,8 @@ import {
   Download,
   Award,
   ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
   Check,
+  Sparkles,
 } from "lucide-react";
 import { RAFFLE_CONFIG } from "@shared/raffle";
 
@@ -47,130 +46,40 @@ const FONT_OPTIONS: FontOption[] = [
   },
 ];
 
-// Tipos de diplomas disponibles con posiciones personalizadas
-interface DiplomaTemplate {
-  id: string;
-  name: string;
-  group: string;
-  fandom: string;
-  imagePath: string;
-  description: string;
+// Configuración del diploma único de BTS
+const BTS_DIPLOMA = {
+  id: "bts-army-hq",
+  name: "BTS ARMY",
+  group: "BTS",
+  fandom: "ARMY",
+  imagePath: "/assets/diploma_bts_army_hq.png",
+  description: "Diploma oficial BTS ARMY",
   namePosition: {
-    x: number; // porcentaje del ancho
-    y: number; // porcentaje del alto
-    fontSize: number; // en píxeles
-    maxWidth: number; // porcentaje del ancho
-    color: string; // color del texto
-    fontWeight: "normal" | "bold" | "italic";
-  };
-}
-
-// Lista de plantillas disponibles en orden secuencial
-const DIPLOMA_TEMPLATES: DiplomaTemplate[] = [
-  {
-    id: "bts-army-hq",
-    name: "BTS ARMY HQ",
-    group: "BTS",
-    fandom: "ARMY",
-    imagePath: "/assets/diploma_bts_army_hq.png",
-    description: "Diploma oficial BTS ARMY (Alta Calidad)",
-    namePosition: {
-      x: 50,
-      y: 40,
-      fontSize: 48,
-      maxWidth: 60,
-      color: "#000000",
-      fontWeight: "normal",
-    },
+    x: 50,
+    y: 40,
+    fontSize: 48,
+    maxWidth: 60,
+    color: "#000000",
+    fontWeight: "normal" as const,
   },
-  {
-    id: "twice-once",
-    name: "TWICE ONCE",
-    group: "TWICE",
-    fandom: "ONCE",
-    imagePath: "/assets/diploma_twice_once.jpeg",
-    description: "Diploma de la ONCE",
-    namePosition: {
-      x: 50,
-      y: 45,
-      fontSize: 40,
-      maxWidth: 70,
-      color: "#000000",
-      fontWeight: "bold",
-    },
-  },
-  {
-    id: "blackpink-blink",
-    name: "BLACKPINK BLINK",
-    group: "BLACKPINK",
-    fandom: "BLINK",
-    imagePath: "/assets/diploma_blackpink_blink.jpeg",
-    description: "Diploma BLINK",
-    namePosition: {
-      x: 50,
-      y: 34,
-      fontSize: 38,
-      maxWidth: 70,
-      color: "#ff69b4",
-      fontWeight: "normal",
-    },
-  },
-  {
-    id: "txt-moa",
-    name: "TXT MOA",
-    group: "TOMORROW X TOGETHER",
-    fandom: "MOA",
-    imagePath: "/assets/diploma_txt_moa.jpeg",
-    description: "Diploma MOA",
-    namePosition: {
-      x: 50,
-      y: 40,
-      fontSize: 40,
-      maxWidth: 70,
-      color: "#000000",
-      fontWeight: "normal",
-    },
-  },
-  {
-    id: "skz-stay",
-    name: "STRAY KIDS STAY",
-    group: "STRAY KIDS",
-    fandom: "STAY",
-    imagePath: "/assets/diploma_skz_stay.jpeg",
-    description: "Certificate of Stay",
-    namePosition: {
-      x: 50,
-      y: 50,
-      fontSize: 36,
-      maxWidth: 70,
-      color: "#000000",
-      fontWeight: "normal",
-    },
-  },
-];
+};
 
 export default function Diploma() {
   const [, navigate] = useLocation();
 
   // Diploma state
   const [diplomaName, setDiplomaName] = useState("");
-  const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedFont, setSelectedFont] = useState<FontStyle>("cursive");
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const diplomaImageRef = useRef<HTMLImageElement | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
-  // Obtener el template actual de forma segura
-  const currentTemplate = DIPLOMA_TEMPLATES[selectedIndex] || DIPLOMA_TEMPLATES[0];
-  const prevIndex = selectedIndex === 0 ? DIPLOMA_TEMPLATES.length - 1 : selectedIndex - 1;
-  const nextIndex = selectedIndex === DIPLOMA_TEMPLATES.length - 1 ? 0 : selectedIndex + 1;
-
-  // Cargar la imagen del template seleccionado
+  // Cargar la imagen del diploma
   useEffect(() => {
     setImageLoaded(false);
     const img = new Image();
-    img.src = currentTemplate.imagePath;
+    img.src = BTS_DIPLOMA.imagePath;
     img.onload = () => {
       diplomaImageRef.current = img;
       setImageLoaded(true);
@@ -178,7 +87,7 @@ export default function Diploma() {
     img.onerror = () => {
       setImageLoaded(false);
     };
-  }, [selectedIndex, currentTemplate.imagePath]);
+  }, []);
 
   // Dibujar el diploma en el canvas
   useEffect(() => {
@@ -200,55 +109,36 @@ export default function Diploma() {
     if (diplomaName) {
       const fontOption = FONT_OPTIONS.find((f) => f.id === selectedFont);
       const fontFamily = fontOption?.family || "Arial";
-      const fontSize = currentTemplate.namePosition.fontSize;
-      const x = (canvas.width * currentTemplate.namePosition.x) / 100;
-      const y = (canvas.height * currentTemplate.namePosition.y) / 100;
-      const maxWidth = (canvas.width * currentTemplate.namePosition.maxWidth) / 100;
+      const fontSize = BTS_DIPLOMA.namePosition.fontSize;
+      const x = (canvas.width * BTS_DIPLOMA.namePosition.x) / 100;
+      const y = (canvas.height * BTS_DIPLOMA.namePosition.y) / 100;
+      const maxWidth = (canvas.width * BTS_DIPLOMA.namePosition.maxWidth) / 100;
 
       ctx.font = `${selectedFont === "professional" ? "" : "italic"} ${fontSize}px ${fontFamily}`;
-      ctx.fillStyle = currentTemplate.namePosition.color;
+      ctx.fillStyle = BTS_DIPLOMA.namePosition.color;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(diplomaName, x, y, maxWidth);
     }
-  }, [diplomaName, imageLoaded, selectedIndex, selectedFont, currentTemplate]);
+  }, [diplomaName, imageLoaded, selectedFont]);
 
-  // Navegar al anterior (secuencial)
-  const handlePrevious = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setSelectedIndex((prev) =>
-        prev === 0 ? DIPLOMA_TEMPLATES.length - 1 : prev - 1
-      );
-      setIsTransitioning(false);
-    }, 300);
-  };
-
-  // Navegar al siguiente (secuencial)
-  const handleNext = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setSelectedIndex((prev) =>
-        prev === DIPLOMA_TEMPLATES.length - 1 ? 0 : prev + 1
-      );
-      setIsTransitioning(false);
-    }, 300);
-  };
-
-  const handleDownloadDiploma = () => {
+  const handleDownloadDiploma = async () => {
     const canvas = canvasRef.current;
-    if (canvas) {
-      const link = document.createElement("a");
-      link.download = `Diploma_${currentTemplate.group}_${diplomaName || "Fan"}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
+    if (canvas && diplomaName.trim()) {
+      setIsDownloading(true);
+      try {
+        const link = document.createElement("a");
+        link.download = `Diploma_BTS_ARMY_${diplomaName}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      } finally {
+        setIsDownloading(false);
+      }
     }
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-violet-50">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-border/50 shadow-sm">
         <div className="container flex items-center justify-between h-14">
@@ -283,157 +173,97 @@ export default function Diploma() {
           Volver al Inicio
         </Button>
 
-        {/* Diploma Generator Section */}
-        <div className="mb-12 md:mb-20">
-          <Card className="bg-white/80 backdrop-blur-xl border-purple-200 shadow-2xl overflow-hidden border-2">
-            <CardContent className="p-0 flex flex-col lg:flex-row">
-              {/* Carrusel 3D con Animación Suave y Scroll Snap */}
-              <div className="w-full lg:w-3/5 p-4 md:p-8 bg-slate-50 flex flex-col items-center justify-center overflow-hidden">
-                <div className="relative w-full max-w-2xl h-[350px] md:h-[450px] mb-8 flex items-center justify-center perspective scroll-snap-x-mandatory scroll-smooth" style={{ scrollSnapType: 'x mandatory', overflowX: 'auto', scrollBehavior: 'smooth' }}>
-                  {/* Diploma Anterior */}
-                  <div 
-                    className={`absolute left-0 w-24 h-32 md:w-40 md:h-56 opacity-40 scale-90 transform transition-all duration-700 ease-out z-0 cursor-pointer hover:opacity-60 ${
-                      isTransitioning ? "translate-x-0" : "-translate-x-1/4"
-                    }`}
-                    style={{ scrollSnapAlign: 'center' }}
-                    onClick={handlePrevious}
-                  >
-                    <img
-                      src={DIPLOMA_TEMPLATES[prevIndex].imagePath}
-                      alt="Anterior"
-                      className="w-full h-full object-cover rounded-lg shadow-lg border border-slate-300"
-                    />
+        {/* Main Card */}
+        <div className="max-w-6xl mx-auto">
+          <Card className="bg-white/95 backdrop-blur-xl border-purple-200 shadow-2xl overflow-hidden border-2">
+            <CardContent className="p-0 flex flex-col lg:flex-row gap-0">
+              {/* Diploma Preview Section */}
+              <div className="w-full lg:w-3/5 p-6 md:p-10 bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center min-h-[500px] lg:min-h-[600px]">
+                <div className="mb-6 text-center">
+                  <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-violet-100 text-purple-700 rounded-full px-4 py-1.5 mb-3 text-sm font-bold">
+                    <Sparkles className="size-4" />
+                    VISTA PREVIA
                   </div>
+                  <h3 className="text-2xl md:text-3xl font-black text-slate-900">
+                    Tu Diploma {BTS_DIPLOMA.group}
+                  </h3>
+                  <p className="text-slate-500 text-sm mt-2">
+                    {BTS_DIPLOMA.fandom} • {BTS_DIPLOMA.description}
+                  </p>
+                </div>
 
-                  {/* Diploma Actual */}
-                  <div 
-                    className={`relative w-full max-w-sm h-auto shadow-2xl rounded-lg overflow-hidden border-4 border-purple-400 z-10 transform transition-all duration-700 ease-out ${
-                      isTransitioning ? "scale-95 opacity-50" : "scale-100 opacity-100"
-                    }`}
-                    style={{ scrollSnapAlign: 'center', scrollSnapStop: 'always' }}
-                  >
-                    <canvas 
-                      ref={canvasRef} 
-                      className="w-full h-auto block bg-white"
-                      style={{ aspectRatio: '1/1' }}
-                    />
-                    {!imageLoaded && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
+                {/* Canvas Container */}
+                <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border-4 border-purple-200 overflow-hidden">
+                  <canvas
+                    ref={canvasRef}
+                    className="w-full h-auto block"
+                    style={{ aspectRatio: "1/1" }}
+                  />
+                  {!imageLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-slate-100 rounded-2xl">
+                      <div className="flex flex-col items-center gap-3">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                        <p className="text-sm text-slate-600 font-medium">
+                          Cargando diploma...
+                        </p>
                       </div>
-                    )}
-                  </div>
-
-                  {/* Diploma Siguiente */}
-                  <div 
-                    className={`absolute right-0 w-24 h-32 md:w-40 md:h-56 opacity-40 scale-90 transform transition-all duration-700 ease-out z-0 cursor-pointer hover:opacity-60 ${
-                      isTransitioning ? "translate-x-0" : "translate-x-1/4"
-                    }`}
-                    style={{ scrollSnapAlign: 'center' }}
-                    onClick={handleNext}
-                  >
-                    <img
-                      src={DIPLOMA_TEMPLATES[nextIndex].imagePath}
-                      alt="Siguiente"
-                      className="w-full h-full object-cover rounded-lg shadow-lg border border-slate-300"
-                    />
-                  </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Controles del Carrusel */}
-                <div className="flex items-center justify-center gap-6 mb-6">
-                  <Button
-                    onClick={handlePrevious}
-                    disabled={isTransitioning}
-                    variant="outline"
-                    size="icon"
-                    className="rounded-full shadow-md hover:bg-purple-50 disabled:opacity-50"
-                  >
-                    <ChevronLeft className="size-6" />
-                  </Button>
-                  <div className="text-center min-w-[150px]">
-                    <p className="text-base font-black text-purple-700 uppercase tracking-wider">
-                      {currentTemplate.name}
-                    </p>
-                    <p className="text-xs font-bold text-slate-500">
-                      {currentTemplate.group}
-                    </p>
-                  </div>
-                  <Button
-                    onClick={handleNext}
-                    disabled={isTransitioning}
-                    variant="outline"
-                    size="icon"
-                    className="rounded-full shadow-md hover:bg-purple-50 disabled:opacity-50"
-                  >
-                    <ChevronRight className="size-6" />
-                  </Button>
-                </div>
-
-                {/* Indicador de Progreso Secuencial */}
-                <div className="flex gap-2">
-                  {DIPLOMA_TEMPLATES.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        if (!isTransitioning && index !== selectedIndex) {
-                          setIsTransitioning(true);
-                          setTimeout(() => {
-                            setSelectedIndex(index);
-                            setIsTransitioning(false);
-                          }, 300);
-                        }
-                      }}
-                      disabled={isTransitioning}
-                      className={`h-2.5 rounded-full transition-all ${
-                        index === selectedIndex
-                          ? "w-10 bg-purple-600"
-                          : "w-2.5 bg-slate-300 hover:bg-slate-400 disabled:opacity-50"
-                      }`}
-                    />
-                  ))}
-                </div>
+                {/* Info Text */}
+                <p className="text-center text-xs text-slate-400 mt-6 max-w-sm leading-relaxed">
+                  El diploma se genera en alta resolución. Personaliza con tu nombre y elige el estilo de letra que prefieras.
+                </p>
               </div>
 
-              {/* Panel de Configuración */}
-              <div className="p-6 md:p-10 flex flex-col justify-center w-full lg:w-2/5 bg-white border-l border-slate-100">
-                <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 rounded-full px-4 py-1.5 mb-6 text-sm font-bold w-fit">
-                  <Award className="size-4" />
-                  PERSONALIZACIÓN
-                </div>
-                <h2 className="text-3xl md:text-4xl font-black mb-4 text-slate-900 leading-tight">
-                  Configura tu Diploma
-                </h2>
-                
-                <div className="space-y-6">
-                  {/* Selector de Fuentes */}
+              {/* Configuration Panel */}
+              <div className="p-6 md:p-10 flex flex-col justify-center w-full lg:w-2/5 bg-white border-t lg:border-t-0 lg:border-l border-slate-100">
+                <div className="space-y-8">
+                  {/* Title */}
+                  <div>
+                    <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 rounded-full px-4 py-1.5 mb-4 text-sm font-bold">
+                      <Award className="size-4" />
+                      PERSONALIZACIÓN
+                    </div>
+                    <h2 className="text-3xl md:text-4xl font-black text-slate-900 leading-tight">
+                      Crea tu Diploma
+                    </h2>
+                  </div>
+
+                  {/* Font Selector */}
                   <div className="space-y-3">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 ml-1">
-                      Estilo de Letra
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1 block">
+                      Elige tu Estilo de Letra
                     </label>
-                    <div className="grid grid-cols-1 gap-2">
+                    <div className="grid grid-cols-1 gap-2.5">
                       {FONT_OPTIONS.map((font) => (
                         <button
                           key={font.id}
                           onClick={() => setSelectedFont(font.id)}
-                          className={`relative p-4 rounded-xl border-2 transition-all text-left ${
+                          className={`relative p-4 rounded-xl border-2 transition-all text-left group ${
                             selectedFont === font.id
-                              ? "border-purple-600 bg-purple-50 shadow-sm"
-                              : "border-slate-100 bg-white hover:border-purple-200"
+                              ? "border-purple-600 bg-purple-50 shadow-md"
+                              : "border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50/30"
                           }`}
                         >
                           <div className="flex items-center justify-between">
-                            <div>
-                              <p className={`text-sm font-bold text-slate-900 ${font.id === 'cursive' ? 'italic' : ''}`} style={{ fontFamily: font.family }}>
+                            <div className="flex-1">
+                              <p
+                                className={`text-sm font-bold text-slate-900 ${
+                                  font.id === "cursive" ? "italic" : ""
+                                }`}
+                                style={{ fontFamily: font.family }}
+                              >
                                 {font.name}
                               </p>
-                              <p className="text-[10px] text-slate-500 mt-0.5">
+                              <p className="text-[11px] text-slate-500 mt-1">
                                 {font.description}
                               </p>
                             </div>
                             {selectedFont === font.id && (
-                              <div className="bg-purple-600 rounded-full p-1">
-                                <Check className="size-3 text-white" />
+                              <div className="bg-gradient-to-br from-purple-600 to-violet-600 rounded-full p-1.5 ml-3 flex-shrink-0">
+                                <Check className="size-4 text-white" />
                               </div>
                             )}
                           </div>
@@ -442,34 +272,43 @@ export default function Diploma() {
                     </div>
                   </div>
 
-                  {/* Input de Nombre */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 ml-1">
-                      Nombre para el Diploma
+                  {/* Name Input */}
+                  <div className="space-y-2.5">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1 block">
+                      Tu Nombre
                     </label>
                     <Input
                       type="text"
-                      placeholder="Tu nombre aquí..."
+                      placeholder="Escribe tu nombre..."
                       value={diplomaName}
                       onChange={(e) => setDiplomaName(e.target.value)}
-                      className="h-14 border-slate-200 focus:border-purple-500 focus:ring-purple-500 rounded-xl text-xl font-medium px-4"
-                      maxLength={30}
+                      className="h-12 border-slate-300 focus:border-purple-500 focus:ring-purple-500 rounded-xl text-base font-medium px-4 bg-slate-50 hover:bg-white transition-colors"
+                      maxLength={35}
                     />
+                    <p className="text-[10px] text-slate-400">
+                      {diplomaName.length}/35 caracteres
+                    </p>
                   </div>
-                  
-                  {/* Botón de Descarga */}
+
+                  {/* Download Button */}
                   <Button
                     onClick={handleDownloadDiploma}
-                    disabled={!diplomaName.trim() || !imageLoaded}
-                    className="w-full gap-3 bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-700 hover:to-violet-800 text-white font-bold py-7 rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] text-lg disabled:opacity-50"
+                    disabled={!diplomaName.trim() || !imageLoaded || isDownloading}
+                    className="w-full gap-3 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold py-6 rounded-xl shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Download className="size-6" />
-                    <span>Descargar Diploma</span>
+                    <Download className="size-5" />
+                    <span>
+                      {isDownloading ? "Descargando..." : "Descargar Diploma"}
+                    </span>
                   </Button>
-                  
-                  <p className="text-[11px] text-center text-slate-400 mt-4 leading-relaxed">
-                    * El diploma se generará en alta resolución con el diseño y nombre elegidos.
-                  </p>
+
+                  {/* Info Box */}
+                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-4">
+                    <p className="text-xs text-blue-900 leading-relaxed">
+                      <span className="font-bold block mb-1">💡 Consejo:</span>
+                      El diploma se descargará en alta resolución PNG. Perfecto para compartir en redes sociales.
+                    </p>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -478,7 +317,7 @@ export default function Diploma() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 md:py-12 bg-white border-t border-border/50">
+      <footer className="py-8 md:py-12 bg-white border-t border-border/50 mt-16">
         <div className="container px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex flex-col items-center md:items-start gap-4">
@@ -499,15 +338,22 @@ export default function Diploma() {
 
             <div className="flex flex-col items-center md:items-end gap-6">
               <div className="flex gap-6 text-sm font-medium text-slate-400">
-                <a href="#" className="hover:text-slate-900 transition-colors">Términos</a>
-                <a href="#" className="hover:text-slate-900 transition-colors">Privacidad</a>
-                <a href="#" className="hover:text-slate-900 transition-colors">Contacto</a>
+                <a href="#" className="hover:text-slate-900 transition-colors">
+                  Términos
+                </a>
+                <a href="#" className="hover:text-slate-900 transition-colors">
+                  Privacidad
+                </a>
+                <a href="#" className="hover:text-slate-900 transition-colors">
+                  Contacto
+                </a>
               </div>
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-slate-100 text-center">
             <p className="text-slate-400 text-xs">
-              © {new Date().getFullYear()} {RAFFLE_CONFIG.storeName}. Todos los derechos reservados.
+              © {new Date().getFullYear()} {RAFFLE_CONFIG.storeName}. Todos los
+              derechos reservados.
             </p>
           </div>
         </div>
