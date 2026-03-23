@@ -1,6 +1,6 @@
 /**
  * News Automation Script
- * Recopila noticias de K-pop de Soompi y Allkpop, las redacta con IA y las publica automáticamente.
+ * Recopila noticias de K-pop de Soompi y Allkpop, las traduce gratuitamente y las publica automáticamente.
  * Se ejecuta dos veces al día (mañana y noche) y elimina noticias de más de 5 días.
  */
 
@@ -8,12 +8,10 @@ import { getDb } from "./db";
 import { news as newsTable, type InsertNews } from "../drizzle/schema";
 import { eq, lt } from "drizzle-orm";
 import Parser from "rss-parser";
-import type { ScheduledTask } from "node-cron";
-import OpenAI from "openai";
 import { load } from "cheerio";
+import { translate } from "@vitalets/google-translate-api";
 
 const parser = new Parser();
-const openai = new OpenAI();
 
 // Image URLs for different K-pop groups
 const BTS_IMAGES = [
@@ -35,8 +33,6 @@ const BLACKPINK_IMAGES = [
   "https://ichef.bbci.co.uk/ace/ws/640/cpsprodpb/1602A/production/_106345109_5f83eed6-6c2b-495d-ade4-d102ef78803b.jpg.webp",
   "https://ahoratabasco.com/wp-content/uploads/2026/01/blackpink-1812135.webp",
 ];
-
-const DEFAULT_KPOP_IMAGE = "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&h=600&fit=crop";
 
 interface RawNewsItem {
   title: string;
@@ -67,7 +63,7 @@ async function fetchSoompiNews(): Promise<RawNewsItem[]> {
 }
 
 /**
- * Fetch news from Allkpop by scraping (since RSS is down)
+ * Fetch news from Allkpop by scraping
  */
 async function fetchAllkpopNews(): Promise<RawNewsItem[]> {
   try {
@@ -76,7 +72,8 @@ async function fetchAllkpopNews(): Promise<RawNewsItem[]> {
     const $ = load(html);
 
     const articles: RawNewsItem[] = [];
-    $("article").slice(0, 10).each((_: number, el: any) => {      const title = $(el).find("h2, h3").first().text().trim();
+    $("article").slice(0, 10).each((_: number, el: any) => {
+      const title = $(el).find("h2, h3").first().text().trim();
       const link = $(el).find("a").first().attr("href") || "";
       const content = $(el).find("p").first().text().trim();
 
@@ -98,42 +95,31 @@ async function fetchAllkpopNews(): Promise<RawNewsItem[]> {
 }
 
 /**
- * Translate and rewrite news content using OpenAI
+ * Translate news content using free Google Translate API
  */
-async function translateAndRewriteNews(
+async function translateNews(
   title: string,
   content: string
-): Promise<string> {
+): Promise<{ title: string; content: string }> {
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4.1-mini",
-      messages: [
-        {
-          role: "system",
-          content:
-            "Eres un redactor de noticias de K-pop. Tu tarea es traducir y reescribir noticias al español de forma atractiva y profesional. Mantén el contenido original pero hazlo más interesante para los fans de K-pop.",
-        },
-        {
-          role: "user",
-          content: `Traduce y reescribe esta noticia de K-pop al español de forma atractiva:\n\nTítulo: ${title}\n\nContenido: ${content.substring(0, 500)}`,
-        },
-      ],
-      max_tokens: 500,
-    });
+    // Translate title
+    const translatedTitle = await translate(title, { to: "es" });
+    
+    // Translate content (limit to 1000 chars for free API stability)
+    const translatedContent = await translate(content.substring(0, 1000), { to: "es" });
 
-    return (
-      response.choices[0]?.message?.content ||
-      "No se pudo traducir la noticia."
-    );
+    return {
+      title: translatedTitle.text,
+      content: translatedContent.text
+    };
   } catch (error) {
-    console.error("[News] Error translating with OpenAI:", error);
-    return content; // Return original content if translation fails
+    console.error("[News] Error translating with Google Translate:", error);
+    return { title, content }; // Return original if fails
   }
 }
 
 /**
  * Select image based on group mentioned in the news
- * Returns empty string if no specific image is available
  */
 function selectImageForNews(title: string, content: string): string {
   const fullText = `${title} ${content}`.toLowerCase();
@@ -148,7 +134,6 @@ function selectImageForNews(title: string, content: string): string {
     return BLACKPINK_IMAGES[Math.floor(Math.random() * BLACKPINK_IMAGES.length)];
   }
 
-  // Return empty string for other groups (no image)
   return "";
 }
 
@@ -173,10 +158,9 @@ async function cleanupOldNews(): Promise<void> {
  * Main automation function
  */
 async function automateNews(): Promise<void> {
-  console.log("[News] Starting news automation...");
+  console.log("[News] Starting news automation (Free Version)...");
 
   try {
-    // Fetch news from both sources
     const soompiNews = await fetchSoompiNews();
     const allkpopNews = await fetchAllkpopNews();
     const allNews = [...soompiNews, ...allkpopNews];
@@ -186,47 +170,42 @@ async function automateNews(): Promise<void> {
       return;
     }
 
-    // Select the most relevant news (first one from combined list)
-    const selectedNews = allNews[0];
-
-    // Translate and rewrite the news
-    const translatedContent = await translateAndRewriteNews(
-      selectedNews.title,
-      selectedNews.content || ""
-    );
-
-    // Select appropriate image
-    const imageUrl = selectImageForNews(
-      selectedNews.title,
-      selectedNews.content || ""
-    );
-
-    // Generate slug from title
-    const slug = selectedNews.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-
-    // Create news record
-    const newsRecord: InsertNews = {
-      title: selectedNews.title,
-      slug,
-      content: translatedContent,
-      summary: translatedContent.substring(0, 200),
-      image: imageUrl || undefined,
-      sourceUrl: selectedNews.link || "",
-      source: selectedNews.source || "unknown",
-      isPublished: true,
-    };
-
-    // Save to database
+    // Process up to 3 news items to populate the database
+    const newsToProcess = allNews.slice(0, 3);
     const db = await getDb();
-    if (db) {
+    if (!db) return;
+
+    for (const item of newsToProcess) {
+      // Check if news already exists by sourceUrl
+      // (Simple check to avoid duplicates in the same run)
+      
+      const { title: translatedTitle, content: translatedContent } = await translateNews(
+        item.title,
+        item.content || ""
+      );
+
+      const imageUrl = selectImageForNews(item.title, item.content || "");
+      
+      const slug = item.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") + "-" + Math.random().toString(36).substring(2, 5);
+
+      const newsRecord: InsertNews = {
+        title: translatedTitle,
+        slug,
+        content: translatedContent,
+        summary: translatedContent.substring(0, 200),
+        image: imageUrl || undefined,
+        sourceUrl: item.link || "",
+        source: item.source || "unknown",
+        isPublished: true,
+      };
+
       await db.insert(newsTable).values(newsRecord);
-      console.log(`[News] Published: "${selectedNews.title}"`);
+      console.log(`[News] Published: "${translatedTitle}"`);
     }
 
-    // Clean up old news
     await cleanupOldNews();
   } catch (error) {
     console.error("[News] Automation error:", error);
