@@ -80,6 +80,8 @@ export default function Diploma() {
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadMessage, setDownloadMessage] = useState("");
   const [isPrinting, setIsPrinting] = useState(false);
+  const [printProgress, setPrintProgress] = useState(0);
+  const [printMessage, setPrintMessage] = useState("");
 
   // Cargar la imagen del diploma
   useEffect(() => {
@@ -133,6 +135,17 @@ export default function Diploma() {
     if (canvas && img && diplomaName.trim()) {
       if (isForPrint) {
         setIsPrinting(true);
+        setPrintProgress(0);
+        setPrintMessage("Iniciando motor de renderizado PDF...");
+        
+        // Simulación de progreso de 10 segundos para retención
+        for (let i = 0; i <= 100; i += 2) {
+          await new Promise(resolve => setTimeout(resolve, 200)); // 10s
+          setPrintProgress(i);
+          
+          if (i === 40) setPrintMessage("Optimizando vectores y fuentes para impresión...");
+          if (i === 80) setPrintMessage("¡Todo listo! Generando documento de alta fidelidad...");
+        }
       } else {
         setIsDownloading(true);
         setDownloadProgress(0);
@@ -140,7 +153,7 @@ export default function Diploma() {
         
         // Simulación de progreso de 10 segundos para retención
         for (let i = 0; i <= 100; i += 2) {
-          await new Promise(resolve => setTimeout(resolve, 200)); // 100/2 * 200ms = 10s
+          await new Promise(resolve => setTimeout(resolve, 200)); // 10s
           setDownloadProgress(i);
           
           if (i === 50) setDownloadMessage("Ajustando últimos detalles de calidad...");
@@ -193,8 +206,10 @@ export default function Diploma() {
           link.click();
         }
       } finally {
-        if (isForPrint) setIsPrinting(false);
-        else {
+        if (isForPrint) {
+          setIsPrinting(false);
+          setPrintProgress(0);
+        } else {
           setIsDownloading(false);
           setDownloadProgress(0);
         }
@@ -418,17 +433,37 @@ export default function Diploma() {
                         </Button>
                       </div>
 
-                      <Button
-                        onClick={() => handleDownloadDiploma(true)}
-                        disabled={!diplomaName.trim() || !imageLoaded || isDownloading || isPrinting}
-                        variant="outline"
-                        className="w-full gap-3 border-2 border-purple-200 hover:border-purple-600 hover:bg-purple-50 text-purple-700 font-bold py-6 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] text-base disabled:opacity-50"
-                      >
-                        <Award className="size-5" />
-                        <span>
-                          {isPrinting ? "Preparando..." : "Descargar para Impresión"}
-                        </span>
-                      </Button>
+                      <div className="relative group">
+                        <Button
+                          onClick={() => handleDownloadDiploma(true)}
+                          disabled={!diplomaName.trim() || !imageLoaded || isDownloading || isPrinting}
+                          variant="outline"
+                          className={`w-full gap-3 border-2 border-purple-200 hover:border-purple-600 hover:bg-purple-50 text-purple-700 font-bold py-6 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] text-base disabled:opacity-50 overflow-hidden ${isPrinting ? 'relative' : ''}`}
+                        >
+                          {isPrinting ? (
+                            <div className="flex flex-col items-center w-full gap-1">
+                              <div className="flex items-center gap-2">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
+                                <span>{printProgress}%</span>
+                              </div>
+                              <span className="text-[10px] font-normal opacity-90">{printMessage}</span>
+                            </div>
+                          ) : (
+                            <>
+                              <Award className="size-5" />
+                              <span>Descargar para Impresión</span>
+                            </>
+                          )}
+                          
+                          {/* Barra de progreso de fondo */}
+                          {isPrinting && (
+                            <div 
+                              className="absolute bottom-0 left-0 h-1 bg-purple-200 transition-all duration-300"
+                              style={{ width: `${printProgress}%` }}
+                            />
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </div>
 
