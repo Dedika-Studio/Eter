@@ -61,6 +61,11 @@ export default function News() {
     setExpandedId(expandedId === id ? null : id);
   };
 
+  const stripHtml = (html: string) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -149,12 +154,12 @@ export default function News() {
                           }`}>
                             {isExpanded ? (
                               <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
-                                {article.content.split('\n').map((paragraph, idx) => (
-                                  <p key={idx}>{paragraph}</p>
+                                {stripHtml(article.content).split('\n').map((paragraph, idx) => (
+                                  paragraph.trim() && <p key={idx}>{paragraph}</p>
                                 ))}
                               </div>
                             ) : (
-                              <p>{article.summary || article.content.substring(0, 200)}</p>
+                              <p>{stripHtml(article.summary || article.content).substring(0, 200)}...</p>
                             )}
                           </div>
                         </div>

@@ -1,7 +1,8 @@
 /**
- * News Automation Script (Enhanced with Image Extraction)
+ * News Automation Script (Enhanced with HTML Cleaning)
  * Recopila noticias de K-pop de Soompi y Allkpop, las traduce gratuitamente y las publica automáticamente.
  * Extrae imágenes reales de los artículos originales usando Open Graph y selectores específicos.
+ * Limpia etiquetas HTML para que el texto sea puro y profesional.
  * Solo procesa UNA noticia por ejecución para evitar saturar la base de datos.
  */
 
@@ -33,6 +34,16 @@ interface RawNewsItem {
   content?: string;
   image?: string;
   source: "soompi" | "allkpop";
+}
+
+/**
+ * Helper to strip HTML tags from a string
+ */
+function stripHtml(html: string): string {
+  if (!html) return "";
+  // Use cheerio to load and get text, which handles entities and tags correctly
+  const $ = load(html);
+  return $.text().trim();
 }
 
 /**
@@ -127,8 +138,12 @@ async function translateNews(
   content: string
 ): Promise<{ title: string; content: string }> {
   try {
-    const translatedTitle = await translate(title, { to: "es" });
-    const translatedContent = await translate(content.substring(0, 1000), { to: "es" });
+    // Clean HTML before translation to avoid issues
+    const cleanTitle = stripHtml(title);
+    const cleanContent = stripHtml(content);
+
+    const translatedTitle = await translate(cleanTitle, { to: "es" });
+    const translatedContent = await translate(cleanContent.substring(0, 1000), { to: "es" });
 
     return {
       title: translatedTitle.text,
@@ -136,7 +151,7 @@ async function translateNews(
     };
   } catch (error) {
     console.error("[News] Error translating with Google Translate:", error);
-    return { title, content };
+    return { title, content: stripHtml(content) };
   }
 }
 
@@ -171,7 +186,7 @@ async function cleanupOldNews(): Promise<void> {
  * Main automation function
  */
 async function automateNews(): Promise<void> {
-  console.log("[News] Starting news automation (Single Item Mode)...");
+  console.log("[News] Starting news automation (HTML Cleaning Mode)...");
 
   try {
     const soompiNews = await fetchSoompiNews();
@@ -191,7 +206,7 @@ async function automateNews(): Promise<void> {
     const existingTitles = lastNews.map(n => n.title.toLowerCase());
 
     // Find the first news item that isn't already in the last 5 entries
-    const item = allNews.find(n => !existingTitles.includes(n.title.toLowerCase()));
+    const item = allNews.find(n => !existingTitles.includes(stripHtml(n.title).toLowerCase()));
 
     if (!item) {
       console.log("[News] No new unique news found in this round.");
@@ -201,7 +216,7 @@ async function automateNews(): Promise<void> {
     // 1. Extract real image from the article URL
     let imageUrl = await extractImageFromUrl(item.link);
     
-    // 2. Translate content
+    // 2. Translate content (now with HTML cleaning)
     const { title: translatedTitle, content: translatedContent } = await translateNews(
       item.title,
       item.content || ""
@@ -212,7 +227,7 @@ async function automateNews(): Promise<void> {
       imageUrl = selectBackupImage(item.title, item.content || "");
     }
     
-    const slug = item.title
+    const slug = translatedTitle
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "") + "-" + Math.random().toString(36).substring(2, 5);
@@ -229,7 +244,7 @@ async function automateNews(): Promise<void> {
     };
 
     await db.insert(newsTable).values(newsRecord);
-    console.log(`[News] Published Single Item: "${translatedTitle}"`);
+    console.log(`[News] Published Clean Item: "${translatedTitle}"`);
 
     await cleanupOldNews();
   } catch (error) {
