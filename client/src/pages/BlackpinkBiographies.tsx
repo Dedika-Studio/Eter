@@ -28,7 +28,7 @@ export default function BlackpinkBiographies() {
       birthday: "3 de enero de 1995",
       birthplace: "Gunpo, Corea del Sur",
       mbti: "ISTP",
-      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop",
+      image: "https://media.vogue.mx/photos/67619978e08ea9c0d0a14146/2:3/w_2560%2Cc_limit/jisoo-blackpink.jpg",
       color: "bg-pink-600",
       fullBio: {
         preDebut: "En 2011, Kim Ji-soo se unió a YG Entertainment como aprendiz a los 16 años, entrenando durante cinco años. En 2012, fue presentada a través del teaser 'Who’s That Girl?'. Antes de su debut, hizo un cameo en el drama 'The Producers' (2015) y apareció en numerosos anuncios para marcas como Samsonite, LG Electronics y Nikon, consolidándose como una de las aprendices más reconocidas de la agencia.",
@@ -45,7 +45,7 @@ export default function BlackpinkBiographies() {
       birthday: "16 de enero de 1996",
       birthplace: "Seúl, Corea del Sur",
       mbti: "INFJ",
-      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1000&auto=format&fit=crop",
+      image: "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1257319503-64a54c233590f.jpg?crop=0.6666044776119403xw:1xh;center,top&resize=1120:*",
       color: "bg-slate-900",
       fullBio: {
         preDebut: "Nacida en Seúl, Jennie vivió y estudió en Auckland, Nueva Zelanda, durante cinco años antes de regresar a Corea en 2010. Se unió a YG Entertainment ese mismo año y entrenó durante casi seis años. Fue la primera integrante de BLACKPINK en ser revelada y colaboró pre-debut con artistas como G-Dragon en 'Black' y Lee Hi en 'Special'.",
@@ -62,7 +62,7 @@ export default function BlackpinkBiographies() {
       birthday: "11 de febrero de 1997",
       birthplace: "Auckland, Nueva Zelanda",
       mbti: "ENFP",
-      image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000&auto=format&fit=crop",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnQS9cxwJIX7pSfwhbETfBkzmCGxbtA6o3kQ&s",
       color: "bg-rose-400",
       fullBio: {
         preDebut: "Nacida en Nueva Zelanda y criada en Melbourne, Australia, Rosé audicionó para YG en 2012 tras quedar en primer lugar entre 700 participantes. Se mudó a Corea sola a los 15 años para comenzar su entrenamiento. Fue la última integrante en ser revelada y colaboró pre-debut en la canción 'Without You' de G-Dragon.",
@@ -79,7 +79,7 @@ export default function BlackpinkBiographies() {
       birthday: "27 de marzo de 1997",
       birthplace: "Buriram, Tailandia",
       mbti: "ESFJ",
-      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1000&auto=format&fit=crop",
+      image: "https://images-prod.anothermag.com/1050/azure/another-prod/460/3/463138.jpg",
       color: "bg-yellow-500",
       fullBio: {
         preDebut: "Lisa fue la única persona aceptada en las audiciones de YG en Tailandia en 2010. Se mudó a Corea en 2011 sin hablar el idioma, convirtiéndose en la primera artista no coreana de la agencia. Antes de BLACKPINK, fue parte del grupo de baile 'We Zaa Cool' junto a BamBam de GOT7.",
