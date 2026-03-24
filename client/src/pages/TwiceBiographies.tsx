@@ -204,9 +204,9 @@ export default function TwiceBiographies() {
       {/* Hero Section */}
       <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=80"
+          src="https://www.nme.com/wp-content/uploads/2025/07/twice-this-is-for-interview-credit-jyp-entertainment-image1.jpeg"
           alt="TWICE Group"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 text-white p-6 text-center">
@@ -262,7 +262,7 @@ export default function TwiceBiographies() {
                             <img
                               src={member.image}
                               alt={member.stageName}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover object-top"
                             />
                             <div className={`absolute inset-0 opacity-30 ${member.color}`} />
                             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent text-white">

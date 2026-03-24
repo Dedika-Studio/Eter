@@ -42,7 +42,7 @@ export default function Biographies() {
       name: "TWICE",
       group: "Grupo de 9 miembros",
       description: "TWICE es un grupo femenino surcoreano que ha ganado múltiples premios internacionales y millones de seguidores.",
-      image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1000&auto=format&fit=crop",
+      image: "https://www.nme.com/wp-content/uploads/2025/07/twice-this-is-for-interview-credit-jyp-entertainment-image1.jpeg",
       debut: "2015",
       members: 9,
       path: "/biografias/twice"
