@@ -357,6 +357,20 @@ export const appRouter = router({
         content: z.string().min(10),
       }))
       .mutation(async ({ input }) => {
+        // 0. Filtrar groserías (español)
+        const BANNED_WORDS = [
+          "puto", "puta", "pendejo", "pendeja", "mierda", "verga", "chingar", "chingada", 
+          "culero", "culera", "cabron", "cabrona", "pito", "zorra", "estupido", "estupida",
+          "idiota", "baboso", "babosa", "mamon", "mamona", "joto", "maricon", "perra"
+        ];
+        
+        const lowerContent = input.content.toLowerCase();
+        const hasBannedWord = BANNED_WORDS.some(word => lowerContent.includes(word));
+        
+        if (hasBannedWord) {
+          throw new Error("Tu historia contiene lenguaje inapropiado. Por favor, sé respetuoso.");
+        }
+
         let contentKo = "";
         try {
           // 1. Intentar traducir al coreano
