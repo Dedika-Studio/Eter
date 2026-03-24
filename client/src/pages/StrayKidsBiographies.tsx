@@ -1,23 +1,14 @@
 import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Star, ChevronDown, Music, Award, BookOpen, Heart } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Star, Music, Award, BookOpen, Heart, Maximize2, Sparkles, Globe } from "lucide-react";
 import { Badge } from "../components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useRef, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { motion } from "framer-motion";
 
 export default function StrayKidsBiographies() {
   const [, navigate] = useLocation();
-  const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null);
-  const bioContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (expandedMemberId && bioContainerRef.current) {
-      setTimeout(() => {
-        bioContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    }
-  }, [expandedMemberId]);
 
   const members = [
     {
@@ -158,26 +149,21 @@ export default function StrayKidsBiographies() {
     }
   ];
 
-  const toggleMemberExpansion = (id: string) => {
-    setExpandedMemberId(expandedMemberId === id ? null : id);
-  };
-
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div className="container flex items-center justify-between h-16 px-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate("/biografias")}
-            className="gap-2 hover:bg-slate-100 transition-colors"
-          >
-            <ArrowLeft className="size-4" />
-            <span className="hidden sm:inline">Volver a Artistas</span>
-          </Button>
-          <div className="flex items-center gap-3">
-            <h1 className="font-bold text-xl tracking-tight text-slate-900">STRAY KIDS</h1>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/biografias")}
+              className="rounded-full hover:bg-slate-100"
+            >
+              <ArrowLeft className="size-5" />
+            </Button>
+            <h1 className="font-bold text-xl tracking-tight text-slate-900">Stray Kids: Biografía Completa</h1>
           </div>
           <Badge className="bg-slate-900 hover:bg-slate-800 text-white border-none px-3 py-1">
             8 Estrellas
@@ -185,134 +171,153 @@ export default function StrayKidsBiographies() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
-        <img
-          src="https://i.pinimg.com/originals/cf/f2/c8/cff2c874b3b35b3a599bafc5e3416240.jpg"
-          alt="Stray Kids Group"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
-        <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 text-white p-6 text-center">
-          <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter drop-shadow-2xl">Stray Kids</h2>
-          <p className="max-w-3xl text-lg md:text-2xl text-slate-200 font-medium leading-relaxed">
-            Los líderes de la nueva generación que crean su propio camino a través de música autoproducida y energía inigualable.
+      <main className="container py-12 px-4 max-w-6xl mx-auto">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-700 rounded-full px-4 py-1.5 mb-6 text-sm font-bold">
+            <Star className="size-4 fill-current" />
+            Líderes de la 4ta Generación
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+            Stray Kids Everywhere All Around The World
+          </h2>
+          <p className="text-slate-600 text-lg max-w-2xl mx-auto leading-relaxed">
+            Descubre la historia de los ocho miembros que están redefiniendo el sonido del K-Pop con su estilo único y autoproducido.
           </p>
         </div>
-      </section>
 
-      {/* Main Content */}
-      <main className="container py-16 px-4 max-w-6xl mx-auto">
-        <div className="space-y-6">
-          {/* Grid de Miembros */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-            {members.map((member) => (
-              <Card
-                key={member.id}
-                className={`group cursor-pointer overflow-hidden border-none shadow-lg transition-all duration-300 hover:scale-[1.02] ${expandedMemberId === member.id ? 'ring-2 ring-slate-900 ring-offset-2' : ''}`}
-                onClick={() => toggleMemberExpansion(member.id)}
-              >
-                <div className="relative aspect-[3/4] overflow-hidden">
-                  <img
-                    src={member.image}
-                    alt={member.stageName}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60" />
-                  <div className="absolute bottom-0 left-0 p-4 text-white">
-                    <p className="text-xs font-medium uppercase tracking-wider text-slate-300 mb-1">{member.position}</p>
-                    <h3 className="text-2xl font-bold">{member.stageName}</h3>
+        {/* Members Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {members.map((member) => (
+            <Dialog key={member.id}>
+              <DialogTrigger asChild>
+                <motion.div
+                  whileHover={{ y: -10 }}
+                  className="cursor-pointer"
+                >
+                  <Card className="group overflow-hidden border-none shadow-xl rounded-[2.5rem] bg-white">
+                    <div className="relative aspect-[3/4] overflow-hidden">
+                      <img
+                        src={member.image}
+                        alt={member.stageName}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className={`absolute inset-0 opacity-20 ${member.color}`} />
+                      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white">
+                        <p className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">{member.position}</p>
+                        <h4 className="text-2xl font-black tracking-tight">{member.stageName}</h4>
+                      </div>
+                      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="bg-white/20 backdrop-blur-md p-2 rounded-xl">
+                          <Maximize2 className="size-5 text-white" />
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
+              </DialogTrigger>
+
+              <DialogContent className="max-w-4xl bg-white border-none shadow-2xl rounded-[2.5rem] p-0 overflow-hidden">
+                <div className="flex flex-col md:flex-row h-[90vh] md:h-[80vh]">
+                  {/* Image Sidebar */}
+                  <div className="w-full md:w-2/5 relative h-64 md:h-full">
+                    <img 
+                      src={member.image} 
+                      alt={member.stageName}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r" />
+                    <div className="absolute bottom-8 left-8">
+                      <h2 className="text-5xl font-black text-white tracking-tighter mb-2">{member.stageName}</h2>
+                      <p className="text-white/90 text-xl font-bold">{member.realName}</p>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            ))}
-          </div>
 
-          {/* Bio Detallada (Acordeón dinámico) */}
-          <div ref={bioContainerRef} className="scroll-mt-24">
-            {expandedMemberId ? (
-              members.filter(m => m.id === expandedMemberId).map(member => (
-                <div key={member.id} className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className={`h-3 w-full ${member.color}`} />
-                  <div className="p-8 md:p-12">
-                    <div className="flex flex-col md:flex-row gap-12">
-                      <div className="w-full md:w-1/3">
-                        <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-xl mb-6">
-                          <img src={member.image} alt={member.stageName} className="w-full h-full object-cover" />
+                  {/* Content Area */}
+                  <div className="w-full md:w-3/5 p-8 md:p-12 overflow-y-auto custom-scrollbar bg-white">
+                    <div className="space-y-8">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                          <div className="flex items-center gap-2 text-slate-400 mb-1">
+                            <Calendar className="size-4" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Nacimiento</span>
+                          </div>
+                          <p className="font-bold text-slate-900">{member.birthday}</p>
                         </div>
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 text-slate-600">
-                            <Star className="size-5 text-yellow-500 fill-yellow-500" />
-                            <span className="font-semibold text-slate-900">{member.realName}</span>
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                          <div className="flex items-center gap-2 text-slate-400 mb-1">
+                            <MapPin className="size-4" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Origen</span>
                           </div>
-                          <div className="flex items-center gap-3 text-slate-600">
-                            <Calendar className="size-5" />
-                            <span>{member.birthday}</span>
-                          </div>
-                          <div className="flex items-center gap-3 text-slate-600">
-                            <MapPin className="size-5" />
-                            <span>{member.birthplace}</span>
-                          </div>
-                          <div className="flex items-center gap-3 text-slate-600">
-                            <Badge variant="secondary" className="font-bold">{member.mbti}</Badge>
-                          </div>
+                          <p className="font-bold text-slate-900 truncate">{member.birthplace}</p>
                         </div>
                       </div>
 
-                      <div className="w-full md:w-2/3">
-                        <div className="mb-8">
-                          <h3 className="text-4xl font-black text-slate-900 mb-2 uppercase tracking-tighter">{member.stageName}</h3>
-                          <p className="text-xl font-medium text-slate-500 italic">{member.position}</p>
+                      <Tabs defaultValue="historia" className="w-full">
+                        <TabsList className="w-full bg-slate-100 p-1 rounded-2xl h-12">
+                          <TabsTrigger value="historia" className="flex-1 rounded-xl font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">Historia</TabsTrigger>
+                          <TabsTrigger value="logros" className="flex-1 rounded-xl font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">Logros</TabsTrigger>
+                          <TabsTrigger value="curiosidades" className="flex-1 rounded-xl font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">Extra</TabsTrigger>
+                        </TabsList>
+                        
+                        <div className="mt-8 space-y-6">
+                          <TabsContent value="historia" className="space-y-6 m-0">
+                            <div className="space-y-3">
+                              <h4 className="flex items-center gap-2 font-black text-slate-900 uppercase tracking-widest text-xs">
+                                <Music className="size-4 text-purple-500" /> Pre-Debut
+                              </h4>
+                              <p className="text-slate-600 leading-relaxed">{member.fullBio.preDebut}</p>
+                            </div>
+                            <div className="space-y-3">
+                              <h4 className="flex items-center gap-2 font-black text-slate-900 uppercase tracking-widest text-xs">
+                                <Star className="size-4 text-amber-500" /> Carrera Solista
+                              </h4>
+                              <p className="text-slate-600 leading-relaxed">{member.fullBio.soloCareer}</p>
+                            </div>
+                          </TabsContent>
+
+                          <TabsContent value="logros" className="space-y-6 m-0">
+                            <div className="space-y-3">
+                              <h4 className="flex items-center gap-2 font-black text-slate-900 uppercase tracking-widest text-xs">
+                                <Award className="size-4 text-blue-500" /> Logros Destacados
+                              </h4>
+                              <p className="text-slate-600 leading-relaxed">{member.fullBio.achievements}</p>
+                            </div>
+                          </TabsContent>
+
+                          <TabsContent value="curiosidades" className="space-y-6 m-0">
+                            <div className="space-y-3">
+                              <h4 className="flex items-center gap-2 font-black text-slate-900 uppercase tracking-widest text-xs">
+                                <Heart className="size-4 text-pink-500" /> Curiosidades
+                              </h4>
+                              <p className="text-slate-600 leading-relaxed">{member.fullBio.curiosities}</p>
+                            </div>
+                            <div className="flex items-center justify-center gap-4 pt-4">
+                              <Sparkles className="size-6 text-purple-500" />
+                              <div className="h-px w-12 bg-slate-100" />
+                              <Heart className="size-6 text-pink-500 fill-current" />
+                              <div className="h-px w-12 bg-slate-100" />
+                              <Globe className="size-6 text-blue-500" />
+                            </div>
+                          </TabsContent>
                         </div>
-
-                        <Tabs defaultValue="historia" className="w-full">
-                          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto p-1 bg-slate-100 rounded-xl mb-8">
-                            <TabsTrigger value="historia" className="py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                              <BookOpen className="size-4 mr-2" /> Historia
-                            </TabsTrigger>
-                            <TabsTrigger value="carrera" className="py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                              <Music className="size-4 mr-2" /> Carrera
-                            </TabsTrigger>
-                            <TabsTrigger value="logros" className="py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                              <Award className="size-4 mr-2" /> Logros
-                            </TabsTrigger>
-                            <TabsTrigger value="curiosidades" className="py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                              <Heart className="size-4 mr-2" /> Datos
-                            </TabsTrigger>
-                          </TabsList>
-
-                          <TabsContent value="historia" className="space-y-4 text-slate-700 leading-relaxed text-lg">
-                            <p>{member.fullBio.preDebut}</p>
-                          </TabsContent>
-                          <TabsContent value="carrera" className="space-y-4 text-slate-700 leading-relaxed text-lg">
-                            <p>{member.fullBio.soloCareer}</p>
-                          </TabsContent>
-                          <TabsContent value="logros" className="space-y-4 text-slate-700 leading-relaxed text-lg">
-                            <p>{member.fullBio.achievements}</p>
-                          </TabsContent>
-                          <TabsContent value="curiosidades" className="space-y-4 text-slate-700 leading-relaxed text-lg">
-                            <p>{member.fullBio.curiosities}</p>
-                          </TabsContent>
-                        </Tabs>
-                      </div>
+                      </Tabs>
                     </div>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="text-center py-20 bg-slate-100/50 rounded-3xl border-2 border-dashed border-slate-200">
-                <ChevronDown className="size-12 text-slate-300 mx-auto mb-4 animate-bounce" />
-                <p className="text-slate-500 font-medium text-xl">Selecciona un miembro para ver su biografía completa</p>
-              </div>
-            )}
-          </div>
+              </DialogContent>
+            </Dialog>
+          ))}
         </div>
       </main>
 
-      {/* Footer simple */}
-      <footer className="bg-slate-900 text-slate-400 py-12 px-4">
-        <div className="container max-w-6xl mx-auto text-center">
-          <p className="text-sm">© 2026 Dedika Studio - Eter Project. Información actualizada para STAY.</p>
+      {/* Footer */}
+      <footer className="py-20 bg-slate-900 text-center mt-20">
+        <div className="container px-4">
+          <p className="text-white/40 text-sm font-bold uppercase tracking-widest mb-4">Eter K-Pop MX</p>
+          <p className="text-white/20 text-xs max-w-md mx-auto">
+            Información actualizada a marzo de 2026. Todas las imágenes pertenecen a sus respectivos dueños.
+          </p>
         </div>
       </footer>
     </div>
