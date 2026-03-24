@@ -22,11 +22,17 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { RAFFLE_CONFIG } from "@shared/raffle";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 export default function LandingHome() {
   const [, navigate] = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Admin Access State
+  const [showAdminPrompt, setShowAdminPrompt] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -42,6 +48,17 @@ export default function LandingHome() {
   const handleNavigate = (path: string) => {
     navigate(path);
     setIsDropdownOpen(false);
+  };
+
+  const handleAdminAccess = () => {
+    if (adminPassword === "panochonas12") {
+      setShowAdminPrompt(false);
+      setAdminPassword("");
+      navigate("/admin");
+    } else {
+      toast.error("Contraseña incorrecta");
+      setAdminPassword("");
+    }
   };
 
   return (
@@ -227,9 +244,9 @@ export default function LandingHome() {
           {/* Galerias */}
           <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow group">
             <CardContent className="p-0">
-              <div className="relative h-32 md:h-48 bg-gradient-to-br from-amber-400 to-orange-400 overflow-hidden">
+              <div className="relative h-32 md:h-48 bg-gradient-to-br from-rose-400 to-pink-400 overflow-hidden">
                 <img
-                  src="/assets/galerias.png"
+                  src="/assets/imagengaleria.png"
                   alt="Galerias K-POP"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
@@ -237,15 +254,15 @@ export default function LandingHome() {
               </div>
               <div className="p-3 md:p-6">
                 <h2 className="text-base md:text-2xl font-bold mb-1 md:mb-2 flex items-center gap-2">
-                  <Images className="size-4 md:size-5 text-amber-600" />
+                  <Images className="size-4 md:size-5 text-rose-600" />
                   Galerias
                 </h2>
                 <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 hidden md:block">
-                  Disfruta de las mejores fotos y visuales de tus idols favoritos.
+                  Disfruta de las mejores fotos y visuales de tus idols preferidos.
                 </p>
                 <Button
                   onClick={() => navigate("/galerias")}
-                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white text-xs md:text-sm py-1 md:py-2"
+                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white text-xs md:text-sm py-1 md:py-2"
                 >
                   <Images className="size-3 md:size-4" />
                   <span className="hidden md:inline">Ver Galerias</span>
@@ -258,9 +275,9 @@ export default function LandingHome() {
           {/* Biografias */}
           <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow group">
             <CardContent className="p-0">
-              <div className="relative h-32 md:h-48 bg-gradient-to-br from-rose-400 to-pink-400 overflow-hidden">
+              <div className="relative h-32 md:h-48 bg-gradient-to-br from-purple-400 to-violet-400 overflow-hidden">
                 <img
-                  src="/assets/BIOGRAFIAS.png"
+                  src="/assets/imagenbiografias.png"
                   alt="Biografias K-POP"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
@@ -268,31 +285,31 @@ export default function LandingHome() {
               </div>
               <div className="p-3 md:p-6">
                 <h2 className="text-base md:text-2xl font-bold mb-1 md:mb-2 flex items-center gap-2">
-                  <Users className="size-4 md:size-5 text-rose-600" />
+                  <Users className="size-4 md:size-5 text-purple-600" />
                   Biografias
                 </h2>
                 <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 hidden md:block">
-                  Conoce la historia y trayectoria de los grupos más influyentes.
+                  Conoce la historia, logros y curiosidades de los grupos más populares.
                 </p>
                 <Button
                   onClick={() => navigate("/biografias")}
-                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white text-xs md:text-sm py-1 md:py-2"
+                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white text-xs md:text-sm py-1 md:py-2"
                 >
                   <Users className="size-3 md:size-4" />
                   <span className="hidden md:inline">Ver Biografias</span>
-                  <span className="md:hidden">Biografias</span>
+                  <span className="md:hidden">Bios</span>
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Diplomas */}
+          {/* Diploma */}
           <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow group">
             <CardContent className="p-0">
               <div className="relative h-32 md:h-48 bg-gradient-to-br from-purple-400 to-violet-400 overflow-hidden">
                 <img
                   src="/assets/diploma.png"
-                  alt="Diplomas K-POP"
+                  alt="Diploma ARMY"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
@@ -369,7 +386,9 @@ export default function LandingHome() {
                 <img
                   src={RAFFLE_CONFIG.logoUrl}
                   alt={RAFFLE_CONFIG.storeName}
-                  className="h-10 w-10 rounded-xl shadow-lg"
+                  onClick={() => setShowAdminPrompt(true)}
+                  className="h-10 w-10 rounded-xl shadow-lg cursor-pointer hover:opacity-80 transition-opacity"
+                  title="Eter"
                 />
                 <span className="font-bold text-xl tracking-tight">
                   {RAFFLE_CONFIG.storeName}
@@ -405,6 +424,57 @@ export default function LandingHome() {
             </p>
           </div>
         </div>
+
+        {/* Admin Password Modal */}
+        {showAdminPrompt && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="w-full max-w-sm"
+            >
+              <Card className="bg-white border-none shadow-2xl rounded-[2.5rem] overflow-hidden">
+                <CardContent className="p-8">
+                  <div className="bg-purple-100 size-12 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                    <ShieldCheck className="size-6 text-purple-600" />
+                  </div>
+                  <h2 className="text-xl font-black text-center text-slate-900 uppercase tracking-tight mb-2">Acceso Restringido</h2>
+                  <p className="text-xs text-slate-400 text-center mb-6 font-medium">Ingresa la contraseña maestra para continuar</p>
+                  
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={adminPassword}
+                    onChange={(e) => setAdminPassword(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleAdminAccess();
+                    }}
+                    className="w-full px-6 py-4 border-2 border-slate-100 rounded-2xl mb-4 bg-slate-50 focus:border-purple-600 focus:outline-none transition-all text-center font-bold"
+                    autoFocus
+                  />
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      onClick={handleAdminAccess}
+                      className="w-full bg-purple-600 hover:bg-purple-700 h-12 rounded-2xl font-black uppercase tracking-widest text-xs"
+                    >
+                      Entrar al Panel
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowAdminPrompt(false);
+                        setAdminPassword("");
+                      }}
+                      variant="ghost"
+                      className="w-full h-12 rounded-2xl font-bold text-slate-400 hover:text-slate-600 text-xs uppercase tracking-widest"
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        )}
       </footer>
     </div>
   );
