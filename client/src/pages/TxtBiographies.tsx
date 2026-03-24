@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, MapPin, Star, Music, Award, BookOpen, Heart, Maximize2, Sparkles, Globe } from "lucide-react";
@@ -9,6 +10,32 @@ import { motion } from "framer-motion";
 
 export default function TxtBiographies() {
   const [, navigate] = useLocation();
+  const [openMemberId, setOpenMemberId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash) {
+        setOpenMemberId(hash);
+      } else {
+        setOpenMemberId(null);
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    handleHashChange(); // Check on mount
+
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const handleOpenChange = (open: boolean, id: string) => {
+    if (open) {
+      window.location.hash = id;
+    } else {
+      window.history.pushState(null, "", window.location.pathname);
+      setOpenMemberId(null);
+    }
+  };
 
   const members = [
     {
@@ -140,7 +167,11 @@ export default function TxtBiographies() {
       <main className="container py-16 px-4 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {members.map((member) => (
-            <Dialog key={member.id}>
+            <Dialog 
+              key={member.id} 
+              open={openMemberId === member.id} 
+              onOpenChange={(open) => handleOpenChange(open, member.id)}
+            >
               <DialogTrigger asChild>
                 <motion.div
                   whileHover={{ y: -10 }}
@@ -216,7 +247,7 @@ export default function TxtBiographies() {
                           <TabsContent value="historia" className="space-y-6 m-0">
                             <div className="space-y-3">
                               <h4 className="flex items-center gap-2 font-black text-slate-900 uppercase tracking-widest text-xs">
-                                <Music className="size-4 text-blue-500" /> Pre-Debut
+                                <Music className="size-4 text-purple-500" /> Pre-Debut
                               </h4>
                               <p className="text-slate-600 leading-relaxed">{member.fullBio.preDebut}</p>
                             </div>

@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, MapPin, Star, Music, Award, BookOpen, Heart, Maximize2, Sparkles, Globe } from "lucide-react";
@@ -9,6 +10,32 @@ import { motion } from "framer-motion";
 
 export default function StrayKidsBiographies() {
   const [, navigate] = useLocation();
+  const [openMemberId, setOpenMemberId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash) {
+        setOpenMemberId(hash);
+      } else {
+        setOpenMemberId(null);
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    handleHashChange(); // Check on mount
+
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const handleOpenChange = (open: boolean, id: string) => {
+    if (open) {
+      window.location.hash = id;
+    } else {
+      window.history.pushState(null, "", window.location.pathname);
+      setOpenMemberId(null);
+    }
+  };
 
   const members = [
     {
@@ -124,7 +151,7 @@ export default function StrayKidsBiographies() {
       image: "https://e0.pxfuel.com/wallpapers/790/26/desktop-wallpaper-seungmin-stray-kids-seungmin-kim-seungmin.jpg",
       color: "bg-blue-400",
       fullBio: {
-        preDebut: "Seungmin se unió a JYP en 2017 tras quedar en segundo lugar en la 13ª Audición Abierta de la agencia. Es conocido por su disciplina extrema y su dedicación a mejorar su técnica vocal, manteniendo diarios de entrenamiento detallados desde sus días de aprendiz.",
+        preDebut: "Seungmin se unió a JYP in 2017 tras quedar en segundo lugar en la 13ª Audición Abierta de la agencia. Es conocido por su disciplina extrema y su dedicación a mejorar su técnica vocal, manteniendo diarios de entrenamiento detallados desde sus días de aprendiz.",
         soloCareer: "Ha lanzado varios OST para dramas coreanos populares como 'Hometown Cha-Cha-Cha' ('Here Always'). Es el líder de la unidad 'Vocal Racha' y ha demostrado su talento en programas como 'King of Mask Singer'.",
         achievements: "Reconocido por su voz clara, estable y emocional. Ha sido MC de programas como 'After School Club'. Su crecimiento vocal constante lo ha posicionado como uno de los mejores vocalistas de su generación.",
         curiosities: "Habla fluido inglés ya que vivió en Los Ángeles por unos meses durante la primaria. Es un gran fan del béisbol. Es conocido por su personalidad pulcra y por ser el 'cachorro' del grupo por su apariencia tierna."
@@ -174,7 +201,7 @@ export default function StrayKidsBiographies() {
       {/* Hero Section */}
       <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
         <img
-          src="https://images.alphacoders.com/132/1327633.jpeg"
+          src="https://wallpaperaccess.com/full/1209511.jpg"
           alt="Stray Kids Group"
           className="w-full h-full object-cover object-top"
         />
@@ -182,16 +209,20 @@ export default function StrayKidsBiographies() {
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 text-white p-6 text-center">
           <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter drop-shadow-2xl uppercase">Stray Kids</h2>
           <p className="max-w-3xl text-lg md:text-2xl text-slate-200 font-medium leading-relaxed">
-            Los líderes de la cuarta generación que han revolucionado el K-Pop con su sonido único y su energía inigualable.
+            El grupo que rompe las reglas y define su propio sonido, liderando la nueva generación del K-Pop con autenticidad.
           </p>
         </div>
       </section>
 
       {/* Main Content */}
       <main className="container py-16 px-4 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {members.map((member) => (
-            <Dialog key={member.id}>
+            <Dialog 
+              key={member.id} 
+              open={openMemberId === member.id} 
+              onOpenChange={(open) => handleOpenChange(open, member.id)}
+            >
               <DialogTrigger asChild>
                 <motion.div
                   whileHover={{ y: -10 }}
@@ -266,7 +297,7 @@ export default function StrayKidsBiographies() {
                           <TabsContent value="historia" className="space-y-6 m-0">
                             <div className="space-y-3">
                               <h4 className="flex items-center gap-2 font-black text-slate-900 uppercase tracking-widest text-xs">
-                                <Music className="size-4 text-orange-500" /> Pre-Debut
+                                <Music className="size-4 text-purple-500" /> Pre-Debut
                               </h4>
                               <p className="text-slate-600 leading-relaxed">{member.fullBio.preDebut}</p>
                             </div>
@@ -290,14 +321,14 @@ export default function StrayKidsBiographies() {
                           <TabsContent value="curiosidades" className="space-y-6 m-0">
                             <div className="space-y-3">
                               <h4 className="flex items-center gap-2 font-black text-slate-900 uppercase tracking-widest text-xs">
-                                <Heart className="size-4 text-red-500" /> Curiosidades
+                                <Heart className="size-4 text-pink-500" /> Curiosidades
                               </h4>
                               <p className="text-slate-600 leading-relaxed">{member.fullBio.curiosities}</p>
                             </div>
                             <div className="flex items-center justify-center gap-4 pt-4">
-                              <Sparkles className="size-6 text-orange-500" />
+                              <Sparkles className="size-6 text-purple-500" />
                               <div className="h-px w-12 bg-slate-100" />
-                              <Heart className="size-6 text-red-500 fill-current" />
+                              <Heart className="size-6 text-pink-500 fill-current" />
                               <div className="h-px w-12 bg-slate-100" />
                               <Globe className="size-6 text-blue-500" />
                             </div>

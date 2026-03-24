@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, MapPin, Star, Music, Award, BookOpen, Heart, Maximize2, Sparkles, Globe } from "lucide-react";
@@ -9,6 +10,32 @@ import { motion } from "framer-motion";
 
 export default function BlackpinkBiographies() {
   const [, navigate] = useLocation();
+  const [openMemberId, setOpenMemberId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash) {
+        setOpenMemberId(hash);
+      } else {
+        setOpenMemberId(null);
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    handleHashChange(); // Check on mount
+
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const handleOpenChange = (open: boolean, id: string) => {
+    if (open) {
+      window.location.hash = id;
+    } else {
+      window.history.pushState(null, "", window.location.pathname);
+      setOpenMemberId(null);
+    }
+  };
 
   const members = [
     {
@@ -107,7 +134,7 @@ export default function BlackpinkBiographies() {
       <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
         <img
           src="https://4kwallpapers.com/images/wallpapers/blackpink-lisa-jisoo-jennie-rose-k-pop-singers-korean-2560x1440-8881.jpg"
-        alt="BLACKPINK Group"
+          alt="BLACKPINK Group"
           className="w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
@@ -123,7 +150,11 @@ export default function BlackpinkBiographies() {
       <main className="container py-16 px-4 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {members.map((member) => (
-            <Dialog key={member.id}>
+            <Dialog 
+              key={member.id} 
+              open={openMemberId === member.id} 
+              onOpenChange={(open) => handleOpenChange(open, member.id)}
+            >
               <DialogTrigger asChild>
                 <motion.div
                   whileHover={{ y: -10 }}
@@ -134,7 +165,7 @@ export default function BlackpinkBiographies() {
                       <img
                         src={member.image}
                         alt={member.stageName}
-                  className="w-full h-full object-cover object-top md:object-center transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-full object-cover object-top md:object-center transition-transform duration-700 group-hover:scale-110"
                       />
                       <div className={`absolute inset-0 opacity-20 ${member.color}`} />
                       <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white">
@@ -198,7 +229,7 @@ export default function BlackpinkBiographies() {
                           <TabsContent value="historia" className="space-y-6 m-0">
                             <div className="space-y-3">
                               <h4 className="flex items-center gap-2 font-black text-slate-900 uppercase tracking-widest text-xs">
-                                <Music className="size-4 text-pink-500" /> Pre-Debut
+                                <Music className="size-4 text-purple-500" /> Pre-Debut
                               </h4>
                               <p className="text-slate-600 leading-relaxed">{member.fullBio.preDebut}</p>
                             </div>
