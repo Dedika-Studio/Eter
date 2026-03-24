@@ -121,7 +121,7 @@ export default function BlackpinkBiographies() {
         <img
           src="https://4kwallpapers.com/images/wallpapers/blackpink-lisa-jisoo-jennie-rose-k-pop-singers-korean-2560x1440-8881.jpg"
           alt="BLACKPINK Group"
-          className="w-full h-full object-cover object-bottom"
+          className="w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 text-white p-6 text-center">
@@ -177,7 +177,7 @@ export default function BlackpinkBiographies() {
                             <img
                               src={member.image}
                               alt={member.stageName}
-                              className="w-full h-full object-cover object-bottom"
+                              className="w-full h-full object-cover object-top"
                             />
                             <div className={`absolute inset-0 opacity-30 ${member.color}`} />
                             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent text-white">
