@@ -379,6 +379,7 @@ export const appRouter = router({
           
           const response = await fetch(STORIES_SHEETS_API, {
             method: "POST",
+            mode: "no-cors",
             body: JSON.stringify(payload),
             headers: { "Content-Type": "application/json" },
           });
