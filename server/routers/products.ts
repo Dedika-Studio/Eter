@@ -32,7 +32,7 @@ export const productsRouter = router({
       const result = await createProduct({
         title: input.title,
         description: input.description || null,
-        price: Math.round(input.price * 100),
+        price: Math.round(Number(input.price.toFixed(2)) * 100),
         image: input.image,
         link: input.link,
         rating: input.rating ? Math.round(input.rating * 10) : null,
@@ -62,7 +62,7 @@ export const productsRouter = router({
 
       if (data.title !== undefined) updateData.title = data.title;
       if (data.description !== undefined) updateData.description = data.description || null;
-      if (data.price !== undefined) updateData.price = Math.round(data.price * 100);
+      if (data.price !== undefined) updateData.price = Math.round(Number(data.price.toFixed(2)) * 100);
       if (data.image !== undefined) updateData.image = data.image;
       if (data.link !== undefined) updateData.link = data.link;
       if (data.rating !== undefined) updateData.rating = data.rating ? Math.round(data.rating * 10) : null;

@@ -267,7 +267,7 @@ export async function createRaffle(data: any) {
   
   const result = await db.insert(raffles).values({
     ...data,
-    pricePerTicket: Math.round(data.pricePerTicket * 100), // Convert to cents
+    pricePerTicket: Math.round(Number(data.pricePerTicket.toFixed(2)) * 100), // Convert to cents
     drawDate: new Date(data.drawDate),
     isActive: true
   });
@@ -299,7 +299,7 @@ export async function updateRaffle(id: number, data: any) {
   if (!db) return;
   await db.update(raffles).set({
     ...data,
-    pricePerTicket: Math.round(data.pricePerTicket * 100),
+    pricePerTicket: Math.round(Number(data.pricePerTicket.toFixed(2)) * 100),
     drawDate: new Date(data.drawDate)
   }).where(eq(raffles.id, id));
 }

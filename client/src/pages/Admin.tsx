@@ -83,7 +83,7 @@ export default function Admin() {
           id: p.id.toString(),
           title: p.title,
           description: p.description || "",
-          price: p.price / 100,
+          price: Number((p.price / 100).toFixed(2)),
           image: p.image,
           link: p.link,
           rating: p.rating ? p.rating / 10 : undefined,
@@ -109,7 +109,7 @@ export default function Admin() {
         description: r.description || "",
         image: r.image,
         totalTickets: r.totalTickets,
-        pricePerTicket: r.pricePerTicket / 100,
+        pricePerTicket: Number((r.pricePerTicket / 100).toFixed(2)),
         drawDate: r.drawDate.toISOString().split('T')[0],
         webhookUrl: r.webhookUrl || "",
         category: r.category as RaffleCategory,
@@ -877,7 +877,16 @@ export default function Admin() {
                     onChange={(e) => setProductFormData({...productFormData, description: e.target.value})}
                     className="w-full min-h-[120px] px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   />
-                  <Input placeholder="Precio (MXN)" type="number" step="0.01" value={productFormData.price ?? ""} onChange={(e) => setProductFormData({...productFormData, price: e.target.value === "" ? undefined : parseFloat(e.target.value)})} />
+                  <Input 
+                    placeholder="Precio (MXN)" 
+                    type="number" 
+                    step="0.01" 
+                    value={productFormData.price ?? ""} 
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setProductFormData({...productFormData, price: val === "" ? undefined : parseFloat(val)});
+                    }} 
+                  />
                   <Input placeholder="URL Imagen" value={productFormData.image || ""} onChange={(e) => setProductFormData({...productFormData, image: e.target.value})} />
                   <Input placeholder="Link Mercado Libre" value={productFormData.link || ""} onChange={(e) => setProductFormData({...productFormData, link: e.target.value})} />
                   <div className="grid grid-cols-2 gap-3">
