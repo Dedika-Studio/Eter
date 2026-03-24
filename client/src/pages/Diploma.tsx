@@ -205,27 +205,55 @@ export default function Diploma() {
           // Generar PNG para redes sociales
           const dataUrl = downloadCanvas.toDataURL("image/png", 1.0);
           
-          // Detectar si es un dispositivo móvil
-          const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+          // Detectar si es un dispositivo móvil y navegadores específicos
+          const ua = navigator.userAgent;
+          const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+          const isSamsung = /SamsungBrowser/i.test(ua);
           
-          // Método universal de descarga (funciona mejor en móviles)
-          const response = await fetch(dataUrl);
-          const blob = await response.blob();
-          const blobUrl = window.URL.createObjectURL(blob);
-          
-          const link = document.createElement("a");
-          link.href = blobUrl;
-          link.download = `Diploma_BTS_ARMY_${diplomaName}.png`;
-          
-          // Importante para iOS/Safari: añadir al DOM antes de hacer click
-          document.body.appendChild(link);
-          link.click();
-          
-          // Limpieza
-          setTimeout(() => {
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(blobUrl);
-          }, 100);
+          if (isSamsung || (isMobile && !/Chrome|Safari/i.test(ua))) {
+            // En Samsung Internet o navegadores móviles menos comunes, 
+            // a menudo se bloquea la descarga automática de blobs.
+            // Abrimos en una nueva pestaña para que el usuario guarde manualmente.
+            const newWindow = window.open();
+            if (newWindow) {
+              newWindow.document.write(`
+                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;padding:20px;text-align:center;background:#f8f9fa;">
+                  <h2 style="color:#6d28d9;margin-bottom:10px;">¡Tu Diploma está listo!</h2>
+                  <p style="color:#4b5563;margin-bottom:20px;">Mantén presionada la imagen y selecciona <b>"Guardar imagen"</b> o <b>"Descargar imagen"</b>.</p>
+                  <img src="${dataUrl}" style="max-width:100%;border-radius:12px;shadow:0 10px 15px -3px rgba(0,0,0,0.1);border:4px solid white;" />
+                  <button onclick="window.close()" style="margin-top:30px;padding:12px 24px;background:#6d28d9;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Cerrar esta pestaña</button>
+                </div>
+              `);
+              newWindow.document.title = `Diploma_BTS_ARMY_${diplomaName}`;
+            } else {
+              // Si el popup es bloqueado, intentamos el método tradicional
+              const link = document.createElement("a");
+              link.href = dataUrl;
+              link.download = `Diploma_BTS_ARMY_${diplomaName}.png`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }
+          } else {
+            // Método universal de descarga para Chrome/Safari/Escritorio
+            const response = await fetch(dataUrl);
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            
+            const link = document.createElement("a");
+            link.href = blobUrl;
+            link.download = `Diploma_BTS_ARMY_${diplomaName}.png`;
+            
+            // Importante para iOS/Safari: añadir al DOM antes de hacer click
+            document.body.appendChild(link);
+            link.click();
+            
+            // Limpieza
+            setTimeout(() => {
+              document.body.removeChild(link);
+              window.URL.revokeObjectURL(blobUrl);
+            }, 100);
+          }
         }
 
         // Mostrar mensaje de éxito
