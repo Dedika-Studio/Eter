@@ -5,7 +5,7 @@ import { ArrowLeft, Calendar, MapPin, Star, Music, Award, BookOpen, Heart, Shiel
 import { Badge } from "../components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function BtsBiographies() {
   const [, navigate] = useLocation();
@@ -185,37 +185,25 @@ export default function BtsBiographies() {
                   whileHover={{ y: -10 }}
                   className="cursor-pointer"
                 >
-                  <Card className="overflow-hidden border-none shadow-xl rounded-[2.5rem] bg-white group">
-                    <div className="relative h-80 overflow-hidden">
-                      <img 
-                        src={member.image} 
+                  <Card className="group overflow-hidden border-none shadow-xl rounded-[2.5rem] bg-white">
+                    <div className="relative aspect-[3/4] overflow-hidden">
+                      <img
+                        src={member.image}
                         alt={member.stageName}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                      <div className="absolute bottom-6 left-6 right-6">
-                        <Badge className={`${member.color} text-white border-none mb-2`}>
-                          {member.position}
-                        </Badge>
-                        <h3 className="text-3xl font-black text-white tracking-tight">{member.stageName}</h3>
-                        <p className="text-white/80 font-medium">{member.realName}</p>
+                      <div className={`absolute inset-0 opacity-20 ${member.color}`} />
+                      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white">
+                        <p className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">{member.position}</p>
+                        <h4 className="text-2xl font-black tracking-tight">{member.stageName}</h4>
+                        <p className="text-white/80 text-sm font-medium">{member.realName}</p>
                       </div>
-                      <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="bg-white/20 backdrop-blur-md p-3 rounded-2xl">
-                          <Maximize2 className="size-6 text-white" />
+                      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="bg-white/20 backdrop-blur-md p-2 rounded-xl">
+                          <Maximize2 className="size-5 text-white" />
                         </div>
                       </div>
                     </div>
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between text-sm text-slate-500 font-bold uppercase tracking-widest">
-                        <span>{member.birthday}</span>
-                        <div className="size-2 rounded-full bg-slate-200" />
-                        <span>{member.mbti}</span>
-                      </div>
-                      <Button variant="ghost" className="w-full mt-4 rounded-xl font-bold text-purple-600 hover:bg-purple-50 gap-2">
-                        Ver Biografía Completa
-                      </Button>
-                    </CardContent>
                   </Card>
                 </motion.div>
               </DialogTrigger>
@@ -227,7 +215,7 @@ export default function BtsBiographies() {
                     <img 
                       src={member.image} 
                       alt={member.stageName}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-center"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r" />
                     <div className="absolute bottom-8 left-8">
