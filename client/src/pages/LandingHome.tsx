@@ -315,6 +315,37 @@ export default function LandingHome() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Muro de Ilusiones Card */}
+          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+            <CardContent className="p-0">
+              <div className="relative h-32 md:h-48 bg-gradient-to-br from-pink-400 to-purple-400 overflow-hidden">
+                <img
+                  src="https://wallpaperaccess.com/full/8626014.jpg"
+                  alt="Muro de Ilusiones"
+                  className="w-full h-full object-cover object-top"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+              </div>
+              <div className="p-3 md:p-6">
+                <h2 className="text-base md:text-2xl font-bold mb-1 md:mb-2 flex items-center gap-2">
+                  <MessageCircle className="size-4 md:size-5 text-pink-600" />
+                  Muro de Ilusiones
+                </h2>
+                <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 hidden md:block">
+                  Comparte tu historia con el K-POP y tradúcela al coreano.
+                </p>
+                <Button
+                  onClick={() => navigate("/historias")}
+                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white text-xs md:text-sm py-1 md:py-2"
+                >
+                  <MessageCircle className="size-3 md:size-4" />
+                  <span className="hidden md:inline">Escribir mi Historia</span>
+                  <span className="md:hidden">Historias</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
