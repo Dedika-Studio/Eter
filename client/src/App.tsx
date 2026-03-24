@@ -16,6 +16,8 @@ import Store from "./pages/Store";
 import Admin from "./pages/Admin";
 import Raffles from "./pages/Raffles";
 import Galleries from "./pages/Galleries";
+import BtsGallery from "./pages/BtsGallery";
+import BlackpinkGallery from "./pages/BlackpinkGallery";
 import Biographies from "./pages/Biographies";
 import BtsBiographies from "./pages/BtsBiographies";
 import BlackpinkBiographies from "./pages/BlackpinkBiographies";
@@ -54,6 +56,8 @@ function Router() {
       <Route path="/tienda" component={Store} />
       <Route path="/rifas" component={Raffles} />
       <Route path="/galerias" component={Galleries} />
+      <Route path="/galerias/bts" component={BtsGallery} />
+      <Route path="/galerias/blackpink" component={BlackpinkGallery} />
       <Route path="/biografias" component={Biographies} />
       <Route path="/biografias/bts" component={BtsBiographies} />
       <Route path="/biografias/blackpink" component={BlackpinkBiographies} />
