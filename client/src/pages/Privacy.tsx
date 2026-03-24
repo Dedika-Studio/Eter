@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronLeft, ShieldCheck, Lock, UserCheck, Eye } from "lucide-react";
 import { useLocation } from "wouter";
-import { RAFFLE_CONFIG } from "@/shared/raffle";
+import { RAFFLE_CONFIG } from "@shared/raffle";
 
 export default function Privacy() {
   const [, setLocation] = useLocation();

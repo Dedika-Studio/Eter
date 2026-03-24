@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronLeft, FileText, Scale, ShieldAlert } from "lucide-react";
 import { useLocation } from "wouter";
-import { RAFFLE_CONFIG } from "@/shared/raffle";
+import { RAFFLE_CONFIG } from "@shared/raffle";
 
 export default function Terms() {
   const [, setLocation] = useLocation();
