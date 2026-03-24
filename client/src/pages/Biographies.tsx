@@ -72,7 +72,7 @@ export default function Biographies() {
       name: "TXT",
       group: "Grupo de 5 miembros",
       description: "TOMORROW X TOGETHER es un grupo masculino surcoreano conocido por sus narrativas mágicas y crecimiento artístico.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
+      image: "https://4kwallpapers.com/images/wallpapers/tomorrow-x-together-3840x2160-23184.jpg",
       debut: "2019",
       members: 5,
       path: "/biografias/txt"
