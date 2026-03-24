@@ -28,7 +28,7 @@ export default function TxtBiographies() {
       birthday: "13 de septiembre de 1999",
       birthplace: "Seongbuk-gu, Seúl, Corea del Sur",
       mbti: "ENFP",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      image: "https://cdn.shopify.com/s/files/1/0469/3927/5428/files/TXT-The-Name-Chapter-FREEFALL-3rd-Full-Album-Concept-Photos-documents-1_13.jpg?v=1733320183",
       color: "bg-red-500",
       fullBio: {
         preDebut: "Yeonjun fue aprendiz en Big Hit Entertainment durante 5 años. Es conocido como el 'Legendary Trainee' de Big Hit y fue el primer miembro en ser revelado.",
@@ -45,7 +45,7 @@ export default function TxtBiographies() {
       birthday: "5 de diciembre de 2000",
       birthplace: "Ansan, Gyeonggi, Corea del Sur",
       mbti: "ISFJ",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      image: "https://www.nme.com/wp-content/uploads/2024/11/txt-soobin-hiatus-announcement-health-concerns-2024.jpg",
       color: "bg-blue-500",
       fullBio: {
         preDebut: "Soobin fue el segundo miembro en ser revelado. Es conocido por su personalidad tímida pero encantadora y su voz suave.",
@@ -62,7 +62,7 @@ export default function TxtBiographies() {
       birthday: "13 de marzo de 2001",
       birthplace: "Daegu, Corea del Sur",
       mbti: "ENFJ",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      image: "https://www.papermag.com/media-library/image.jpg?id=27279240&width=2000&height=1500&coordinates=0%2C801%2C0%2C1879",
       color: "bg-green-500",
       fullBio: {
         preDebut: "Beomgyu fue el quinto y último miembro en ser revelado. Fue reclutado en Daegu y tuvo que viajar a Seúl para entrenar. Es conocido por su energía y su personalidad brillante.",
@@ -79,7 +79,7 @@ export default function TxtBiographies() {
       birthday: "5 de febrero de 2002",
       birthplace: "Gangnam-gu, Seúl, Corea del Sur",
       mbti: "ESTP",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      image: "https://legacy.kpopping.com/eb/3/250823-TXT-TAEHYUN-at-World-Tour-ACT-TOMORROW-in-SEOUL-D2-documents-1.jpeg",
       color: "bg-purple-500",
       fullBio: {
         preDebut: "Taehyun fue el cuarto miembro en ser revelado. Fue un modelo infantil y apareció en varios anuncios antes de unirse a Big Hit.",
@@ -96,7 +96,7 @@ export default function TxtBiographies() {
       birthday: "14 de agosto de 2002",
       birthplace: "Honolulu, Hawái, EE.UU.",
       mbti: "ENFP",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      image: "https://www.allkpop.com/upload/2024/11/content/020355/web_data/allkpop_1730535368_20241102-hueningkai.jpg",
       color: "bg-yellow-500",
       fullBio: {
         preDebut: "Huening Kai es el primer idol extranjero en debutar bajo Big Hit Entertainment. Es de ascendencia coreana, alemana y brasileña. Fue el tercer miembro en ser revelado.",
