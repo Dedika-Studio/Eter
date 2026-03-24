@@ -1,0 +1,17 @@
+{
+  "name": "ETER KPOP MX",
+  "short_name": "ETER",
+  "description": "Tu destino número uno para todo lo relacionado con el K-POP en México.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "https://yt3.ggpht.com/rGD4n7Nq_CQfuIV0Ig_iIIbv30gVoKEcqcn1tsbWKZVWBA9Ni1W5TVhp5vRMKplK0uBK7S4Ikw=s600-c-k-c0x00ffffff-no-rj-rp-mo",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
