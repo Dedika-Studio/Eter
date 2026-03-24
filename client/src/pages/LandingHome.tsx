@@ -261,12 +261,11 @@ export default function LandingHome() {
                   Disfruta de las mejores fotos y visuales de tus idols preferidos.
                 </p>
                 <Button
-                  onClick={() => navigate("/galerias")}
-                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white text-xs md:text-sm py-1 md:py-2"
+                  disabled
+                  className="w-full gap-1 md:gap-2 bg-slate-200 text-slate-500 cursor-not-allowed text-xs md:text-sm py-1 md:py-2 opacity-70"
                 >
                   <Images className="size-3 md:size-4" />
-                  <span className="hidden md:inline">Ver Galerias</span>
-                  <span className="md:hidden">Galerias</span>
+                  <span>Próximamente</span>
                 </Button>
               </div>
             </CardContent>
