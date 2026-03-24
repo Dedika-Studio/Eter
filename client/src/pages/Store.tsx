@@ -247,9 +247,23 @@ export default function Store() {
                               </div>
                             )}
                           </div>
-                          <Button className="w-full rounded-2xl bg-slate-900 hover:bg-purple-600 text-white font-bold text-xs uppercase tracking-widest h-10 transition-all">
-                            Ver Detalles
-                          </Button>
+                          <div className="flex flex-col gap-2">
+                            <Button className="w-full rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-[10px] uppercase tracking-widest h-9 transition-all">
+                              Ver Detalles
+                            </Button>
+                            <a
+                              href={product.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="w-full"
+                            >
+                              <Button className="w-full rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-black text-[10px] uppercase tracking-widest h-9 transition-all gap-2">
+                                <ExternalLink className="size-3" />
+                                Comprar
+                              </Button>
+                            </a>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
