@@ -136,7 +136,7 @@ export default function NewJeansBiographies() {
       {/* Hero Section */}
       <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
         <img
-          src="https://imgix.bustle.com/uploads/image/2024/9/23/cad67fbf/f24_newjeans_pr_logo_.jpg?w=414&h=259&fit=crop&crop=focalpoint&fp-x=0.4848&fp-y=0.0095&dpr=2"
+          src="https://wallpaperaccess.com/full/8626014.jpg"
           alt="NewJeans Group"
           className="w-full h-full object-cover object-top"
         />

@@ -52,7 +52,7 @@ export default function Biographies() {
       name: "NewJeans",
       group: "Grupo de 5 miembros",
       description: "NewJeans es el grupo femenino más nuevo de HYBE, conocido por su concepto fresco y moderno.",
-      image: "https://imgix.bustle.com/uploads/image/2024/9/23/cad67fbf/f24_newjeans_pr_logo_.jpg?w=414&h=259&fit=crop&crop=focalpoint&fp-x=0.4848&fp-y=0.0095&dpr=2",
+      image: "https://wallpaperaccess.com/full/8626014.jpg",
       debut: "2022",
       members: 5,
       path: "/biografias/newjeans"
@@ -116,7 +116,7 @@ export default function Biographies() {
                 <img
                   src={artist.image}
                   alt={artist.name}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform"
+                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform"
                 />
                 <div className="absolute inset-0 bg-black/20 hover:bg-black/30 transition-colors" />
 
