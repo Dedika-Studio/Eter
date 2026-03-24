@@ -350,19 +350,23 @@ export const appRouter = router({
         content: z.string().min(10),
       }))
       .mutation(async ({ input }) => {
+        let contentKo = "";
         try {
-          // 1. Traducir al coreano
-          const translation = await translate(input.content, { to: "ko" });
-          const contentKo = translation.text;
+          // 1. Intentar traducir al coreano
+          const translation = await translate(input.content, { to: "ko" }).catch(err => {
+            console.error("[Stories] Translation failed:", err);
+            return { text: "" };
+          });
+          contentKo = translation.text || "Traducción no disponible en este momento.";
 
-          // 2. Guardar en BD
+          // 2. Guardar en BD (esto es lo más importante)
           const storyId = await createStory({
             name: input.name,
             content: input.content,
             contentKo,
           });
 
-          // 3. Sincronizar con Google Sheets
+          // 3. Sincronizar con Google Sheets (en segundo plano)
           const payload = {
             tipo: "historia",
             nombre: input.name,
@@ -372,7 +376,9 @@ export const appRouter = router({
           };
 
           const STORIES_SHEETS_API = "https://script.google.com/macros/s/AKfycbzOJeE4kmAOr2kxGkKrdQgLsvZBNq-GgQLGEHNbrbfBlPIypoh0cDh7xso66Kc1PDru/exec";
-          await fetch(STORIES_SHEETS_API, {
+          
+          // No esperamos la respuesta de Sheets para no bloquear al usuario
+          fetch(STORIES_SHEETS_API, {
             method: "POST",
             body: JSON.stringify(payload),
             headers: { "Content-Type": "application/json" },
@@ -380,8 +386,9 @@ export const appRouter = router({
 
           return { success: true, storyId };
         } catch (error) {
-          console.error("[Stories] Error submitting story:", error);
-          throw new Error("Error al enviar tu historia. Por favor, intenta de nuevo.");
+          console.error("[Stories] Critical error submitting story:", error);
+          // Solo lanzamos error si falla el guardado en la base de datos
+          throw new Error("Lo sentimos, hubo un problema técnico al procesar tu historia. Por favor, intenta de nuevo.");
         }
       }),
   }),
