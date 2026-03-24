@@ -18,7 +18,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "../components/ui/badge";
 import { toast } from "sonner";
 import { RAFFLE_CONFIG } from "@shared/raffle";
 import {

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "../components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowLeft, Send, Heart, MessageCircle, Sparkles, Globe, ChevronDown, Maximize2 } from "lucide-react";
 import { toast } from "sonner";
@@ -187,7 +187,7 @@ export default function Stories() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               <AnimatePresence mode="popLayout">
-                {stories?.map((story, index) => {
+                {stories?.map((story: any, index: number) => {
                   const colorClass = cardColors[index % cardColors.length];
                   return (
                     <motion.div

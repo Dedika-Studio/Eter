@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "../components/ui/badge";
 import { CheckCircle2, Ticket, Loader2, PartyPopper, AlertCircle } from "lucide-react";
 import { RAFFLE_CONFIG } from "@shared/raffle";
 import { useLocation } from "wouter";

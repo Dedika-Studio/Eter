@@ -90,7 +90,7 @@ export function StoriesWall() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {recentStories.map((story, index) => (
+          {recentStories.map((story: any, index: number) => (
             <motion.div
               key={story.id}
               initial={{ opacity: 0, y: 30 }}

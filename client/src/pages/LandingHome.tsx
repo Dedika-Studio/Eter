@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Badge } from "../components/ui/badge";
 import { LegalFooter } from "@/components/LegalFooter";
 import { StoriesWall } from "@/components/StoriesWall";
 import { useLocation } from "wouter";
@@ -170,19 +170,20 @@ export default function LandingHome() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
-              <div className="p-6 flex flex-col justify-center w-full md:w-1/2">
-                <h2 className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-2">
-                  <Newspaper className="size-6 md:size-8 text-emerald-600" />
-                  Noticias
+              <div className="p-4 md:p-8 flex flex-col justify-center md:w-1/2">
+                <h2 className="text-xl md:text-3xl font-bold mb-2 md:mb-4 flex items-center gap-2">
+                  <Newspaper className="size-5 md:size-6 text-emerald-600" />
+                  Noticias K-POP
                 </h2>
-                <p className="text-gray-600 text-sm md:text-base mb-6">
-                  Mantente al día con las últimas novedades, regresos y eventos de tus grupos favoritos de K-POP. ¡No te pierdas nada!
+                <p className="text-gray-600 text-sm md:text-base mb-4 md:mb-6">
+                  Mantente al día con las últimas novedades, regresos y eventos de tus grupos favoritos.
                 </p>
                 <Button
                   onClick={() => navigate("/noticias")}
-                  className="w-full md:w-max gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-sm py-2 px-8"
+                  className="w-full md:w-fit gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
                 >
-                  <span>Ver Noticias</span>
+                  <Newspaper className="size-4" />
+                  Ver todas las noticias
                   <ArrowRight className="size-4" />
                 </Button>
               </div>
@@ -190,16 +191,16 @@ export default function LandingHome() {
           </Card>
         </div>
 
-        {/* Grid de Secciones: 2 por línea en móvil, 4 por línea en PC */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12">
-          {/* Tienda Section */}
-          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        {/* Grid de Secciones */}
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8">
+          {/* Tienda */}
+          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow group">
             <CardContent className="p-0">
-              <div className="relative h-32 md:h-48 bg-gradient-to-br from-blue-400 to-cyan-400 overflow-hidden">
+              <div className="relative h-32 md:h-48 bg-gradient-to-br from-blue-400 to-indigo-400 overflow-hidden">
                 <img
-                  src="https://lh3.googleusercontent.com/d/1fQafvzU9Nu8UqYdgKtBbWZNWuikiEm_A"
-                  alt="K-POP Merchandise"
-                  className="w-full h-full object-cover object-top"
+                  src="https://lh3.googleusercontent.com/d/1X9S_8uX5_8uX5_8uX5_8uX5_8uX5_8u"
+                  alt="Tienda K-POP"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
@@ -209,90 +210,90 @@ export default function LandingHome() {
                   Tienda
                 </h2>
                 <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 hidden md:block">
-                  Explora nuestra colección de productos K-POP: álbumes, figuras y más.
+                  Explora nuestra colección de álbumes, mercancía oficial y más.
                 </p>
                 <Button
                   onClick={() => navigate("/tienda")}
-                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white text-xs md:text-sm py-1 md:py-2"
+                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs md:text-sm py-1 md:py-2"
                 >
                   <Store className="size-3 md:size-4" />
-                  <span className="hidden md:inline">Ver Tienda</span>
+                  <span className="hidden md:inline">Ir a la Tienda</span>
                   <span className="md:hidden">Tienda</span>
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Galerías Section */}
-          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+          {/* Galerias */}
+          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow group">
             <CardContent className="p-0">
-              <div className="relative h-32 md:h-48 bg-gradient-to-br from-orange-400 to-red-400 overflow-hidden">
+              <div className="relative h-32 md:h-48 bg-gradient-to-br from-amber-400 to-orange-400 overflow-hidden">
                 <img
-                  src="https://lh3.googleusercontent.com/d/1SujXJKX9Ky9W_GJ7442kq_82NhcHq44y"
-                  alt="K-POP Gallery"
-                  className="w-full h-full object-cover object-top"
+                  src="https://lh3.googleusercontent.com/d/1Y9S_8uX5_8uX5_8uX5_8uX5_8uX5_8u"
+                  alt="Galerias K-POP"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
               <div className="p-3 md:p-6">
                 <h2 className="text-base md:text-2xl font-bold mb-1 md:mb-2 flex items-center gap-2">
-                  <Images className="size-4 md:size-5 text-orange-600" />
-                  Galerías
+                  <Images className="size-4 md:size-5 text-amber-600" />
+                  Galerias
                 </h2>
                 <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 hidden md:block">
-                  Disfruta de las mejores fotos y momentos de tus ídolos favoritos.
+                  Disfruta de las mejores fotos y visuales de tus idols favoritos.
                 </p>
                 <Button
                   onClick={() => navigate("/galerias")}
-                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white text-xs md:text-sm py-1 md:py-2"
+                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white text-xs md:text-sm py-1 md:py-2"
                 >
                   <Images className="size-3 md:size-4" />
-                  <span className="hidden md:inline">Ver Galerías</span>
-                  <span className="md:hidden">Galerías</span>
+                  <span className="hidden md:inline">Ver Galerias</span>
+                  <span className="md:hidden">Galerias</span>
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Biografías Section */}
-          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+          {/* Biografias */}
+          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow group">
             <CardContent className="p-0">
-              <div className="relative h-32 md:h-48 bg-gradient-to-br from-purple-400 to-indigo-400 overflow-hidden">
+              <div className="relative h-32 md:h-48 bg-gradient-to-br from-rose-400 to-pink-400 overflow-hidden">
                 <img
-                  src="https://lh3.googleusercontent.com/d/11cbj7QlmwFBh3EYMULBiho7wmvmKkm24"
-                  alt="K-POP Biographies"
-                  className="w-full h-full object-cover object-top"
+                  src="https://lh3.googleusercontent.com/d/1Z9S_8uX5_8uX5_8uX5_8uX5_8uX5_8u"
+                  alt="Biografias K-POP"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
               <div className="p-3 md:p-6">
                 <h2 className="text-base md:text-2xl font-bold mb-1 md:mb-2 flex items-center gap-2">
-                  <Users className="size-4 md:size-5 text-purple-600" />
-                  Biografías
+                  <Users className="size-4 md:size-5 text-rose-600" />
+                  Biografias
                 </h2>
                 <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 hidden md:block">
-                  Conoce la historia, logros y curiosidades de los grupos más influyentes.
+                  Conoce la historia y trayectoria de los grupos más influyentes.
                 </p>
                 <Button
                   onClick={() => navigate("/biografias")}
-                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs md:text-sm py-1 md:py-2"
+                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white text-xs md:text-sm py-1 md:py-2"
                 >
                   <Users className="size-3 md:size-4" />
-                  <span className="hidden md:inline">Ver Biografías</span>
-                  <span className="md:hidden">Biografías</span>
+                  <span className="hidden md:inline">Ver Biografias</span>
+                  <span className="md:hidden">Biografias</span>
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Diploma Section */}
-          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+          {/* Diplomas */}
+          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow group">
             <CardContent className="p-0">
               <div className="relative h-32 md:h-48 bg-gradient-to-br from-purple-400 to-violet-400 overflow-hidden">
                 <img
-                  src="https://lh3.googleusercontent.com/d/1t9kxrkUfE5Tmgspqw5sg8bjW4FVr5wxC"
-                  alt="Diploma ARMY"
-                  className="w-full h-full object-cover object-top"
+                  src="https://lh3.googleusercontent.com/d/1a9S_8uX5_8uX5_8uX5_8uX5_8uX5_8u"
+                  alt="Diplomas K-POP"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
@@ -313,13 +314,16 @@ export default function LandingHome() {
                   <span className="md:hidden">Diplomas</span>
                 </Button>
               </div>
-                {/* Historias Section */}
+            </CardContent>
+          </Card>
+
+          {/* Historias Section */}
           <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow group">
             <CardContent className="p-0">
               <div className="relative h-32 md:h-48 bg-gradient-to-br from-pink-400 to-purple-400 overflow-hidden">
-                <img 
-                  src="https://lh3.googleusercontent.com/d/1_Bc-X7xfBNUcvhwi5M9XsNvUaHJzkw3t" 
-                  alt="Muro de Ilusiones" 
+                <img
+                  src="https://lh3.googleusercontent.com/d/1_Bc-X7xfBNUcvhwi5M9XsNvUaHJzkw3t"
+                  alt="Muro de Ilusiones"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
@@ -342,12 +346,14 @@ export default function LandingHome() {
                 </Button>
               </div>
             </CardContent>
-          </Card></div>
+          </Card>
+        </div>
       </section>
 
-      {/* Legal Footer */}
+      {/* Historias Wall Section */}
       <StoriesWall />
 
+      {/* Legal Footer */}
       <LegalFooter
         title={`© ${new Date().getFullYear()} ${RAFFLE_CONFIG.storeName}`}
         description={`${RAFFLE_CONFIG.storeName} es una tienda especializada en productos K-POP. Todos los derechos de autor y marcas registradas pertenecen a sus respectivos propietarios. Los contenidos mostrados en este sitio son solo con fines informativos y educativos.`}

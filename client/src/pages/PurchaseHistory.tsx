@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "../components/ui/badge";
 import { ArrowLeft, Ticket, ShoppingBag, Calendar, DollarSign, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Loader } from "lucide-react";

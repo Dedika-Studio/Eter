@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LegalFooter } from "@/components/LegalFooter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-// Badge component replaced by styled div to avoid build errors in Railway
+import { Badge } from "../components/ui/badge";
 import { ArrowLeft, Calendar, ExternalLink, Loader2, ChevronDown, ChevronUp, Maximize2, Globe } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 
@@ -125,9 +125,9 @@ export default function News() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                       <div className="absolute top-3 left-3">
-                        <div className="bg-emerald-500/80 backdrop-blur-md text-white border-none text-[10px] uppercase tracking-widest">
+                        <Badge className="bg-emerald-500/80 backdrop-blur-md text-white border-none text-[10px] uppercase tracking-widest">
                           {article.source}
-                        </div>
+                        </Badge>
                       </div>
                     </div>
                   )}
