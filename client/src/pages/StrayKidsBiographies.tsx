@@ -186,9 +186,7 @@ export default function StrayKidsBiographies() {
 
       {/* Hero Section */}
       <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Bang_Chan_of_Stray_Kids%2C_October_15%2C_2025_%282%29.png"
-          alt="Stray Kids Group"
+       src="https://i.pinimg.com/originals/cf/f2/c8/cff2c874b3b35b3a599bafc5e3416240.jpg"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
