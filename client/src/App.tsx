@@ -30,6 +30,8 @@ import Stories from "./pages/Stories";
 import PurchaseHistory from "./pages/PurchaseHistory";
 import News from "./pages/News";
 import Diploma from "./pages/Diploma";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 
 function Router() {
@@ -70,6 +72,8 @@ function Router() {
       <Route path="/mi-historial" component={PurchaseHistory} />
       <Route path="/noticias" component={News} />
       <Route path="/diploma" component={Diploma} />
+      <Route path="/terminos" component={Terms} />
+      <Route path="/privacidad" component={Privacy} />
       <Route path="/admin" component={Admin} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}

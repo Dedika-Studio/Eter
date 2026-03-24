@@ -623,14 +623,11 @@ export default function Diploma() {
 
             <div className="flex flex-col items-center md:items-end gap-6">
               <div className="flex gap-6 text-sm font-medium text-slate-400">
-                <a href="#" className="hover:text-slate-900 transition-colors">
+                <a href="/terminos" className="hover:text-slate-900 transition-colors">
                   Términos
                 </a>
-                <a href="#" className="hover:text-slate-900 transition-colors">
+                <a href="/privacidad" className="hover:text-slate-900 transition-colors">
                   Privacidad
-                </a>
-                <a href="#" className="hover:text-slate-900 transition-colors">
-                  Contacto
                 </a>
               </div>
             </div>

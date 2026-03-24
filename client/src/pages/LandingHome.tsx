@@ -420,9 +420,8 @@ export default function LandingHome() {
                 </Button>
               </div>
               <div className="flex gap-6 text-sm font-medium text-slate-400">
-                <a href="#" className="hover:text-slate-900 transition-colors">Términos</a>
-                <a href="#" className="hover:text-slate-900 transition-colors">Privacidad</a>
-                <a href="#" className="hover:text-slate-900 transition-colors">Contacto</a>
+                <a href="/terminos" className="hover:text-slate-900 transition-colors">Términos</a>
+                <a href="/privacidad" className="hover:text-slate-900 transition-colors">Privacidad</a>
               </div>
             </div>
           </div>
