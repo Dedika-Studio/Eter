@@ -810,3 +810,41 @@ export async function getDb() {
     })
   };
 }
+
+export async function markOrderSyncedToSheets(orderId: number): Promise<void> {
+  const doc = await getDoc();
+  if (!doc) return;
+
+  try {
+    const sheet = doc.sheetsByTitle['orders'];
+    if (!sheet) return;
+
+    const rows = await sheet.getRows();
+    const row = rows.find(r => Number(r.id) === orderId);
+
+    if (row) {
+      row.syncedToSheets = 'true';
+      row.updatedAt = new Date().toISOString();
+      await row.save();
+    }
+  } catch (error) {
+    console.error('[Sheets] Error marking order synced to sheets:', error);
+  }
+}
+
+export async function getOrderByStripeSession(sessionId: string): Promise<Order | null> {
+  const doc = await getDoc();
+  if (!doc) return null;
+
+  try {
+    const sheet = doc.sheetsByTitle['orders'];
+    if (!sheet) return null;
+
+    const rows = await sheet.getRows();
+    const row = rows.find(r => r.stripeSessionId === sessionId);
+    return row ? rowToObject(row, getHeadersForSheet('orders')) : null;
+  } catch (error) {
+    console.error('[Sheets] Error getting order by stripe session:', error);
+    return null;
+  }
+}
