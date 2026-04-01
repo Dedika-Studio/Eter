@@ -121,11 +121,11 @@ let _doc: GoogleSpreadsheet | null = null;
 async function getDoc() {
   if (_doc) return _doc;
 
-  const credsJson = process.env.GOOGLE_SHEETS_CREDS;
-  const spreadsheetId = process.env.SPREADSHEET_ID;
+  const credsJson = ENV.googleSheetsCreds;
+  const spreadsheetId = ENV.spreadsheetId;
 
   if (!credsJson || !spreadsheetId) {
-    console.warn('[Sheets] Missing credentials or spreadsheet ID');
+    console.warn('[Sheets] Missing credentials or spreadsheet ID. SPREADSHEET_ID:', !!spreadsheetId, 'CREDS:', !!credsJson);
     return null;
   }
 
