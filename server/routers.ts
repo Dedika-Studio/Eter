@@ -293,6 +293,51 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return getRaffleByNumber(input.raffleNumber);
       }),
+
+    create: protectedProcedure
+      .input(
+        z.object({
+          title: z.string().min(1),
+          description: z.string().optional(),
+          image: z.string().url(),
+          totalTickets: z.number().min(1),
+          pricePerTicket: z.number().min(1),
+          drawDate: z.string(), // ISO string from frontend
+          webhookUrl: z.string().url().optional(),
+          category: z.string(),
+          raffleNumber: z.number(),
+          isActive: z.boolean().default(true),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return createRaffle(input);
+      }),
+
+    update: protectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          title: z.string().optional(),
+          description: z.string().optional(),
+          image: z.string().optional(),
+          totalTickets: z.number().optional(),
+          pricePerTicket: z.number().optional(),
+          drawDate: z.string().optional(),
+          webhookUrl: z.string().optional(),
+          category: z.string().optional(),
+          isActive: z.boolean().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        return updateRaffle(id, data);
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return deleteRaffle(input.id);
+      }),
   }),
 
   news: newsRouter,

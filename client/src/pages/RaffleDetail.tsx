@@ -40,8 +40,8 @@ export default function RaffleDetail() {
         description: dbRaffle.description || "",
         image: dbRaffle.image,
         totalTickets: dbRaffle.totalTickets,
-        pricePerTicket: dbRaffle.pricePerTicket / 100,
-        drawDate: dbRaffle.drawDate.toISOString(),
+        pricePerTicket: Number(dbRaffle.pricePerTicket) / 100,
+        drawDate: typeof dbRaffle.drawDate === 'string' ? dbRaffle.drawDate : new Date(dbRaffle.drawDate).toISOString(),
         webhookUrl: dbRaffle.webhookUrl || "",
         category: dbRaffle.category as RaffleCategory,
       });

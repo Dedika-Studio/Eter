@@ -111,8 +111,8 @@ export default function Admin() {
         description: r.description || "",
         image: r.image,
         totalTickets: r.totalTickets,
-        pricePerTicket: Number((r.pricePerTicket / 100).toFixed(2)),
-        drawDate: r.drawDate.toISOString().split('T')[0],
+        pricePerTicket: Number((Number(r.pricePerTicket) / 100).toFixed(2)),
+        drawDate: typeof r.drawDate === 'string' ? r.drawDate.split('T')[0] : new Date(r.drawDate).toISOString().split('T')[0],
         webhookUrl: r.webhookUrl || "",
         category: r.category as RaffleCategory,
       })));
