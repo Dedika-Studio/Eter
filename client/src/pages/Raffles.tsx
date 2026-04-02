@@ -51,7 +51,7 @@ export default function Raffles() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {raffles.map((raffle) => {
               const theme = getTheme(raffle.category);
-              const drawDate = new Date(raffle.drawDate);
+              const drawDate = typeof raffle.drawDate === 'string' ? new Date(raffle.drawDate) : raffle.drawDate;
               const isUpcoming = drawDate > new Date();
 
               return (

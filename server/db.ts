@@ -572,13 +572,25 @@ export async function createRaffle(data: any): Promise<number> {
   if (!doc) throw new Error('Database not available');
 
   try {
+    // 1. Desactivar rifas anteriores si la nueva es activa
+    if (data.isActive) {
+      const raffleSheet = doc.sheetsByTitle['raffles'];
+      const raffleRows = await raffleSheet.getRows();
+      for (const row of raffleRows) {
+        if (row.get('isActive') === 'TRUE' || row.get('isActive') === true) {
+          row.set('isActive', 'FALSE');
+          await row.save();
+        }
+      }
+    }
+
+    // 2. Crear la nueva rifa
     const sheet = doc.sheetsByTitle['raffles'];
     const rows = await sheet.getRows();
     const maxId = rows.reduce((max, row) => Math.max(max, Number(row.id) || 0), 0);
     const id = (maxId + 1).toString();
     const now = new Date().toISOString();
 
-    // Convert complex objects to simple types (strings/numbers) for Google Sheets
     const safeData: Record<string, any> = { id };
     for (const key in data) {
       const val = data[key];
@@ -594,6 +606,36 @@ export async function createRaffle(data: any): Promise<number> {
     safeData.updatedAt = now;
 
     await sheet.addRows([safeData]);
+
+    // 3. Generar boletos para esta rifa
+    // Primero limpiamos la tabla de boletos (opcional, pero recomendado si solo hay una rifa activa)
+    const ticketSheet = doc.sheetsByTitle['tickets'];
+    await ticketSheet.clearRows(); // Borra los boletos de la rifa anterior
+
+    const totalTickets = Number(data.totalTickets);
+    const ticketRows = [];
+    for (let i = 0; i < totalTickets; i++) {
+      ticketRows.push({
+        id: (i + 1).toString(),
+        number: i.toString().padStart(3, '0'),
+        status: 'available',
+        orderId: '',
+        reservedAt: '',
+        buyerName: '',
+        buyerPhone: '',
+        buyerEmail: '',
+        updatedAt: now,
+      });
+
+      // Insertar en bloques de 100 para no saturar la API
+      if (ticketRows.length === 100) {
+        await ticketSheet.addRows(ticketRows);
+        ticketRows.length = 0;
+      }
+    }
+    if (ticketRows.length > 0) {
+      await ticketSheet.addRows(ticketRows);
+    }
 
     return Number(id);
   } catch (error) {
