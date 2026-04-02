@@ -149,6 +149,17 @@ export const appRouter = router({
 
         const formattedPhone = input.buyerPhone.trim();
 
+        // Obtener la rifa activa para usar su precio real de Google Sheets
+        const raffles = await getAllRaffles();
+        const activeRaffle = raffles.find(r => r.isActive) || raffles[0]; // Usar la primera si no hay activa
+        
+        if (!activeRaffle) {
+          throw new Error("No hay ninguna rifa activa configurada en el sistema.");
+        }
+
+        // El precio en Sheets está en centavos (ej: 5000 para $50)
+        const pricePerTicket = Number(activeRaffle.pricePerTicket);
+
         const ticketRows = await getTicketsByNumbers(input.ticketNumbers);
         const availableTickets = ticketRows.filter(t => t.status === "available");
 
@@ -161,7 +172,7 @@ export const appRouter = router({
           throw new Error("Algunos boletos ya no están disponibles. Por favor, intenta con otros.");
         }
 
-        const totalAmount = input.ticketNumbers.length * RAFFLE_CONFIG.pricePerTicket;
+        const totalAmount = input.ticketNumbers.length * pricePerTicket;
 
         const orderId = await createOrder({
           userId: ctx.user?.id ?? null,
@@ -184,13 +195,13 @@ export const appRouter = router({
             line_items: [
               {
                 price_data: {
-                  currency: RAFFLE_PRODUCT.currency,
+                  currency: "mxn",
                   product_data: {
-                    name: RAFFLE_PRODUCT.name,
+                    name: activeRaffle.title,
                     description: `${input.ticketNumbers.length} boleto(s): ${input.ticketNumbers.join(", ")}`,
-                    images: RAFFLE_PRODUCT.images,
+                    images: [activeRaffle.image],
                   },
-                  unit_amount: RAFFLE_PRODUCT.unitAmount,
+                  unit_amount: pricePerTicket,
                 },
                 quantity: input.ticketNumbers.length,
               },
