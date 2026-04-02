@@ -30,17 +30,19 @@ export default function Store() {
 
   useEffect(() => {
     if (dbProducts) {
-      const formattedProducts = dbProducts.map((p: any) => ({
-        id: p.id.toString(),
-        title: p.title,
-        description: p.description || "",
-        price: Number(p.price),
-        image: p.image,
-        link: p.link,
-        rating: p.rating ? p.rating / 10 : undefined,
-        reviews: p.reviews,
-        badge: p.badge || undefined,
-      }));
+      const formattedProducts = dbProducts
+        .filter((p: any) => p && p.id !== undefined && p.id !== null)
+        .map((p: any) => ({
+          id: p.id.toString(),
+          title: p.title || "Producto sin nombre",
+          description: p.description || "",
+          price: p.price ? Number(p.price) : 0,
+          image: p.image || "",
+          link: p.link || "#",
+          rating: p.rating ? Number(p.rating) / 10 : undefined,
+          reviews: p.reviews ? Number(p.reviews) : 0,
+          badge: p.badge || undefined,
+        }));
       setProducts(formattedProducts);
     }
   }, [dbProducts]);

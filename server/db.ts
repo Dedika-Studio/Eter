@@ -423,7 +423,8 @@ export async function createOrder(data: any): Promise<number> {
     if (!sheet) throw new Error('Orders sheet not found');
 
     const rows = await sheet.getRows();
-    const id = (rows.length + 1).toString();
+    const maxId = rows.reduce((max, row) => Math.max(max, Number(row.id) || 0), 0);
+    const id = (maxId + 1).toString();
     const now = new Date().toISOString();
 
     await sheet.addRows([{
@@ -546,7 +547,8 @@ export async function createRaffle(data: any): Promise<number> {
   try {
     const sheet = doc.sheetsByTitle['raffles'];
     const rows = await sheet.getRows();
-    const id = (rows.length + 1).toString();
+    const maxId = rows.reduce((max, row) => Math.max(max, Number(row.id) || 0), 0);
+    const id = (maxId + 1).toString();
     const now = new Date().toISOString();
 
     await sheet.addRows([{
@@ -648,7 +650,8 @@ export async function createProduct(data: any): Promise<number> {
   try {
     const sheet = doc.sheetsByTitle['products'];
     const rows = await sheet.getRows();
-    const id = (rows.length + 1).toString();
+    const maxId = rows.reduce((max, row) => Math.max(max, Number(row.id) || 0), 0);
+    const id = (maxId + 1).toString();
     const now = new Date().toISOString();
 
     await sheet.addRows([{
@@ -727,7 +730,8 @@ export async function createNews(data: any): Promise<number> {
     if (!sheet) throw new Error('News sheet not found');
 
     const rows = await sheet.getRows();
-    const id = (rows.length + 1).toString();
+    const maxId = rows.reduce((max, row) => Math.max(max, Number(row.id) || 0), 0);
+    const id = (maxId + 1).toString();
     const now = new Date().toISOString();
 
     await sheet.addRows([
