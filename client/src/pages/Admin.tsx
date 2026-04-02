@@ -9,8 +9,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { 
   Loader2, Plus, Trash2, Edit2, Ticket, Package, ShoppingCart, 
   MessageCircle, Newspaper, Image as ImageIcon, Search, RefreshCw,
-  DollarSign, Calendar, Zap, ExternalLink, Images, User, Phone, CheckCircle2, XCircle
+  DollarSign, Calendar, Zap, ExternalLink, Images, User, Phone, CheckCircle2, XCircle,
+  Smartphone, Wallet, Plane, Car, Gift
 } from "lucide-react";
+import { raffleThemes, type RaffleCategory } from "@shared/raffleThemes";
 import { toast } from "sonner";
 
 export default function Admin() {
@@ -158,6 +160,25 @@ function RaffleManager() {
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Fecha del Sorteo</label>
               <Input className="rounded-xl h-11 bg-slate-50 border-slate-100" type="date" value={formData.drawDate} onChange={e => setFormData({...formData, drawDate: e.target.value})} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Categoría / Tema</label>
+              <div className="grid grid-cols-3 gap-2">
+                {Object.keys(raffleThemes).map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setFormData({...formData, category: cat as RaffleCategory})}
+                    className={`
+                      p-2 rounded-xl border-2 transition-all flex flex-col items-center gap-1
+                      ${formData.category === cat ? "border-purple-600 bg-purple-50" : "border-slate-100 bg-slate-50 grayscale opacity-60 hover:grayscale-0 hover:opacity-100"}
+                    `}
+                  >
+                    <span className="text-lg">{raffleThemes[cat as RaffleCategory].icon}</span>
+                    <span className="text-[8px] font-black uppercase tracking-tighter">{cat}</span>
+                  </button>
+                ))}
+              </div>
             </div>
             <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-2xl h-14 font-black uppercase tracking-widest shadow-lg shadow-purple-100 mt-4" disabled={createMutation.isLoading}>
               {createMutation.isLoading ? <Loader2 className="animate-spin mr-2" /> : <Ticket className="mr-2 size-5" />}

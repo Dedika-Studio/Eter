@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Ticket, Loader2, Calendar, DollarSign, Info, ShieldCheck, Search } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { getTheme, type RaffleCategory } from "@shared/raffleThemes";
 
 export default function RaffleDetail() {
   const [match, params] = useRoute("/rifa/:id");
@@ -84,6 +85,7 @@ export default function RaffleDetail() {
 
   const pricePerTicket = Number(raffle.pricePerTicket) / 100;
   const totalPrice = selectedTickets.length * pricePerTicket;
+  const theme = getTheme(raffle.category as RaffleCategory);
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 lg:pb-0">
@@ -92,7 +94,10 @@ export default function RaffleDetail() {
           <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="gap-2 text-slate-600 font-bold hover:bg-slate-100 rounded-xl">
             <ArrowLeft className="size-4" /> Inicio
           </Button>
-          <Badge className="bg-purple-100 text-purple-700 border-purple-200 px-3 py-1 font-black uppercase text-[10px] tracking-tighter">Sorteo Activo</Badge>
+          <div className="flex items-center gap-2">
+            <span className="text-lg">{theme.icon}</span>
+            <Badge className={`${theme.buttonBg} ${theme.textColor} px-3 py-1 font-black uppercase text-[10px] tracking-tighter`}>Sorteo {raffle.category}</Badge>
+          </div>
         </div>
       </header>
 
@@ -100,12 +105,16 @@ export default function RaffleDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Columna Izquierda: Información */}
           <div className="lg:col-span-5 space-y-6">
-            <Card className="overflow-hidden border-none shadow-2xl rounded-[2.5rem] bg-white">
+            <Card className={`overflow-hidden border-none shadow-2xl rounded-[2.5rem] bg-white ring-4 ring-offset-4 ring-${theme.primary}/10`}>
               <div className="aspect-square relative">
                 <img src={raffle.image} className="w-full h-full object-cover" alt={raffle.title} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
-                  <h1 className="text-3xl md:text-4xl font-black text-white mb-2 leading-tight">{raffle.title}</h1>
-                  <p className="text-white/80 text-sm line-clamp-2">{raffle.description}</p>
+                <div className={`absolute inset-0 bg-gradient-to-t from-${theme.primary}/90 via-black/20 to-transparent flex flex-col justify-end p-8`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl drop-shadow-lg">{theme.icon}</span>
+                    <span className="text-[10px] font-black text-white/80 uppercase tracking-[0.2em] drop-shadow-sm">Premio {raffle.category}</span>
+                  </div>
+                  <h1 className="text-3xl md:text-4xl font-black text-white mb-2 leading-tight drop-shadow-xl">{raffle.title}</h1>
+                  <p className="text-white/80 text-sm line-clamp-2 drop-shadow-md">{raffle.description}</p>
                 </div>
               </div>
               <CardContent className="p-8 space-y-6">
@@ -115,7 +124,7 @@ export default function RaffleDetail() {
                       <DollarSign className="size-3" />
                       <span className="text-[10px] font-black uppercase tracking-widest">Precio</span>
                     </div>
-                    <p className="text-2xl font-black text-slate-900">${pricePerTicket} <span className="text-xs font-medium text-slate-400">MXN</span></p>
+                    <p className={`text-2xl font-black ${theme.accent}`}>${pricePerTicket} <span className="text-xs font-medium text-slate-400">MXN</span></p>
                   </div>
                   <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                     <div className="flex items-center gap-2 text-slate-400 mb-1">
@@ -126,13 +135,13 @@ export default function RaffleDetail() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 bg-green-50 rounded-2xl border border-green-100">
-                  <div className="bg-green-500 size-10 rounded-xl flex items-center justify-center text-white">
+                <div className={`flex items-center gap-4 p-4 ${theme.buttonBg}/5 rounded-2xl border border-${theme.primary}/10`}>
+                  <div className={`${theme.buttonBg} size-10 rounded-xl flex items-center justify-center text-white`}>
                     <ShieldCheck className="size-6" />
                   </div>
                   <div>
-                    <p className="text-xs font-black text-green-800 uppercase tracking-widest">Pago Seguro</p>
-                    <p className="text-[10px] text-green-600 font-bold">Procesado por Stripe®</p>
+                    <p className={`text-xs font-black ${theme.accent} uppercase tracking-widest`}>Compra Protegida</p>
+                    <p className="text-[10px] text-slate-400 font-bold">Garantía de Sorteo Eter</p>
                   </div>
                 </div>
               </CardContent>
@@ -142,11 +151,11 @@ export default function RaffleDetail() {
           {/* Columna Derecha: Boletos */}
           <div className="lg:col-span-7 space-y-6">
             <Card className="border-none shadow-xl rounded-[2.5rem] bg-white overflow-hidden">
-              <div className="bg-slate-900 p-6 flex items-center justify-between">
-                <h2 className="text-white font-black text-lg flex items-center gap-3">
-                  <Ticket className="size-6 text-purple-400" /> Selecciona tus Boletos
+              <div className={`${theme.buttonBg} p-6 flex items-center justify-between`}>
+                <h2 className={`${theme.textColor} font-black text-lg flex items-center gap-3`}>
+                  <Ticket className="size-6 opacity-80" /> Selecciona tus Boletos
                 </h2>
-                <Badge variant="outline" className="text-white border-white/20 px-3 py-1">
+                <Badge variant="outline" className={`${theme.textColor} border-white/20 px-3 py-1`}>
                   {tickets?.filter((t: any) => t.status === "available").length} Disponibles
                 </Badge>
               </div>
@@ -195,7 +204,7 @@ export default function RaffleDetail() {
                             onClick={() => handleTicketClick(t.number, t.status)}
                             className={`
                               aspect-square rounded-xl text-xs font-black transition-all duration-200
-                              ${isSelected ? "bg-purple-600 text-white scale-95 shadow-lg shadow-purple-200" : ""}
+                              ${isSelected ? `${theme.buttonBg} ${theme.textColor} scale-95 shadow-lg shadow-${theme.primary}/20` : ""}
                               ${t.status === "available" && !isSelected ? "bg-slate-50 text-slate-600 hover:bg-slate-100 hover:scale-105" : ""}
                               ${isSold ? "bg-red-50 text-red-300 cursor-not-allowed opacity-50" : ""}
                               ${isReserved ? "bg-amber-50 text-amber-400 cursor-not-allowed animate-pulse" : ""}
@@ -227,7 +236,7 @@ export default function RaffleDetail() {
       `}>
         <div className="container max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-4">
           <div className="flex-grow flex items-center gap-4">
-            <div className="bg-purple-100 text-purple-700 px-4 py-2 rounded-2xl font-black text-sm">
+            <div className={`${theme.buttonBg}/10 ${theme.accent} px-4 py-2 rounded-2xl font-black text-sm`}>
               {selectedTickets.length} Boletos
             </div>
             <div className="text-slate-900">
@@ -238,7 +247,7 @@ export default function RaffleDetail() {
           <Button 
             disabled={isProcessing}
             onClick={handleCheckout}
-            className="w-full md:w-auto px-12 h-14 bg-slate-900 hover:bg-slate-800 text-white font-black text-lg rounded-2xl shadow-xl transition-all hover:scale-105 active:scale-95 gap-3"
+            className={`w-full md:w-auto px-12 h-14 ${theme.buttonBg} ${theme.buttonHover} ${theme.textColor} font-black text-lg rounded-2xl shadow-xl transition-all hover:scale-105 active:scale-95 gap-3`}
           >
             {isProcessing ? <Loader2 className="animate-spin" /> : <Ticket className="size-5" />}
             {isProcessing ? "Procesando..." : "Comprar Ahora"}
