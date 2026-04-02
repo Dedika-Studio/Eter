@@ -444,12 +444,22 @@ export async function createOrder(data: any): Promise<number> {
     const id = (maxId + 1).toString();
     const now = new Date().toISOString();
 
-    await sheet.addRows([{
-      id,
-      ...data,
-      createdAt: now,
-      updatedAt: now,
-    }]);
+    // Convert complex objects to simple types (strings/numbers) for Google Sheets
+    const safeData: Record<string, any> = { id };
+    for (const key in data) {
+      const val = data[key];
+      if (val instanceof Date) {
+        safeData[key] = val.toISOString();
+      } else if (val === null || val === undefined) {
+        safeData[key] = '';
+      } else {
+        safeData[key] = val;
+      }
+    }
+    safeData.createdAt = now;
+    safeData.updatedAt = now;
+
+    await sheet.addRows([safeData]);
 
     return Number(id);
   } catch (error) {
@@ -568,12 +578,22 @@ export async function createRaffle(data: any): Promise<number> {
     const id = (maxId + 1).toString();
     const now = new Date().toISOString();
 
-    await sheet.addRows([{
-      id,
-      ...data,
-      createdAt: now,
-      updatedAt: now,
-    }]);
+    // Convert complex objects to simple types (strings/numbers) for Google Sheets
+    const safeData: Record<string, any> = { id };
+    for (const key in data) {
+      const val = data[key];
+      if (val instanceof Date) {
+        safeData[key] = val.toISOString();
+      } else if (val === null || val === undefined) {
+        safeData[key] = '';
+      } else {
+        safeData[key] = val;
+      }
+    }
+    safeData.createdAt = now;
+    safeData.updatedAt = now;
+
+    await sheet.addRows([safeData]);
 
     return Number(id);
   } catch (error) {
@@ -616,8 +636,17 @@ export async function updateRaffle(id: number, data: any): Promise<void> {
     const row = rows.find(r => Number(r.id) === id);
 
     if (row) {
-      Object.assign(row, data);
-      row.updatedAt = new Date().toISOString();
+      for (const key in data) {
+        const val = data[key];
+        if (val instanceof Date) {
+          row.set(key, val.toISOString());
+        } else if (val === null || val === undefined) {
+          row.set(key, '');
+        } else {
+          row.set(key, val);
+        }
+      }
+      row.set('updatedAt', new Date().toISOString());
       await row.save();
     }
   } catch (error) {
@@ -671,12 +700,22 @@ export async function createProduct(data: any): Promise<number> {
     const id = (maxId + 1).toString();
     const now = new Date().toISOString();
 
-    await sheet.addRows([{
-      id,
-      ...data,
-      createdAt: now,
-      updatedAt: now,
-    }]);
+    // Convert complex objects to simple types (strings/numbers) for Google Sheets
+    const safeData: Record<string, any> = { id };
+    for (const key in data) {
+      const val = data[key];
+      if (val instanceof Date) {
+        safeData[key] = val.toISOString();
+      } else if (val === null || val === undefined) {
+        safeData[key] = '';
+      } else {
+        safeData[key] = val;
+      }
+    }
+    safeData.createdAt = now;
+    safeData.updatedAt = now;
+
+    await sheet.addRows([safeData]);
 
     return Number(id);
   } catch (error) {
@@ -695,8 +734,17 @@ export async function updateProduct(id: number, data: any): Promise<void> {
     const row = rows.find(r => Number(r.id) === id);
 
     if (row) {
-      Object.assign(row, data);
-      row.updatedAt = new Date().toISOString();
+      for (const key in data) {
+        const val = data[key];
+        if (val instanceof Date) {
+          row.set(key, val.toISOString());
+        } else if (val === null || val === undefined) {
+          row.set(key, '');
+        } else {
+          row.set(key, val);
+        }
+      }
+      row.set('updatedAt', new Date().toISOString());
       await row.save();
     }
   } catch (error) {
