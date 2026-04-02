@@ -38,7 +38,10 @@ export default function RaffleDetail() {
     );
   }
 
-  const allImages = [raffle.image, ...(raffle.images ? raffle.images.split(',').map(img => img.trim()).filter(img => img !== "") : [])];
+  // Procesar campo unificado de imágenes (soporta comas y saltos de línea)
+  const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1579546678181-7f1a630ec3dc?q=80&w=2071&auto=format&fit=crop";
+  const rawImages = raffle.image ? raffle.image.split(/[\n,]+/).map(img => img.trim()).filter(img => img !== "") : [];
+  const allImages = rawImages.length > 0 ? rawImages : [FALLBACK_IMAGE];
 
   const handleNextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % allImages.length);

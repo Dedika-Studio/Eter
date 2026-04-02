@@ -81,8 +81,7 @@ function RaffleManager() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    image: "",
-    images: "", // URLs adicionales separadas por comas
+    image: "", // Todas las imágenes aquí
     totalTickets: 100,
     pricePerTicket: 50,
     drawDate: "",
@@ -145,18 +144,14 @@ function RaffleManager() {
               <Input className="rounded-xl h-11 bg-slate-50 border-slate-100" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Imagen Principal (URL)</label>
-              <Input className="rounded-xl h-11 bg-slate-50 border-slate-100" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} placeholder="https://..." />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Imágenes Adicionales (Carrusel - Opcional)</label>
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Imágenes de la Rifa (URLs)</label>
               <textarea 
-                className="w-full min-h-[80px] px-3 py-2 border border-slate-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-slate-50"
-                placeholder="Pega las URLs separadas por comas..."
-                value={formData.images}
-                onChange={e => setFormData({...formData, images: e.target.value})}
+                className="w-full min-h-[120px] px-3 py-2 border border-slate-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-slate-50"
+                placeholder="Pega las URLs aquí (puedes poner una por línea o separarlas por comas)"
+                value={formData.image}
+                onChange={e => setFormData({...formData, image: e.target.value})}
               />
-              <p className="text-[10px] text-slate-400 italic">Estas imágenes aparecerán en un carrusel profesional.</p>
+              <p className="text-[10px] text-slate-400 italic">La primera imagen será la de portada. El resto aparecerá en el carrusel.</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
