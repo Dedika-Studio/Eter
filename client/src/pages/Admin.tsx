@@ -82,6 +82,7 @@ function RaffleManager() {
     title: "",
     description: "",
     image: "",
+    images: "", // URLs adicionales separadas por comas
     totalTickets: 100,
     pricePerTicket: 50,
     drawDate: "",
@@ -144,8 +145,18 @@ function RaffleManager() {
               <Input className="rounded-xl h-11 bg-slate-50 border-slate-100" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Imagen URL</label>
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Imagen Principal (URL)</label>
               <Input className="rounded-xl h-11 bg-slate-50 border-slate-100" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} placeholder="https://..." />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Imágenes Adicionales (Carrusel - Opcional)</label>
+              <textarea 
+                className="w-full min-h-[80px] px-3 py-2 border border-slate-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-slate-50"
+                placeholder="Pega las URLs separadas por comas..."
+                value={formData.images}
+                onChange={e => setFormData({...formData, images: e.target.value})}
+              />
+              <p className="text-[10px] text-slate-400 italic">Estas imágenes aparecerán en un carrusel profesional.</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
