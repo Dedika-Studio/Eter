@@ -117,7 +117,7 @@ export default function PurchaseHistory() {
             <CardContent className="p-12 text-center">
               <ShoppingBag className="size-12 mx-auto mb-4 text-muted-foreground" />
               <p className="text-muted-foreground mb-4">No tienes compras registradas</p>
-              <Button onClick={() => navigate("/rifas")} className="gap-2">
+              <Button onClick={() => navigate("/rifa")} className="gap-2">
                 <Ticket className="size-4" />
                 Explorar Rifas
               </Button>

@@ -670,6 +670,8 @@ export async function createRaffle(data: any): Promise<number> {
         safeData[key] = val.toISOString();
       } else if (val === null || val === undefined) {
         safeData[key] = '';
+      } else if (key === 'isActive') {
+        safeData[key] = val ? 'TRUE' : 'FALSE';
       } else {
         safeData[key] = val;
       }

@@ -261,7 +261,7 @@ export default function Home() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => navigate("/rifas")}
+            onClick={() => navigate("/rifa")}
             className="gap-1 text-xs flex-shrink-0 ml-2"
           >
             ← Ver Rifas
