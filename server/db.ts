@@ -998,6 +998,27 @@ export async function getDb() {
   };
 }
 
+export async function updateOrderStripeSession(orderId: number, sessionId: string): Promise<void> {
+  const doc = await getDoc();
+  if (!doc) return;
+
+  try {
+    const sheet = doc.sheetsByTitle['orders'];
+    if (!sheet) return;
+
+    const rows = await sheet.getRows();
+    const row = rows.find(r => Number(r.id) === orderId);
+
+    if (row) {
+      row.stripeSessionId = sessionId;
+      row.updatedAt = new Date().toISOString();
+      await row.save();
+    }
+  } catch (error) {
+    console.error('[Sheets] Error updating order stripe session:', error);
+  }
+}
+
 export async function markOrderSyncedToSheets(orderId: number): Promise<void> {
   const doc = await getDoc();
   if (!doc) return;
