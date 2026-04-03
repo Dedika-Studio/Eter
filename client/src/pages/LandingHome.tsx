@@ -21,6 +21,7 @@ import {
   Award,
   MessageCircle,
   Clock,
+  Ticket,
 } from "lucide-react";
 import { RAFFLE_CONFIG } from "@shared/raffle";
 import { motion } from "framer-motion";
