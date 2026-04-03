@@ -142,8 +142,8 @@ export default function Home() {
 
   const handleSearch = useCallback(() => {
     const totalTickets = activeRaffle ? Number(activeRaffle.totalTickets) : 1000;
-    const padding = totalTickets > 1000 ? 5 : totalTickets > 100 ? 4 : 3;
-    const num = searchValue.padStart(padding - 1, "0");
+    const padding = totalTickets > 10000 ? 5 : (totalTickets > 1000 ? 4 : 3);
+    const num = searchValue.padStart(padding, "0");
     
     if (isNaN(Number(num))) {
       toast.error("Ingresa un número válido");

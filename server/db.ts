@@ -342,12 +342,12 @@ export async function releaseExpiredReservations(): Promise<void> {
 
     const rows = await sheet.getRows();
     const now = Date.now();
-    const expiryTime = 15 * 60 * 1000; // 15 minutes
+    const TIMEOUT = 10 * 60 * 1000; // 10 minutes
 
     for (const row of rows) {
       if (row.status === 'reserved' && row.reservedAt) {
         const reservedAt = Number(row.reservedAt);
-        if (now - reservedAt > expiryTime) {
+        if (now - reservedAt > TIMEOUT) {
           row.status = 'available';
           row.orderId = '';
           row.reservedAt = '';
@@ -370,11 +370,15 @@ export async function releaseTicketsByOrder(orderId: number): Promise<void> {
     if (!sheet) return;
 
     const rows = await sheet.getRows();
+
     for (const row of rows) {
-      if (row.orderId === orderId.toString() && row.status === 'reserved') {
+      if (row.orderId === orderId.toString()) {
         row.status = 'available';
         row.orderId = '';
         row.reservedAt = '';
+        row.buyerName = '';
+        row.buyerPhone = '';
+        row.buyerEmail = '';
         row.updatedAt = new Date().toISOString();
         await row.save();
       }
@@ -384,54 +388,9 @@ export async function releaseTicketsByOrder(orderId: number): Promise<void> {
   }
 }
 
-export async function markTicketsSold(orderId: number, numbers: string[], name: string, phone: string, email: string): Promise<void> {
-  const doc = await getDoc();
-  if (!doc) return;
-
-  try {
-    const sheet = doc.sheetsByTitle['tickets'];
-    if (!sheet) return;
-
-    const rows = await sheet.getRows();
-    const now = new Date().toISOString();
-
-    for (const number of numbers) {
-      const row = rows.find(r => r.number === number);
-      if (row) {
-        row.status = 'sold';
-        row.orderId = orderId.toString();
-        row.buyerName = name;
-        row.buyerPhone = phone;
-        row.buyerEmail = email;
-        row.soldAt = Date.now().toString();
-        row.updatedAt = now;
-        await row.save();
-      }
-    }
-  } catch (error) {
-    console.error('[Sheets] Error marking tickets as sold:', error);
-  }
-}
-
-export async function getAvailableRandomTickets(count: number): Promise<Ticket[]> {
-  const tickets = await getAllTickets();
-  const available = tickets.filter(t => t.status === 'available');
-  return available.sort(() => Math.random() - 0.5).slice(0, count);
-}
-
-export async function getTicketStats() {
-  const tickets = await getAllTickets();
-  return {
-    total: tickets.length,
-    available: tickets.filter(t => t.status === 'available').length,
-    reserved: tickets.filter(t => t.status === 'reserved').length,
-    sold: tickets.filter(t => t.status === 'sold').length,
-  };
-}
-
 // ============ ORDER QUERIES ============
 
-export async function createOrder(data: any): Promise<number> {
+export async function createOrder(data: InsertOrder): Promise<number> {
   const doc = await getDoc();
   if (!doc) throw new Error('Database not available');
 
@@ -447,7 +406,7 @@ export async function createOrder(data: any): Promise<number> {
     // Convert complex objects to simple types (strings/numbers) for Google Sheets
     const safeData: Record<string, any> = { id };
     for (const key in data) {
-      const val = data[key];
+      const val = (data as any)[key];
       if (val instanceof Date) {
         safeData[key] = val.toISOString();
       } else if (val === null || val === undefined) {
@@ -477,7 +436,9 @@ export async function getAllOrders(): Promise<Order[]> {
     if (!sheet) return [];
 
     const rows = await sheet.getRows();
-    return rows.map(r => rowToObject(r, getHeadersForSheet('orders')));
+    return rows
+      .map(r => rowToObject(r, getHeadersForSheet('orders')))
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   } catch (error) {
     console.error('[Sheets] Error getting all orders:', error);
     return [];
@@ -501,12 +462,28 @@ export async function getOrderById(id: number): Promise<Order | null> {
   }
 }
 
-export async function getOrdersByPhone(phone: string): Promise<Order[]> {
-  const orders = await getAllOrders();
-  return orders.filter(o => o.buyerPhone === phone);
+export async function getOrderByStripeSession(sessionId: string): Promise<Order | null> {
+  const doc = await getDoc();
+  if (!doc) return null;
+
+  try {
+    const sheet = doc.sheetsByTitle['orders'];
+    if (!sheet) return null;
+
+    const rows = await sheet.getRows();
+    const row = rows.find(r => r.stripeSessionId === sessionId);
+    return row ? rowToObject(row, getHeadersForSheet('orders')) : null;
+  } catch (error) {
+    console.error('[Sheets] Error getting order by stripe session:', error);
+    return null;
+  }
 }
 
-export async function updateOrderStatus(id: number, status: string, paymentIntentId?: string): Promise<void> {
+export async function updateOrderStatus(
+  id: number,
+  status: 'pending' | 'paid' | 'failed' | 'expired',
+  stripePaymentIntentId?: string
+): Promise<void> {
   const doc = await getDoc();
   if (!doc) return;
 
@@ -519,7 +496,9 @@ export async function updateOrderStatus(id: number, status: string, paymentInten
 
     if (row) {
       row.status = status;
-      if (paymentIntentId) row.stripePaymentIntentId = paymentIntentId;
+      if (stripePaymentIntentId) {
+        row.stripePaymentIntentId = stripePaymentIntentId;
+      }
       row.updatedAt = new Date().toISOString();
       await row.save();
     }
@@ -528,24 +507,90 @@ export async function updateOrderStatus(id: number, status: string, paymentInten
   }
 }
 
-export async function updateOrderStripeSession(orderId: number, sessionId: string): Promise<void> {
+export async function markTicketsSold(orderId: number, ticketNumbers: string[], buyerName: string, buyerPhone: string, buyerEmail: string): Promise<void> {
   const doc = await getDoc();
   if (!doc) return;
 
   try {
-    const sheet = doc.sheetsByTitle['orders'];
+    const sheet = doc.sheetsByTitle['tickets'];
     if (!sheet) return;
 
     const rows = await sheet.getRows();
-    const row = rows.find(r => Number(r.id) === orderId);
 
-    if (row) {
-      row.stripeSessionId = sessionId;
-      row.updatedAt = new Date().toISOString();
-      await row.save();
+    for (const number of ticketNumbers) {
+      const row = rows.find(r => r.number === number);
+      if (row) {
+        row.status = 'sold';
+        row.orderId = orderId.toString();
+        row.buyerName = buyerName;
+        row.buyerPhone = buyerPhone;
+        row.buyerEmail = buyerEmail;
+        row.soldAt = Date.now().toString();
+        row.updatedAt = new Date().toISOString();
+        await row.save();
+      }
     }
   } catch (error) {
-    console.error('[Sheets] Error updating order stripe session:', error);
+    console.error('[Sheets] Error marking tickets sold:', error);
+  }
+}
+
+export async function getAvailableRandomTickets(count: number): Promise<Ticket[]> {
+  const doc = await getDoc();
+  if (!doc) return [];
+
+  try {
+    const sheet = doc.sheetsByTitle['tickets'];
+    if (!sheet) return [];
+
+    const rows = await sheet.getRows();
+    return rows
+      .filter(r => r.status === 'available')
+      .slice(0, count)
+      .map(r => rowToObject(r, getHeadersForSheet('tickets')));
+  } catch (error) {
+    console.error('[Sheets] Error getting available random tickets:', error);
+    return [];
+  }
+}
+
+export async function getOrdersByPhone(phone: string): Promise<Order[]> {
+  const doc = await getDoc();
+  if (!doc) return [];
+
+  try {
+    const sheet = doc.sheetsByTitle['orders'];
+    if (!sheet) return [];
+
+    const rows = await sheet.getRows();
+    return rows
+      .filter(r => r.buyerPhone === phone)
+      .map(r => rowToObject(r, getHeadersForSheet('orders')))
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  } catch (error) {
+    console.error('[Sheets] Error getting orders by phone:', error);
+    return [];
+  }
+}
+
+export async function getTicketStats(): Promise<{ available: number; reserved: number; sold: number; total: number }> {
+  const doc = await getDoc();
+  if (!doc) return { available: 0, reserved: 0, sold: 0, total: 0 };
+
+  try {
+    const sheet = doc.sheetsByTitle['tickets'];
+    if (!sheet) return { available: 0, reserved: 0, sold: 0, total: 0 };
+
+    const rows = await sheet.getRows();
+    return {
+      available: rows.filter(t => t.status === 'available').length,
+      reserved: rows.filter(t => t.status === 'reserved').length,
+      sold: rows.filter(t => t.status === 'sold').length,
+      total: rows.length,
+    };
+  } catch (error) {
+    console.error('[Sheets] Error getting ticket stats:', error);
+    return { available: 0, reserved: 0, sold: 0, total: 0 };
   }
 }
 
@@ -572,10 +617,22 @@ export async function createRaffle(data: any): Promise<number> {
   if (!doc) throw new Error('Database not available');
 
   try {
+    // Validar datos de entrada
+    const totalTickets = Number(data.totalTickets);
+    if (!totalTickets || totalTickets < 1) {
+      throw new Error('totalTickets debe ser un número válido mayor a 0');
+    }
+
     const raffleSheet = doc.sheetsByTitle['raffles'];
+    const ticketSheet = doc.sheetsByTitle['tickets'];
+    if (!raffleSheet || !ticketSheet) {
+      throw new Error('Raffles or tickets sheet not found');
+    }
+
     const raffleRows = await raffleSheet.getRows();
 
     // 1. Desactivar TODAS las rifas anteriores
+    console.log('[Sheets] Deactivating previous raffles...');
     for (const row of raffleRows) {
       if (row.get('isActive') === 'TRUE' || row.get('isActive') === true) {
         row.set('isActive', 'FALSE');
@@ -583,9 +640,18 @@ export async function createRaffle(data: any): Promise<number> {
       }
     }
 
-    // 2. Limpiar la tabla de boletos (tickets) para la nueva rifa
-    const ticketSheet = doc.sheetsByTitle['tickets'];
-    await ticketSheet.clearRows();
+    // 2. Limpiar la tabla de boletos (tickets) de forma segura
+    // Usar eliminación individual en lugar de clearRows() que puede fallar
+    console.log('[Sheets] Clearing old tickets...');
+    const existingTickets = await ticketSheet.getRows();
+    console.log(`[Sheets] Deleting ${existingTickets.length} old tickets...`);
+    for (const row of existingTickets) {
+      try {
+        await row.delete();
+      } catch (err) {
+        console.warn(`[Sheets] Failed to delete ticket row:`, err);
+      }
+    }
 
     // 3. Crear la nueva rifa
     const id = Date.now().toString();
@@ -612,14 +678,15 @@ export async function createRaffle(data: any): Promise<number> {
     safeData.updatedAt = now;
 
     await raffleSheet.addRows([safeData]);
+    console.log(`[Sheets] New raffle created with ID: ${id}, Price: ${safeData.pricePerTicket}, Total Tickets: ${totalTickets}`);
 
     // 4. Generar boletos para esta nueva rifa
-    const totalTickets = Number(data.totalTickets);
     const padding = totalTickets > 10000 ? 5 : (totalTickets > 1000 ? 4 : 3);
     
     const BATCH_SIZE = 500;
     let ticketRows = [];
     
+    console.log(`[Sheets] Generating ${totalTickets} tickets with padding ${padding}...`);
     for (let i = 0; i < totalTickets; i++) {
       ticketRows.push({
         id: (i + 1).toString(),
@@ -635,14 +702,17 @@ export async function createRaffle(data: any): Promise<number> {
 
       if (ticketRows.length >= BATCH_SIZE) {
         await ticketSheet.addRows(ticketRows);
+        console.log(`[Sheets] Added ${ticketRows.length} tickets (batch)`);
         ticketRows = [];
       }
     }
     
     if (ticketRows.length > 0) {
       await ticketSheet.addRows(ticketRows);
+      console.log(`[Sheets] Added final ${ticketRows.length} tickets`);
     }
 
+    console.log(`[Sheets] Raffle creation completed successfully`);
     return Number(id);
   } catch (error) {
     console.error('[Sheets] Error creating raffle:', error);
@@ -946,23 +1016,6 @@ export async function markOrderSyncedToSheets(orderId: number): Promise<void> {
     }
   } catch (error) {
     console.error('[Sheets] Error marking order synced to sheets:', error);
-  }
-}
-
-export async function getOrderByStripeSession(sessionId: string): Promise<Order | null> {
-  const doc = await getDoc();
-  if (!doc) return null;
-
-  try {
-    const sheet = doc.sheetsByTitle['orders'];
-    if (!sheet) return null;
-
-    const rows = await sheet.getRows();
-    const row = rows.find(r => r.stripeSessionId === sessionId);
-    return row ? rowToObject(row, getHeadersForSheet('orders')) : null;
-  } catch (error) {
-    console.error('[Sheets] Error getting order by stripe session:', error);
-    return null;
   }
 }
 
