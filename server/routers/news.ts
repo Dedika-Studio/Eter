@@ -3,7 +3,7 @@
  * Provides endpoints for fetching automated K-pop news
  */
 
-import { publicProcedure, router } from "../_core/trpc";
+import { publicProcedure, router, adminProcedure } from "../_core/trpc";
 import { getAllNews, getNewsBySlug, deleteNews } from "../db";
 import { z } from "zod";
 
@@ -69,7 +69,7 @@ export const newsRouter = router({
   /**
    * Admin: Get all news articles (including unpublished)
    */
-  adminGetAll: publicProcedure.query(async () => {
+  adminGetAll: adminProcedure.query(async () => {
     try {
       return await getAllNews();
     } catch (error) {
@@ -81,7 +81,7 @@ export const newsRouter = router({
   /**
    * Admin: Delete a news article
    */
-  delete: publicProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       try {
@@ -96,14 +96,14 @@ export const newsRouter = router({
   /**
    * Admin: Run news automation manually
    */
-  runAutomation: publicProcedure.mutation(async () => {
+  runAutomation: adminProcedure.mutation(async () => {
     const { default: automateNews } = await import("../news-automation");
     try {
       await automateNews();
-      return { success: true };
+      return { success: true, message: "Automatización de noticias completada" };
     } catch (error) {
       console.error("[News Router] Error running automation:", error);
-      throw new Error("Failed to run news automation");
+      throw new Error("Error al ejecutar la automatización de noticias: " + (error instanceof Error ? error.message : "Error desconocido"));
     }
   }),
 });

@@ -318,36 +318,122 @@ function StoryManager() {
 
 // --- NEWS MANAGER ---
 function NewsManager() {
-  const { data: news, refetch, isLoading } = trpc.news.getAll.useQuery();
+  const { data: news, refetch, isLoading } = trpc.news.adminGetAll.useQuery();
   const deleteMutation = trpc.news.delete.useMutation();
+  const automationMutation = trpc.news.runAutomation.useMutation();
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleDelete = async (id: number) => {
     if (!confirm("¿Eliminar noticia?")) return;
-    await deleteMutation.mutateAsync({ id });
-    refetch();
+    try {
+      await deleteMutation.mutateAsync({ id });
+      toast.success("Noticia eliminada");
+      refetch();
+    } catch (error) {
+      toast.error("Error al eliminar noticia");
+    }
+  };
+
+  const handleRunAutomation = async () => {
+    setIsGenerating(true);
+    try {
+      const result = await automationMutation.mutateAsync();
+      toast.success(result.message || "Noticia generada exitosamente");
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      refetch();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+      toast.error("Error: " + errorMessage);
+      console.error("[NewsManager] Automation error:", error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   if (isLoading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin size-8 text-slate-400" /></div>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {news?.map((item) => (
-        <Card key={item.id} className="border-slate-200 shadow-lg rounded-3xl overflow-hidden group">
-          <div className="aspect-video relative overflow-hidden bg-slate-100">
-            <img src={item.image || ""} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <Badge className="absolute bottom-3 left-3 bg-white/20 backdrop-blur-md text-white border-none font-bold text-[10px]">{item.source}</Badge>
+    <div className="space-y-6">
+      <Card className="border-slate-200 shadow-xl rounded-[2rem] bg-white overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-slate-100 p-6 flex flex-row items-center justify-between">
+          <CardTitle className="text-lg font-black uppercase tracking-tighter flex items-center gap-2">
+            <Newspaper className="size-5 text-blue-600" /> Generador Automático de Noticias
+          </CardTitle>
+          <Button 
+            onClick={handleRunAutomation} 
+            disabled={isGenerating}
+            className="rounded-full gap-2 font-bold bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="size-4 animate-spin" /> Generando...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="size-4" /> Generar Noticia
+              </>
+            )}
+          </Button>
+        </CardHeader>
+        <CardContent className="p-6 space-y-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+            <p className="text-sm text-blue-900 font-medium">
+              ✨ Haz clic en el botón para generar una nueva noticia automáticamente desde Soompi o Allkpop. Las noticias se traducen al español automáticamente y se publican de inmediato.
+            </p>
           </div>
-          <CardContent className="p-4 space-y-3">
-            <h3 className="font-black text-slate-900 leading-tight line-clamp-2 uppercase tracking-tighter">{item.title}</h3>
-            <p className="text-xs text-slate-500 line-clamp-3 font-medium">{item.summary}</p>
-            <div className="flex justify-between items-center pt-3 border-t border-slate-50">
-              <span className="text-[10px] font-black text-slate-400 uppercase">{new Date(item.createdAt).toLocaleDateString()}</span>
-              <Button variant="ghost" size="sm" onClick={() => handleDelete(Number(item.id))} className="text-slate-300 hover:text-red-500 rounded-xl"><Trash2 className="size-4" /></Button>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="bg-slate-50 rounded-xl p-3">
+              <p className="font-black text-slate-900">🤖 Automático</p>
+              <p className="text-slate-600 text-xs mt-1">Se ejecuta cada día a las 8 AM y 8 PM</p>
             </div>
-          </CardContent>
-        </Card>
-      ))}
+            <div className="bg-slate-50 rounded-xl p-3">
+              <p className="font-black text-slate-900">🌐 Traducido</p>
+              <p className="text-slate-600 text-xs mt-1">Contenido traducido al español</p>
+            </div>
+            <div className="bg-slate-50 rounded-xl p-3">
+              <p className="font-black text-slate-900">🎯 Sin Duplicados</p>
+              <p className="text-slate-600 text-xs mt-1">Detecta y evita noticias repetidas</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-slate-200 shadow-xl rounded-[2rem] bg-white overflow-hidden">
+        <CardHeader className="bg-slate-50 border-b border-slate-100 p-6">
+          <CardTitle className="text-lg font-black uppercase tracking-tighter flex items-center gap-2">
+            <Newspaper className="size-5 text-slate-900" /> Noticias Publicadas ({news?.length || 0})
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          {news && news.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {news.map((item) => (
+                <Card key={item.id} className="border-slate-200 shadow-lg rounded-3xl overflow-hidden group hover:shadow-xl transition-shadow">
+                  <div className="aspect-video relative overflow-hidden bg-slate-100">
+                    <img src={item.image || ""} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <Badge className="absolute bottom-3 left-3 bg-white/20 backdrop-blur-md text-white border-none font-bold text-[10px]">{item.source}</Badge>
+                    {item.isPublished && <Badge className="absolute top-3 right-3 bg-green-500 text-white border-none font-bold text-[10px]">PUBLICADA</Badge>}
+                  </div>
+                  <CardContent className="p-4 space-y-3">
+                    <h3 className="font-black text-slate-900 leading-tight line-clamp-2 uppercase tracking-tighter text-sm">{item.title}</h3>
+                    <p className="text-xs text-slate-500 line-clamp-3 font-medium">{item.summary}</p>
+                    <div className="flex justify-between items-center pt-3 border-t border-slate-50">
+                      <span className="text-[10px] font-black text-slate-400 uppercase">{new Date(item.createdAt).toLocaleDateString()}</span>
+                      <Button variant="ghost" size="sm" onClick={() => handleDelete(Number(item.id))} className="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl"><Trash2 className="size-4" /></Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="p-12 text-center bg-slate-50 rounded-2xl">
+              <Newspaper className="size-12 text-slate-300 mx-auto mb-4" />
+              <p className="text-slate-500 font-medium">No hay noticias publicadas aún. ¡Genera la primera!</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
