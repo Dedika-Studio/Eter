@@ -101,6 +101,14 @@ export interface Story {
   updatedAt?: string;
 }
 
+export interface Gallery {
+  id?: string;
+  group: string;
+  url: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 let _doc: GoogleSpreadsheet | null = null;
 
 async function getDoc() {
@@ -132,7 +140,7 @@ async function getDoc() {
 async function ensureSheets() {
   const doc = _doc;
   if (!doc) return;
-  const requiredSheets = ['users', 'tickets', 'orders', 'raffles', 'purchases', 'products', 'news', 'stories'];
+  const requiredSheets = ['users', 'tickets', 'orders', 'raffles', 'purchases', 'products', 'news', 'stories', 'galleries'];
   for (const sheetName of requiredSheets) {
     if (!doc.sheetsByTitle[sheetName]) {
       await doc.addSheet({ title: sheetName, headerValues: getHeadersForSheet(sheetName) });
@@ -150,6 +158,7 @@ function getHeadersForSheet(sheetName: string): string[] {
     products: ['id', 'title', 'description', 'price', 'image', 'link', 'rating', 'reviews', 'badge', 'createdAt', 'updatedAt'],
     news: ['id', 'title', 'content', 'summary', 'image', 'source', 'sourceUrl', 'slug', 'isPublished', 'createdAt', 'updatedAt'],
     stories: ['id', 'nombre', 'historia_es', 'historia_ko', 'fecha', 'createdAt', 'updatedAt'],
+    galleries: ['id', 'group', 'url', 'createdAt', 'updatedAt'],
   };
   return headers[sheetName] || [];
 }
@@ -615,4 +624,37 @@ export async function deleteOldNews(days: number): Promise<number> {
     }
   }
   return deletedCount;
+}
+
+// ============ GALLERIES QUERIES ============
+export async function getAllGalleries(group?: string): Promise<Gallery[]> {
+  const doc = await getDoc();
+  if (!doc) return [];
+  const sheet = doc.sheetsByTitle['galleries'];
+  const rows = await sheet.getRows();
+  const galleries = rows.map(r => rowToObject(r, getHeadersForSheet('galleries')));
+  
+  if (group) {
+    return galleries.filter(g => g.group === group);
+  }
+  return galleries;
+}
+
+export async function addGalleryPhoto(group: string, url: string): Promise<string> {
+  const doc = await getDoc();
+  if (!doc) throw new Error('DB not available');
+  const sheet = doc.sheetsByTitle['galleries'];
+  const id = Date.now().toString();
+  const now = new Date().toISOString();
+  await sheet.addRow({ id, group, url, createdAt: now, updatedAt: now });
+  return id;
+}
+
+export async function deleteGalleryPhoto(id: string): Promise<void> {
+  const doc = await getDoc();
+  if (!doc) return;
+  const sheet = doc.sheetsByTitle['galleries'];
+  const rows = await sheet.getRows();
+  const row = rows.find(r => r.get('id') === id);
+  if (row) await row.delete();
 }

@@ -440,15 +440,141 @@ function NewsManager() {
 
 // --- GALLERY MANAGER ---
 function GalleryManager() {
+  const groups = ["bts", "blackpink", "straykids", "twice", "newjeans", "ive", "txt"];
+  const [selectedGroup, setSelectedGroup] = useState("bts");
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const { data: photos, refetch } = trpc.galleries.list.useQuery({ group: selectedGroup });
+  const addMutation = trpc.galleries.add.useMutation();
+  const deleteMutation = trpc.galleries.delete.useMutation();
+
+  const handleAddPhoto = async () => {
+    if (!photoUrl.trim()) {
+      toast.error("Por favor ingresa una URL de imagen");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await addMutation.mutateAsync({ group: selectedGroup, url: photoUrl });
+      toast.success("Foto agregada exitosamente");
+      setPhotoUrl("");
+      refetch();
+    } catch (error) {
+      toast.error("Error al agregar la foto");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeletePhoto = async (id: string) => {
+    try {
+      await deleteMutation.mutateAsync({ id });
+      toast.success("Foto eliminada exitosamente");
+      refetch();
+    } catch (error) {
+      toast.error("Error al eliminar la foto");
+    }
+  };
+
   return (
-    <div className="p-12 text-center bg-white border border-slate-200 rounded-[2rem] shadow-xl space-y-4">
-      <div className="bg-slate-50 size-20 rounded-full flex items-center justify-center mx-auto">
-        <Images className="size-10 text-slate-300" />
-      </div>
-      <div className="space-y-1">
-        <h3 className="text-xl font-black text-slate-900 uppercase tracking-tighter">Gestor de Galerías</h3>
-        <p className="text-slate-500 max-w-sm mx-auto font-medium">Las galerías se gestionan actualmente de forma estática en el código. Próximamente podrás subir fotos directamente desde aquí.</p>
-      </div>
+    <div className="space-y-6">
+      <Card className="bg-white border border-slate-200 shadow-lg rounded-[2rem]">
+        <CardHeader className="border-b border-slate-100 pb-6">
+          <CardTitle className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Gestor de Galerías</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6 space-y-6">
+          {/* Group Selector */}
+          <div className="space-y-3">
+            <label className="text-sm font-bold text-slate-700 uppercase tracking-widest">Seleccionar Grupo</label>
+            <div className="flex flex-wrap gap-2">
+              {groups.map((group) => (
+                <Button
+                  key={group}
+                  onClick={() => setSelectedGroup(group)}
+                  className={`rounded-full capitalize font-bold ${
+                    selectedGroup === group
+                      ? "bg-purple-600 text-white hover:bg-purple-700"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  }`}
+                >
+                  {group.toUpperCase()}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {/* Add Photo Form */}
+          <div className="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <label className="text-sm font-bold text-slate-700 uppercase tracking-widest">Agregar Nueva Foto</label>
+            <div className="flex gap-2">
+              <Input
+                type="url"
+                placeholder="https://ejemplo.com/imagen.jpg"
+                value={photoUrl}
+                onChange={(e) => setPhotoUrl(e.target.value)}
+                className="rounded-xl border-slate-300"
+              />
+              <Button
+                onClick={handleAddPhoto}
+                disabled={isLoading || !photoUrl.trim()}
+                className="bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl gap-2 px-6"
+              >
+                {isLoading ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+                Agregar
+              </Button>
+            </div>
+          </div>
+
+          {/* Photos Grid */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-bold text-slate-700 uppercase tracking-widest">
+                Fotos de {selectedGroup.toUpperCase()} ({photos?.length || 0})
+              </label>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => refetch()}
+                className="rounded-lg gap-1"
+              >
+                <RefreshCw className="size-3" />
+                Actualizar
+              </Button>
+            </div>
+            
+            {photos && photos.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {photos.map((photo: any) => (
+                  <div key={photo.id} className="relative group">
+                    <img
+                      src={photo.url}
+                      alt="Gallery photo"
+                      className="w-full h-32 object-cover rounded-xl border border-slate-200 group-hover:border-red-400 transition-all"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "https://via.placeholder.com/150?text=Error";
+                      }}
+                    />
+                    <Button
+                      onClick={() => handleDeletePhoto(photo.id)}
+                      size="sm"
+                      className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 className="size-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200">
+                <ImageIcon className="size-8 text-slate-300 mx-auto mb-2" />
+                <p className="text-slate-500 font-medium">No hay fotos en {selectedGroup.toUpperCase()} aún</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

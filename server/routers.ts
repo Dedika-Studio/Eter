@@ -5,6 +5,7 @@ import { ordersRouter } from "./routers/orders";
 import { productsRouter } from "./routers/products";
 import { newsRouter } from "./routers/news";
 import { storiesRouter } from "./routers/stories";
+import { galleriesRouter } from "./routers/galleries";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import {
@@ -29,6 +30,7 @@ export const appRouter = router({
   }),
   products: productsRouter,
   stories: storiesRouter,
+  galleries: galleriesRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
