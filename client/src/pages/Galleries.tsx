@@ -11,8 +11,8 @@ export default function Galleries() {
       id: "bts",
       title: "BTS - Colección Especial",
       description: "Galería exclusiva de BTS con sus mejores momentos y sesiones fotográficas.",
-      image: "https://imgmedia.larepublica.pe/1000x590/larepublica/original/2021/12/19/61be97f0f0dd9c5007478e90.webp",
-      photos: 7,
+      image: "https://www.billboard.com/wp-content/uploads/2026/03/bts-netflix-trailer-2026-billboard-1800.jpg?w=1024",
+      photos: 15,
       path: "/galerias/bts",
       status: "active"
     },

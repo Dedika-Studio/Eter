@@ -1,23 +1,41 @@
 import { useLocation } from "wouter";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Star, ChevronDown, Music, Award, BookOpen, Heart, Shield, Images } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Calendar, MapPin, Star, Music, Award, BookOpen, Heart, Maximize2, Sparkles, Shield } from "lucide-react";
+import { Badge } from "../components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useRef, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { motion } from "framer-motion";
 
 export default function BtsBiographies() {
   const [, navigate] = useLocation();
-  const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null);
-  const bioContainerRef = useRef<HTMLDivElement>(null);
+  const [openMemberId, setOpenMemberId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (expandedMemberId && bioContainerRef.current) {
-      setTimeout(() => {
-        bioContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash) {
+        setOpenMemberId(hash);
+      } else {
+        setOpenMemberId(null);
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    handleHashChange(); // Check on mount
+
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const handleOpenChange = (open: boolean, id: string) => {
+    if (open) {
+      window.location.hash = id;
+    } else {
+      window.history.pushState(null, "", window.location.pathname);
+      setOpenMemberId(null);
     }
-  }, [expandedMemberId]);
+  };
 
   const members = [
     {
@@ -122,7 +140,7 @@ export default function BtsBiographies() {
       color: "bg-purple-600",
       fullBio: {
         preDebut: "Acompañó a un amigo a una audición solo por apoyo, pero los agentes le pidieron que audicionara también y fue el único que pasó ese día. Fue mantenido como el 'miembro secreto' de BTS hasta el último momento para generar misterio.",
-        soloCareer: "Famoso por su voz barítona profunda. Lanzó temas como 'Scenery' y 'Winter Bear'. Su álbum debut 'Layover' (2023) fusiona jazz, R&B y soul, reflejando sus gustos personales. En 2024 lanzó el single digital 'FRI(END)S'.",
+        soloCareer: "Famoso por su voz barítona profunda. Lanzó temas como 'Scenery' and 'Winter Bear'. Su álbum debut 'Layover' (2023) fusiona jazz, R&B y soul, reflejando sus gustos personales. En 2024 lanzó el single digital 'FRI(END)S'.",
         achievements: "Ha ganado múltiples títulos como 'El rostro más hermoso del mundo'. Debutó como actor en el drama 'Hwarang'. Es un ícono de la moda global y embajador de Celine y Cartier.",
         curiosities: "Ama el jazz, la fotografía y el arte clásico (especialmente Van Gogh). Inventó la frase 'I Purple You' (Borahae), que se convirtió en el símbolo de la unión entre BTS y ARMY.",
         military: "Se unió a las fuerzas especiales de la Policía Militar en diciembre de 2023."
@@ -145,51 +163,8 @@ export default function BtsBiographies() {
         curiosities: "Es cinturón negro en Taekwondo. Le encanta dibujar, editar videos (G.C.F) y los deportes. Es conocido por ser extremadamente competitivo y por aprender cualquier habilidad casi instantáneamente.",
         military: "Inició su servicio militar en diciembre de 2023 junto a Jimin."
       }
-    },
+    }
   ];
-
-  const galleryImages = [
-    "https://media.gq.com.mx/photos/6146620f682afc1f2f9a50fe/16:9/w_2560%2Cc_limit/GettyImages-1196915689%2520(1).jpg",
-    "https://media.glamour.mx/photos/68470e7f3a63b341f062a46d/16:9/w_2560%2Cc_limit/BTS%2520portada.jpg",
-    "https://media.gq.com.mx/photos/698e16c03d0ffacb6a5d5914/16:9/w_1280,c_limit/BTS_para_portada_GQ_2026_01.jpg",
-    "https://media.glamour.mx/photos/6190995af5ed039ceea85e2f/master/w_1600%2Cc_limit/233736.jpg",
-    "https://www.jornada.com.mx/ndjsimg/images/jornada/jornadaimg/cuando-se-estrena-bts-the-return-esto-se-sabe-del-nuevo-documental-de-netflix/cuando-se-estrena-bts-the-return-esto-se-sabe-del-nuevo-documental-de-netflix_e5e09480-654d-4502-acd8-d4c3e8e28d67_medialjnimgndimage=fullsize",
-    "https://wallpapers.com/images/featured/sesion-de-fotos-de-bts-n4kol3ixqv5wjqgs.jpg",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwQ25U7IoC1eTdbh6Aeve0AJHpw5chVnklcg&s",
-    "https://wallpapers.com/images/hd/bts-cute-pictures-y98h6l8rt67xexbl.jpg",
-    "https://media.gq.com.mx/photos/698e099ab310a58bba01809b/master/w_1600%2Cc_limit/BTS_para_portada_GQ_2026_13.jpg",
-    "https://ca-times.brightspotcdn.com/dims4/default/a9047bb/2147483647/strip/true/crop/3315x2296+0+0/resize/1200x831!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2F9c%2F7e%2F04f056354c19888ba613f1f10cfe%2Fcf23698f3598465181748b7e77ff9038",
-    "https://album.mediaset.es/eimg/2026/03/20/los-siete-miembros-de-bts-en-la-portada-oficial-de-su-nuevo-album-arirang-16-9-aspect-ratio-default_da39-2.jpg",
-    "https://wallpapers.com/images/featured/bts-utd6rlso6dvav5az.jpg",
-    "https://cloudfront-us-east-1.images.arcpublishing.com/infobae/V4IFVN6S7NDPRD7DFFGX7ZTEDQ.png",
-    "https://www.dondeir.com/wp-content/uploads/2026/02/bts-cinepolis-transmision-en-vivo-conciertos-seul-y-tokio-preventa-y-boletos-funciones-en-cine.jpg",
-    "https://media.cnn.com/api/v1/images/stellar/prod/bts-20250702093506572.jpeg?c=original",
-    "https://lumiere-a.akamaihd.net/v1/images/bts_10e2829a.jpeg?region=0,409,4096,2304",
-    "https://www.infobae.com/resizer/v2/TNUROGJ4ERBERHJWZC4IWSJ6OM.png?auth=1ccb20592e7cf74565144387d6de86689e9c698ffe40ef4fe7b8c97b8406d708&smart=true&width=1200&height=900&quality=85",
-    "https://cdn.milenio.com/uploads/media/2020/07/22/grupo-debuto-junio-instagram-bts.jpg",
-    "https://www.dondeir.com/wp-content/uploads/2022/07/the-most-beautiful-moment-to-party-fiesta-de-bts-en-la-cdmx.jpg",
-    "https://static.wikia.nocookie.net/bighit-family/images/d/de/BTS_-_Fake_Love-Airplane_Pt.2_-_01.png/revision/latest?cb=20190203205918&path-prefix=es",
-    "https://publicidadymercados.com/wp-content/uploads/2024/02/BTS-Set-the-Pace-for-ARMYs-Drool-Over-Sizzling-Photos-of-RM.jpg",
-    "https://media.vogue.mx/photos/60e4c7c83a0166093ab3cacb/2:3/w_2560%2Cc_limit/BTS-grupo-K-Pop.jpg",
-    "https://www.laxmasmusica.com/uploads/newsarticle/c63a7b36eeea44adb94b2f28afb47b71/BTS_anuncia_show_en_Corea_del_Sur_y_se_podr_SRTbEmZ.jpg",
-    "https://media.gq.com.mx/photos/6966d1f926895c3cd18985b5/16:9/w_1280,c_limit/Integrantes_de_BTS%20(1).jpg",
-    "https://f.radio-grpp.io/2022/02/10/211521_1215616.jpg?imgdimension=look",
-    "https://los40.com.co/resizer/v2/AH5FVCME7FEEXDMUZIQGK3SBUA.jpg?auth=3d2c295c0cb3102d2bd1bf4132b129d16fb1e27900cb1444cf84df122e63d0fc&quality=70&width=1200&height=544&focal=1500,940",
-    "https://www.laxmasmusica.com/uploads/newsarticle/53b6f9d562a0485cb057f3bd2ea9bbe9/BTS.jpg",
-    "https://www.generacionuniversitaria.com.mx/wp-content/uploads/2026/01/BTS-2.jpg",
-    "https://marieclaire.com.mx/wp-content/uploads/2025/09/bts-cancion-oficial-mundial-2026-2-1024x546.jpg",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTclT0N_P6YCHaoUr8SInkhyBW52f17K6gCuA&s",
-    "https://m.media-amazon.com/images/S/pv-target-images/92ee2f8ca6e0519978d09db0ce68487895b7f0e7f82fecc1276f9181f67a9ecc._SX1080_FMjpg_.jpg",
-    "https://www.actitudfem.com/media/files/bts-quienes-son-red.jpg",
-    "https://www.telehit.com/_next/image?url=https%3A%2F%2Fst1.uvnimg.com%2F9d%2Fc4%2Fed7c9329d881bf5bae61b486023f%2Fbts-antes-de-ser-famosos.jpg&w=1280&q=75",
-    "https://static-live.nmas.com.mx/nmas-news/2026-01/bts-regreso-musica-disco-gira-mundial.jpg",
-    "https://media.admagazine.com/photos/6213fd5e18153088f4f949d7/master/pass/BTS.jpg",
-    "https://imgmedia.larepublica.pe/1000x590/larepublica/original/2022/05/06/6275aed2a3df7610fa4c9f9e.webp"
-  ];
-
-  const toggleMember = (memberId: string) => {
-    setExpandedMemberId(expandedMemberId === memberId ? null : memberId);
-  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -216,193 +191,194 @@ export default function BtsBiographies() {
       {/* Hero Section */}
       <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=80"
+          src="https://www.billboard.com/wp-content/uploads/2026/03/bts-netflix-trailer-2026-billboard-1800.jpg?w=1024"
           alt="BTS Group"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 text-white p-6 text-center">
           <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter drop-shadow-2xl">BTS</h2>
           <p className="max-w-3xl text-lg md:text-2xl text-slate-200 font-medium leading-relaxed">
-            Siete artistas excepcionales que cambiaron la historia de la música global con su mensaje de amor propio y perseverancia.
+            El grupo que rompió todas las barreras y se convirtió en el fenómeno musical más grande del siglo XXI.
           </p>
         </div>
       </section>
 
       {/* Main Content */}
       <main className="container py-16 px-4 max-w-6xl mx-auto">
-        <div className="space-y-16">
-          {/* Members Grid */}
-          <section>
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-8 w-1.5 bg-purple-600 rounded-full" />
-              <h3 className="text-2xl font-bold text-slate-900">Integrantes</h3>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {members.map((member) => (
-                <Card
-                  key={member.id}
-                  className="group overflow-hidden border-none shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer bg-white"
-                  onClick={() => toggleMember(member.id)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {members.map((member) => (
+            <Dialog 
+              key={member.id} 
+              open={openMemberId === member.id} 
+              onOpenChange={(open) => handleOpenChange(open, member.id)}
+            >
+              <DialogTrigger asChild>
+                <motion.div
+                  whileHover={{ y: -10 }}
+                  className="cursor-pointer"
                 >
-                  <div className="relative aspect-[3/4] overflow-hidden">
-                    <img
-                      src={member.image}
-                      alt={member.stageName}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className={`absolute inset-0 opacity-20 ${member.color}`} />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent text-white">
-                      <p className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">{member.position}</p>
-                      <h4 className="text-xl font-black">{member.stageName}</h4>
-                    </div>
-                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ChevronDown className={`size-5 text-slate-900 transition-transform ${expandedMemberId === member.id ? 'rotate-180' : ''}`} />
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </section>
-
-          {/* Expanded Biography Section */}
-          {expandedMemberId && (
-            <div ref={bioContainerRef} className="animate-in fade-in slide-in-from-top-4 duration-500">
-              <Card className="border-none shadow-2xl bg-white overflow-hidden">
-                <CardContent className="p-0">
-                  {members
-                    .filter((m) => m.id === expandedMemberId)
-                    .map((member) => (
-                      <div key={member.id} className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-8 md:p-12">
-                        {/* Left: Image and Basic Info */}
-                        <div className="lg:col-span-1">
-                          <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[3/4] mb-6">
-                            <img
-                              src={member.image}
-                              alt={member.stageName}
-                              className="w-full h-full object-cover"
-                            />
-                            <div className={`absolute inset-0 opacity-30 ${member.color}`} />
-                            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent text-white">
-                              <h3 className="text-3xl font-black mb-1">{member.stageName}</h3>
-                              <p className="text-purple-300 font-bold tracking-widest uppercase text-xs">{member.position}</p>
-                            </div>
-                          </div>
-
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                              <Calendar className="size-4 text-purple-600 shrink-0" />
-                              <div>
-                                <p className="text-xs text-slate-400 font-bold uppercase">Nacimiento</p>
-                                <p className="text-xs font-bold text-slate-700">{member.birthday}</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                              <MapPin className="size-4 text-blue-600 shrink-0" />
-                              <div>
-                                <p className="text-xs text-slate-400 font-bold uppercase">Origen</p>
-                                <p className="text-xs font-bold text-slate-700">{member.birthplace}</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                              <Star className="size-4 text-amber-600 shrink-0" />
-                              <div>
-                                <p className="text-xs text-slate-400 font-bold uppercase">MBTI</p>
-                                <p className="text-xs font-bold text-slate-700">{member.mbti}</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                              <Shield className="size-4 text-emerald-600 shrink-0" />
-                              <div>
-                                <p className="text-xs text-slate-400 font-bold uppercase">Servicio Militar</p>
-                                <p className="text-xs font-bold text-slate-700">{member.military}</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Right: Tabs */}
-                        <div className="lg:col-span-2">
-                          <Tabs defaultValue="bio" className="w-full">
-                            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto p-1 bg-slate-100 rounded-xl mb-6">
-                              <TabsTrigger value="bio" className="rounded-lg py-2 text-xs md:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                                <BookOpen className="size-3 md:size-4 mr-1" /> Bio
-                              </TabsTrigger>
-                              <TabsTrigger value="solo" className="rounded-lg py-2 text-xs md:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                                <Music className="size-3 md:size-4 mr-1" /> Solo
-                              </TabsTrigger>
-                              <TabsTrigger value="achievements" className="rounded-lg py-2 text-xs md:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                                <Award className="size-3 md:size-4 mr-1" /> Logros
-                              </TabsTrigger>
-                              <TabsTrigger value="extra" className="rounded-lg py-2 text-xs md:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                                <Heart className="size-3 md:size-4 mr-1" /> Extra
-                              </TabsTrigger>
-                            </TabsList>
-
-                            <div className="text-slate-700 text-sm md:text-base leading-relaxed">
-                              <TabsContent value="bio" className="space-y-4">
-                                <p className="font-medium text-purple-600 italic">Antes del debut:</p>
-                                <p>{member.fullBio.preDebut}</p>
-                              </TabsContent>
-                              <TabsContent value="solo" className="space-y-4">
-                                <p className="font-medium text-purple-600 italic">Carrera en solitario:</p>
-                                <p>{member.fullBio.soloCareer}</p>
-                              </TabsContent>
-                              <TabsContent value="achievements" className="space-y-4">
-                                <p className="font-medium text-purple-600 italic">Hitos destacados:</p>
-                                <p>{member.fullBio.achievements}</p>
-                              </TabsContent>
-                              <TabsContent value="extra" className="space-y-4">
-                                <p className="font-medium text-purple-600 italic">Curiosidades:</p>
-                                <p>{member.fullBio.curiosities}</p>
-                              </TabsContent>
-                            </div>
-                          </Tabs>
+                  <Card className="group overflow-hidden border-none shadow-xl rounded-[2.5rem] bg-white">
+                    <div className="relative aspect-[3/4] overflow-hidden">
+                      <img
+                        src={member.image}
+                        alt={member.stageName}
+                        className="w-full h-full object-cover object-top md:object-center transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className={`absolute inset-0 opacity-20 ${member.color}`} />
+                      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white">
+                        <p className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">{member.position}</p>
+                        <h4 className="text-2xl font-black tracking-tight">{member.stageName}</h4>
+                      </div>
+                      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="bg-white/20 backdrop-blur-md p-2 rounded-xl">
+                          <Maximize2 className="size-5 text-white" />
                         </div>
                       </div>
-                    ))}
-                </CardContent>
-              </Card>
-            </div>
-          )}
+                    </div>
+                  </Card>
+                </motion.div>
+              </DialogTrigger>
 
-          {/* Photo Gallery Section */}
-          <section className="pt-8">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-1.5 bg-purple-600 rounded-full" />
-                <h3 className="text-2xl font-bold text-slate-900">Galería de Fotos</h3>
-              </div>
-              <Badge variant="outline" className="border-purple-200 text-purple-600">
-                {galleryImages.length} Imágenes
-              </Badge>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {galleryImages.map((url, index) => (
-                <div 
-                  key={index} 
-                  className="relative aspect-video md:aspect-square rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 group cursor-pointer"
-                >
-                  <img
-                    src={url}
-                    alt={`BTS Gallery ${index + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <Images className="text-white size-8" />
+              <DialogContent className="max-w-4xl bg-white border-none shadow-2xl rounded-[2.5rem] p-0 overflow-hidden">
+                <div className="flex flex-col md:flex-row h-[90vh] md:h-[80vh]">
+                  {/* Image Sidebar */}
+                  <div className="w-full md:w-2/5 relative h-64 md:h-full">
+                    <img 
+                      src={member.image} 
+                      alt={member.stageName}
+                      className="w-full h-full object-cover object-top md:object-center"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-white/10" />
+                    <div className="absolute bottom-6 left-6 text-white md:hidden">
+                      <h3 className="text-3xl font-black">{member.stageName}</h3>
+                      <p className="text-sm font-bold opacity-90">{member.realName}</p>
+                    </div>
+                  </div>
+
+                  {/* Content Area */}
+                  <div className="w-full md:w-3/5 p-6 md:p-10 overflow-y-auto custom-scrollbar bg-white">
+                    <div className="hidden md:block mb-8">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-4xl font-black text-slate-900 tracking-tighter">{member.stageName}</h3>
+                        <Badge className={`${member.color} text-white border-none`}>{member.position}</Badge>
+                      </div>
+                      <p className="text-slate-500 font-bold text-lg">{member.realName}</p>
+                    </div>
+
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                      <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <div className="flex items-center gap-2 text-slate-400 mb-1">
+                          <Calendar className="size-4" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Nacimiento</span>
+                        </div>
+                        <p className="text-sm font-bold text-slate-700">{member.birthday}</p>
+                      </div>
+                      <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <div className="flex items-center gap-2 text-slate-400 mb-1">
+                          <MapPin className="size-4" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Origen</span>
+                        </div>
+                        <p className="text-sm font-bold text-slate-700">{member.birthplace}</p>
+                      </div>
+                      <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <div className="flex items-center gap-2 text-slate-400 mb-1">
+                          <Star className="size-4" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">MBTI</span>
+                        </div>
+                        <p className="text-sm font-bold text-slate-700">{member.mbti}</p>
+                      </div>
+                      <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <div className="flex items-center gap-2 text-slate-400 mb-1">
+                          <Shield className="size-4" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Servicio</span>
+                        </div>
+                        <p className="text-sm font-bold text-slate-700">{member.fullBio.military || "Pendiente"}</p>
+                      </div>
+                    </div>
+
+                    {/* Tabs Content */}
+                    <Tabs defaultValue="historia" className="w-full">
+                      <TabsList className="grid w-full grid-cols-3 bg-slate-100 p-1 rounded-xl mb-6">
+                        <TabsTrigger value="historia" className="rounded-lg text-xs font-bold">Historia</TabsTrigger>
+                        <TabsTrigger value="logros" className="rounded-lg text-xs font-bold">Logros</TabsTrigger>
+                        <TabsTrigger value="curiosidades" className="rounded-lg text-xs font-bold">Extra</TabsTrigger>
+                      </TabsList>
+                      
+                      <TabsContent value="historia" className="space-y-4 animate-in fade-in duration-500">
+                        <div className="space-y-4">
+                          <div className="flex items-start gap-3">
+                            <div className="mt-1 bg-purple-100 p-2 rounded-lg">
+                              <Sparkles className="size-4 text-purple-600" />
+                            </div>
+                            <div>
+                              <h5 className="font-black text-slate-900 text-sm uppercase tracking-tight mb-1">Pre-Debut</h5>
+                              <p className="text-sm text-slate-600 leading-relaxed">{member.fullBio.preDebut}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <div className="mt-1 bg-blue-100 p-2 rounded-lg">
+                              <Music className="size-4 text-blue-600" />
+                            </div>
+                            <div>
+                              <h5 className="font-black text-slate-900 text-sm uppercase tracking-tight mb-1">Carrera Solista</h5>
+                              <p className="text-sm text-slate-600 leading-relaxed">{member.fullBio.soloCareer}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="logros" className="space-y-4 animate-in fade-in duration-500">
+                        <div className="flex items-start gap-3">
+                          <div className="mt-1 bg-amber-100 p-2 rounded-lg">
+                            <Award className="size-4 text-amber-600" />
+                          </div>
+                          <div>
+                            <h5 className="font-black text-slate-900 text-sm uppercase tracking-tight mb-1">Reconocimientos</h5>
+                            <p className="text-sm text-slate-600 leading-relaxed">{member.fullBio.achievements}</p>
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="curiosidades" className="space-y-4 animate-in fade-in duration-500">
+                        <div className="flex items-start gap-3">
+                          <div className="mt-1 bg-rose-100 p-2 rounded-lg">
+                            <Heart className="size-4 text-rose-600" />
+                          </div>
+                          <div>
+                            <h5 className="font-black text-slate-900 text-sm uppercase tracking-tight mb-1">Datos Curiosos</h5>
+                            <p className="text-sm text-slate-600 leading-relaxed">{member.fullBio.curiosities}</p>
+                          </div>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+
+                    <div className="mt-10 pt-6 border-t border-slate-100 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`size-3 rounded-full ${member.color} animate-pulse`} />
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Miembro de BTS</span>
+                      </div>
+                      <Heart className="size-5 text-slate-200 fill-slate-200" />
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
+              </DialogContent>
+            </Dialog>
+          ))}
         </div>
       </main>
 
-      {/* Footer Decoration */}
-      <footer className="py-20 text-center bg-slate-100/50 border-t border-slate-200">
-        <p className="text-slate-400 font-medium tracking-widest uppercase text-sm">Born to be legends</p>
-        <h4 className="text-3xl font-black text-slate-900 mt-2">BTS x ARMY</h4>
+      {/* Footer Decorativo */}
+      <footer className="bg-white border-t border-slate-200 py-12">
+        <div className="container px-4 text-center">
+          <div className="inline-flex items-center gap-2 bg-slate-900 text-white px-6 py-2 rounded-full text-sm font-black italic mb-4">
+            ARMY FOREVER
+          </div>
+          <p className="text-slate-400 text-sm font-medium">
+            © 2026 ETER KPOP MX - Biografías Oficiales
+          </p>
+        </div>
       </footer>
     </div>
   );
