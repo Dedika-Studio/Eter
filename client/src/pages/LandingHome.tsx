@@ -381,6 +381,37 @@ export default function LandingHome() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Quizzes Section */}
+          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg overflow-hidden hover:shadow-xl transition-shadow group">
+            <CardContent className="p-0">
+              <div className="relative h-32 md:h-48 bg-gradient-to-br from-violet-400 to-fuchsia-400 overflow-hidden">
+                <img
+                  src="https://lh3.googleusercontent.com/d/16_3UTSlqrB1VHVIVM4cMMea0n96vm7Is"
+                  alt="ETER Challenge"
+                  className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+              </div>
+              <div className="p-3 md:p-6">
+                <h2 className="text-base md:text-2xl font-bold mb-1 md:mb-2 flex items-center gap-2">
+                  <Brain className="size-4 md:size-5 text-violet-600" />
+                  Quizzes
+                </h2>
+                <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-4 hidden md:block">
+                  Pon a prueba tu pasión y demuestra cuánto sabes de tus grupos favoritos.
+                </p>
+                <Button
+                  onClick={() => navigate("/quizzes")}
+                  className="w-full gap-1 md:gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white text-xs md:text-sm py-1 md:py-2"
+                >
+                  <Brain className="size-3 md:size-4" />
+                  <span className="hidden md:inline">Jugar Ahora</span>
+                  <span className="md:hidden">Quizzes</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
