@@ -109,6 +109,17 @@ export interface Gallery {
   updatedAt?: string;
 }
 
+export interface QuizScore {
+  id?: string;
+  name: string;
+  score: number;
+  total: number;
+  quizId: string;
+  date: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 let _doc: GoogleSpreadsheet | null = null;
 
 async function getDoc() {
@@ -140,7 +151,7 @@ async function getDoc() {
 async function ensureSheets() {
   const doc = _doc;
   if (!doc) return;
-  const requiredSheets = ['users', 'tickets', 'orders', 'raffles', 'purchases', 'products', 'news', 'stories', 'galleries'];
+  const requiredSheets = ['users', 'tickets', 'orders', 'raffles', 'purchases', 'products', 'news', 'stories', 'galleries', 'quiz_scores'];
   for (const sheetName of requiredSheets) {
     if (!doc.sheetsByTitle[sheetName]) {
       await doc.addSheet({ title: sheetName, headerValues: getHeadersForSheet(sheetName) });
@@ -159,6 +170,7 @@ function getHeadersForSheet(sheetName: string): string[] {
     news: ['id', 'title', 'content', 'summary', 'image', 'source', 'sourceUrl', 'slug', 'isPublished', 'createdAt', 'updatedAt'],
     stories: ['id', 'nombre', 'historia_es', 'historia_ko', 'fecha', 'createdAt', 'updatedAt'],
     galleries: ['id', 'group', 'url', 'createdAt', 'updatedAt'],
+    quiz_scores: ['id', 'name', 'score', 'total', 'quizId', 'date', 'createdAt', 'updatedAt'],
   };
   return headers[sheetName] || [];
 }
@@ -657,4 +669,37 @@ export async function deleteGalleryPhoto(id: string): Promise<void> {
   const rows = await sheet.getRows();
   const row = rows.find(r => r.get('id') === id);
   if (row) await row.delete();
+}
+
+// ============ QUIZ SCORES QUERIES ============
+export async function getAllQuizScores(quizId?: string): Promise<QuizScore[]> {
+  const doc = await getDoc();
+  if (!doc) return [];
+  const sheet = doc.sheetsByTitle['quiz_scores'];
+  if (!sheet) return [];
+  const rows = await sheet.getRows();
+  const scores = rows.map(r => rowToObject(r, getHeadersForSheet('quiz_scores')));
+  
+  if (quizId) {
+    return scores.filter(s => s.quizId === quizId);
+  }
+  return scores;
+}
+
+export async function addQuizScore(data: Omit<QuizScore, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  const doc = await getDoc();
+  if (!doc) throw new Error('DB not available');
+  const sheet = doc.sheetsByTitle['quiz_scores'];
+  if (!sheet) throw new Error('Quiz scores sheet not found');
+  const id = Date.now().toString();
+  const now = new Date().toISOString();
+  await sheet.addRow({ 
+    ...data, 
+    id, 
+    score: data.score.toString(),
+    total: data.total.toString(),
+    createdAt: now, 
+    updatedAt: now 
+  });
+  return id;
 }

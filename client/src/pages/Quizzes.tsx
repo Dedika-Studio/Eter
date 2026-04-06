@@ -19,6 +19,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 
 // --- Tipos ---
 type QuizType = "trivia" | "personality";
@@ -401,14 +402,24 @@ export default function Quizzes() {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [showResults, setShowResults] = useState(false);
   const [userName, setUserName] = useState("");
-  const [leaderboard, setLeaderboard] = useState<Score[]>([]);
   const [view, setView] = useState<"list" | "quiz" | "results" | "leaderboard">("list");
 
-  // Cargar leaderboard de localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem("eter_leaderboard");
-    if (saved) setLeaderboard(JSON.parse(saved));
-  }, []);
+  const utils = trpc.useUtils();
+  const { data: leaderboard = [] } = trpc.quizzes.getLeaderboard.useQuery(
+    { quizId: activeQuiz?.id },
+    { enabled: view === "leaderboard" || view === "list" }
+  );
+
+  const saveScoreMutation = trpc.quizzes.saveScore.useMutation({
+    onSuccess: () => {
+      toast.success("¡Puntaje guardado en el ranking global!");
+      utils.quizzes.getLeaderboard.invalidate();
+      setView("leaderboard");
+    },
+    onError: () => {
+      toast.error("Error al guardar en el ranking global");
+    }
+  });
 
   const startQuiz = (quiz: Quiz) => {
     setActiveQuiz(quiz);
@@ -481,17 +492,17 @@ export default function Quizzes() {
       toast.error("Por favor ingresa tu nombre");
       return;
     }
-    const newScore: Score = {
+
+    const score = calculateScore();
+    const total = activeQuiz?.questions.length || 0;
+
+    saveScoreMutation.mutate({
       name: userName,
-      score: calculateScore(),
-      total: activeQuiz?.questions.length || 0,
+      score,
+      total,
+      quizId: activeQuiz?.id || "unknown",
       date: new Date().toLocaleDateString(),
-    };
-    const updated = [...leaderboard, newScore].sort((a, b) => b.score - a.score).slice(0, 10);
-    setLeaderboard(updated);
-    localStorage.setItem("eter_leaderboard", JSON.stringify(updated));
-    toast.success("¡Puntaje guardado!");
-    setView("leaderboard");
+    });
   };
 
   return (

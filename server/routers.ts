@@ -6,6 +6,7 @@ import { productsRouter } from "./routers/products";
 import { newsRouter } from "./routers/news";
 import { storiesRouter } from "./routers/stories";
 import { galleriesRouter } from "./routers/galleries";
+import { quizzesRouter } from "./routers/quizzes";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import {
@@ -40,6 +41,7 @@ export const appRouter = router({
     }),
   }),
   news: newsRouter,
+  quizzes: quizzesRouter,
 });
 
 export type AppRouter = typeof appRouter;
