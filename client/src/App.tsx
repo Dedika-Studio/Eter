@@ -27,6 +27,7 @@ import News from "./pages/News";
 import Diploma from "./pages/Diploma";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import Quizzes from "./pages/Quizzes";
 
 
 function Router() {
@@ -53,6 +54,7 @@ function Router() {
       <Route path="/diploma" component={Diploma} />
       <Route path="/terminos" component={Terms} />
       <Route path="/privacidad" component={Privacy} />
+      <Route path="/quizzes" component={Quizzes} />
       <Route path="/admin" component={Admin} />
       <Route path="/admin/" component={Admin} />
       <Route path="/404" component={NotFound} />
