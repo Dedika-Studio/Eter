@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import html2canvas from "html2canvas";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,8 @@ import {
   XCircle,
   Share2,
   Play,
-  History
+  History,
+  Download
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
@@ -23,6 +25,7 @@ import { trpc } from "@/lib/trpc";
 
 // --- Tipos ---
 type QuizType = "trivia" | "personality";
+type ViewType = "list" | "name-input" | "quiz" | "results" | "leaderboard";
 
 interface Question {
   id: number;
@@ -312,7 +315,7 @@ const QUIZZES: Quiz[] = [
         id: 7,
         text: "¿Cuál es tu estación del año favorita?",
         options: [
-          { id: "rm", text: "Otoño (por los colores y la reflexión)" },
+          { id: "rm", text: "Otoño (para reflexionar)" },
           { id: "jin", text: "Invierno (para estar cómodo y abrigado)" },
           { id: "suga", text: "Invierno (prefiero el frío)" },
           { id: "jhope", text: "Primavera (por el renacimiento y la energía)" },
@@ -409,7 +412,10 @@ export default function Quizzes() {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [showResults, setShowResults] = useState(false);
   const [userName, setUserName] = useState("");
-  const [view, setView] = useState<"list" | "quiz" | "results" | "leaderboard">("list");
+  const [tempUserName, setTempUserName] = useState("");
+  const [view, setView] = useState<ViewType>("list");
+  const resultCardRef = useRef<HTMLDivElement>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
 
   const utils = trpc.useUtils();
   const { data: leaderboard = [] } = trpc.quizzes.getLeaderboard.useQuery(
@@ -433,6 +439,19 @@ export default function Quizzes() {
     setCurrentQuestionIndex(0);
     setAnswers({});
     setShowResults(false);
+    setTempUserName("");
+    setView("name-input");
+  };
+
+  const handleNameSubmit = () => {
+    if (!tempUserName.trim()) {
+      toast.error("Por favor ingresa tu nombre o apodo");
+      return;
+    }
+    setUserName(tempUserName);
+    setCurrentQuestionIndex(0);
+    setAnswers({});
+    setShowResults(false);
     setView("quiz");
   };
 
@@ -444,6 +463,21 @@ export default function Quizzes() {
     } else {
       setShowResults(true);
       setView("results");
+      
+      // Auto-save para trivia
+      if (activeQuiz?.type === "trivia") {
+        const score = calculateScore();
+        const total = activeQuiz.questions.length;
+        setTimeout(() => {
+          saveScoreMutation.mutate({
+            name: userName,
+            score,
+            total,
+            quizId: activeQuiz.id || "unknown",
+            date: new Date().toLocaleDateString(),
+          });
+        }, 500);
+      }
     }
   };
 
@@ -466,15 +500,54 @@ export default function Quizzes() {
     return PERSONALITY_RESULTS[winner];
   };
 
-  const handleShare = (platform: "twitter" | "facebook" | "copy") => {
+  const captureResultImage = async () => {
+    if (!resultCardRef.current) return;
+    
+    try {
+      setIsCapturing(true);
+      const canvas = await html2canvas(resultCardRef.current, {
+        backgroundColor: "#ffffff",
+        scale: 2,
+        logging: false,
+      });
+      return canvas.toDataURL("image/png");
+    } catch (error) {
+      console.error("Error capturing image:", error);
+      toast.error("Error al capturar la imagen");
+      return null;
+    } finally {
+      setIsCapturing(false);
+    }
+  };
+
+  const downloadResultImage = async () => {
+    const imageData = await captureResultImage();
+    if (imageData) {
+      const link = document.createElement("a");
+      link.href = imageData;
+      const resultName = activeQuiz?.type === "personality" 
+        ? getPersonalityResult()?.name 
+        : "trivia";
+      link.download = `mi-resultado-bts-${resultName}-${userName}.png`;
+      link.click();
+      toast.success("¡Imagen descargada!");
+    }
+  };
+
+  const handleShare = (platform: "twitter" | "facebook" | "copy" | "download") => {
+    if (platform === "download") {
+      downloadResultImage();
+      return;
+    }
+
     let shareText = "";
     
     if (activeQuiz?.type === "trivia") {
       const score = calculateScore();
-      shareText = `¡Acabo de obtener ${score}/${activeQuiz.questions.length} en el quiz de BTS en ETER KPOP MX! 🎉 ¿Puedes superarme?`;
+      shareText = `¡Acabo de obtener ${score}/${activeQuiz.questions.length} en el quiz de BTS en ETER KPOP MX! 🎉 ¿Puedes superarme? Soy ${userName}`;
     } else {
       const result = getPersonalityResult();
-      shareText = `¡Descubrí que soy ${result?.name} en el quiz de personalidad de BTS en ETER KPOP MX! ¿Con quién te identificas tú?`;
+      shareText = `¡Descubrí que soy ${result?.name} en el quiz de personalidad de BTS en ETER KPOP MX! Yo soy ${userName}. ¿Con quién te identificas tú?`;
     }
 
     const siteUrl = window.location.origin;
@@ -494,30 +567,15 @@ export default function Quizzes() {
     }
   };
 
-  const saveScore = () => {
-    if (!userName.trim()) {
-      toast.error("Por favor ingresa tu nombre");
-      return;
-    }
-
-    const score = calculateScore();
-    const total = activeQuiz?.questions.length || 0;
-
-    saveScoreMutation.mutate({
-      name: userName,
-      score,
-      total,
-      quizId: activeQuiz?.id || "unknown",
-      date: new Date().toLocaleDateString(),
-    });
-  };
-
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-border/50 p-4">
         <div className="container flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={() => view === "list" ? navigate("/") : setView("list")}>
+          <Button variant="ghost" size="sm" onClick={() => {
+            if (view === "list") navigate("/");
+            else setView("list");
+          }}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Volver
           </Button>
@@ -561,6 +619,45 @@ export default function Quizzes() {
                   </CardContent>
                 </Card>
               ))}
+            </motion.div>
+          )}
+
+          {/* VISTA: INGRESO DE NOMBRE */}
+          {view === "name-input" && activeQuiz && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="max-w-md mx-auto"
+            >
+              <Card className="border-2">
+                <CardHeader className="bg-gradient-to-br from-purple-600 to-fuchsia-500 text-white">
+                  <CardTitle className="text-2xl">¡Bienvenido!</CardTitle>
+                  <CardDescription className="text-purple-100">
+                    Antes de comenzar, cuéntanos tu nombre o apodo
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Tu nombre o apodo:</label>
+                    <Input
+                      placeholder="Ej: ARMY123, Mi Nombre..."
+                      value={tempUserName}
+                      onChange={(e) => setTempUserName(e.target.value)}
+                      onKeyPress={(e) => e.key === "Enter" && handleNameSubmit()}
+                      autoFocus
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Este nombre se mostrará en tus resultados y en el ranking.
+                  </p>
+                  <Button 
+                    className="w-full" 
+                    onClick={handleNameSubmit}
+                  >
+                    Comenzar Quiz
+                  </Button>
+                </CardContent>
+              </Card>
             </motion.div>
           )}
 
@@ -608,10 +705,13 @@ export default function Quizzes() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center max-w-md mx-auto"
             >
-              <Card className="overflow-hidden border-none shadow-2xl">
+              <Card ref={resultCardRef} className="overflow-hidden border-none shadow-2xl">
                 <div className="bg-gradient-to-br from-purple-600 to-fuchsia-500 p-8 text-white">
                   <Trophy className="h-16 w-16 mx-auto mb-4 animate-bounce" />
-                  <h2 className="text-3xl font-bold mb-2">¡Terminaste!</h2>
+                  <h2 className="text-3xl font-bold mb-2">
+                    {activeQuiz.type === "personality" ? "¡Tu destino ha sido revelado!" : "¡Excelente desempeño!"}
+                  </h2>
+                  <p className="text-purple-100 mb-4">Hola, {userName}</p>
                   
                   {activeQuiz.type === "trivia" ? (
                     <div>
@@ -644,22 +744,8 @@ export default function Quizzes() {
                     </div>
                   )}
 
-                  {activeQuiz.type === "trivia" && (
-                    <div className="space-y-4 mb-6">
-                      <p className="text-sm font-medium">Guarda tu puntaje en el ranking:</p>
-                      <div className="flex gap-2">
-                        <Input 
-                          placeholder="Tu nombre o apodo" 
-                          value={userName}
-                          onChange={(e) => setUserName(e.target.value)}
-                        />
-                        <Button onClick={saveScore}>Guardar</Button>
-                      </div>
-                    </div>
-                  )}
-
                   <div className="space-y-3">
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       <Button 
                         variant="outline" 
                         className="gap-1 text-xs" 
@@ -674,14 +760,15 @@ export default function Quizzes() {
                       >
                         f Facebook
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        className="gap-1 text-xs" 
-                        onClick={() => handleShare("copy")}
-                      >
-                        📋 Copiar
-                      </Button>
                     </div>
+                    <Button 
+                      variant="outline" 
+                      className="w-full gap-2" 
+                      onClick={() => handleShare("download")}
+                      disabled={isCapturing}
+                    >
+                      <Download className="h-4 w-4" /> {isCapturing ? "Capturando..." : "Descargar"}
+                    </Button>
                     <Button variant="outline" className="w-full gap-2" onClick={() => setView("list")}>
                       <History className="h-4 w-4" /> Otros Quizzes
                     </Button>

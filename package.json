@@ -61,6 +61,7 @@
     "framer-motion": "^12.23.22",
     "google-auth-library": "^10.6.2",
     "google-spreadsheet": "^5.2.0",
+    "html2canvas": "^1.4.1",
     "input-otp": "^1.4.2",
     "jose": "6.1.0",
     "jspdf": "^4.2.1",
