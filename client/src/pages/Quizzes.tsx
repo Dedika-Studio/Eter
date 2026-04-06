@@ -734,7 +734,7 @@ export default function Quizzes() {
                           <img 
                             src={getPersonalityResult()?.image} 
                             alt={getPersonalityResult()?.name}
-                            className="w-48 h-48 object-top rounded-lg shadow-md"
+                            className="max-w-full h-auto rounded-lg shadow-md"
                           />
                         </div>
                       )}
