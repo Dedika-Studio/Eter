@@ -500,30 +500,71 @@ export default function Quizzes() {
     return PERSONALITY_RESULTS[winner];
   };
 
+  const imageToBase64 = async (url: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/png'));
+        } else {
+          reject(new Error('Could not get canvas context'));
+        }
+      };
+      img.onerror = () => {
+        reject(new Error('Failed to load image'));
+      };
+      img.src = url;
+    });
+  };
+
   const captureResultImage = async () => {
     if (!resultCardRef.current) return;
     
     try {
       setIsCapturing(true);
       
-      // Configurar todas las imágenes para permitir CORS
+      // Convertir imágenes externas a Base64 para evitar problemas de CORS
       const images = resultCardRef.current.querySelectorAll('img');
+      const imagePromises: Promise<void>[] = [];
+      
       images.forEach(img => {
-        img.setAttribute('crossOrigin', 'anonymous');
+        const src = img.getAttribute('src');
+        if (src && (src.includes('http') || src.includes('https'))) {
+          const promise = imageToBase64(src)
+            .then(base64 => {
+              img.setAttribute('src', base64);
+            })
+            .catch(error => {
+              console.warn('Could not convert image to base64:', error);
+              // Continuar sin esta imagen si falla
+            });
+          imagePromises.push(promise);
+        }
       });
+      
+      // Esperar a que todas las imágenes se conviertan
+      await Promise.allSettled(imagePromises);
+      
+      // Dar un pequeño tiempo para que las imágenes se actualicen en el DOM
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       const canvas = await html2canvas(resultCardRef.current, {
         backgroundColor: "#ffffff",
         scale: 2,
         logging: false,
         useCORS: true,
-        allowTaint: false,
-        proxy: null,
+        allowTaint: true,
       });
       return canvas.toDataURL("image/png");
     } catch (error) {
       console.error("Error capturing image:", error);
-      toast.error("Error al capturar la imagen. Intenta descargarla nuevamente.");
+      toast.error("Error al capturar. Por favor, intenta de nuevo.");
       return null;
     } finally {
       setIsCapturing(false);
@@ -782,6 +823,9 @@ export default function Quizzes() {
                     <p className="text-xs text-muted-foreground text-center">
                       Descarga tu resultado como imagen y comparte en tus redes sociales 📸
                     </p>
+                    <Button variant="outline" className="w-full gap-2" onClick={() => handleShare("copy")}>
+                      📋 Copiar Enlace
+                    </Button>
                     <Button variant="outline" className="w-full gap-2" onClick={() => setView("list")}>
                       <History className="h-4 w-4" /> Otros Quizzes
                     </Button>
