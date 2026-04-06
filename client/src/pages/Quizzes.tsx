@@ -364,34 +364,41 @@ const QUIZZES: Quiz[] = [
   }
 ];
 
-const PERSONALITY_RESULTS: Record<string, { name: string; description: string }> = {
+const PERSONALITY_RESULTS: Record<string, { name: string; description: string; image: string }> = {
   rm: {
     name: "RM",
-    description: "¡Felicidades, eres RM! Eres un líder innato, con una mente profunda y una sed insaciable de conocimiento. Tu capacidad para la reflexión y tu amor por la naturaleza te conectan con el mundo de una manera única. Eres el pilar de tu grupo, siempre buscando la verdad y la autenticidad, y no temes guiar a los demás con tu sabiduría y tu ejemplo. Tu inteligencia y tu responsabilidad son tus mayores fortalezas, y siempre estás en constante crecimiento personal."
+    description: "¡Felicidades, eres RM! Eres un líder innato, con una mente profunda y una sed insaciable de conocimiento. Tu capacidad para la reflexión y tu amor por la naturaleza te conectan con el mundo de una manera única. Eres el pilar de tu grupo, siempre buscando la verdad y la autenticidad, y no temes guiar a los demás con tu sabiduría y tu ejemplo. Tu inteligencia y tu responsabilidad son tus mayores fortalezas, y siempre estás en constante crecimiento personal.",
+    image: "https://m.media-amazon.com/images/M/MV5BNmUzYjVlYTUtNWEyMC00NjBlLTk0Y2UtZjhkY2EwMmY0ZjExXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
   },
   jin: {
     name: "Jin",
-    description: "¡Eres Jin, el 'Worldwide Handsome'! Posees un carisma natural y una confianza inquebrantable que ilumina cualquier habitación. Te encanta hacer reír a los demás y eres el alma de la fiesta, pero detrás de esa fachada divertida se esconde una persona trabajadora y profundamente preocupada por sus seres queridos. Tu humor y tu capacidad para mantener la calma en cualquier situación son admirables, y siempre buscas la felicidad, tanto la tuya como la de quienes te rodean."
+    description: "¡Eres Jin, el 'Worldwide Handsome'! Posees un carisma natural y una confianza inquebrantable que ilumina cualquier habitación. Te encanta hacer reír a los demás y eres el alma de la fiesta, pero detrás de esa fachada divertida se esconde una persona trabajadora y profundamente preocupada por sus seres queridos. Tu humor y tu capacidad para mantener la calma en cualquier situación son admirables, y siempre buscas la felicidad, tanto la tuya como la de quienes te rodean.",
+    image: "https://i.pinimg.com/originals/90/7e/7c/907e7c150d4b655517b81841296b40ae.jpg"
   },
   suga: {
     name: "Suga",
-    description: "¡Tu espíritu es el de Suga! Eres una persona con una mente brillante y un talento innato para la creatividad, especialmente en el ámbito musical. Aunque a veces puedes parecer tranquilo o reservado, por dentro arde una pasión inmensa por lo que haces. Eres honesto, directo y valoras la autenticidad por encima de todo. Tus amigos saben que pueden contar contigo para un consejo sincero y una lealtad inquebrantable, y tu capacidad para transformar tus pensamientos en arte es verdaderamente inspiradora."
+    description: "¡Tu espíritu es el de Suga! Eres una persona con una mente brillante y un talento innato para la creatividad, especialmente en el ámbito musical. Aunque a veces puedes parecer tranquilo o reservado, por dentro arde una pasión inmensa por lo que haces. Eres honesto, directo y valoras la autenticidad por encima de todo. Tus amigos saben que pueden contar contigo para un consejo sincero y una lealtad inquebrantable, y tu capacidad para transformar tus pensamientos en arte es verdaderamente inspiradora.",
+    image: "https://i.pinimg.com/originals/a0/84/b7/a084b7f4da8c3e0bfc46922f2de11ab0.jpg"
   },
   jhope: {
     name: "J-Hope",
-    description: "¡Eres J-Hope, la personificación de la esperanza! Tu energía es contagiosa y tu optimismo es una fuente de luz para todos. Siempre buscas el lado positivo de las cosas y tu espíritu trabajador te impulsa a mejorar constantemente. Eres un gran motivador, siempre apoyando a tus amigos y levantando el ánimo con tu alegría. Tu pasión por el baile y la música se refleja en tu personalidad vibrante y tu deseo de ser una fuente de esperanza para el mundo."
+    description: "¡Eres J-Hope, la personificación de la esperanza! Tu energía es contagiosa y tu optimismo es una fuente de luz para todos. Siempre buscas el lado positivo de las cosas y tu espíritu trabajador te impulsa a mejorar constantemente. Eres un gran motivador, siempre apoyando a tus amigos y levantando el ánimo con tu alegría. Tu pasión por el baile y la música se refleja en tu personalidad vibrante y tu deseo de ser una fuente de esperanza para el mundo.",
+    image: "https://static.wikia.nocookie.net/the_kpop_house/images/9/9c/J_hope.jpg/revision/latest?cb=20200330154441"
   },
   jimin: {
     name: "Jimin",
-    description: "¡Te identificas con Jimin! Eres una persona con una gran sensibilidad y empatía, siempre atento a las necesidades de los demás. Te esfuerzas por la perfección en todo lo que haces y tienes un gran sentido de la responsabilidad. Eres amable, cariñoso y tus amigos te valoran por tu apoyo incondicional y tu capacidad para escuchar. Tu dedicación y tu deseo de ser la mejor versión de ti mismo te hacen una persona admirable y querida por todos."
+    description: "¡Te identificas con Jimin! Eres una persona con una gran sensibilidad y empatía, siempre atento a las necesidades de los demás. Te esfuerzas por la perfección en todo lo que haces y tienes un gran sentido de la responsabilidad. Eres amable, cariñoso y tus amigos te valoran por tu apoyo incondicional y tu capacidad para escuchar. Tu dedicación y tu deseo de ser la mejor versión de ti mismo te hacen una persona admirable y querida por todos.",
+    image: "https://i0.wp.com/zaloramalaysiablog.wpcomstaging.com/wp-content/uploads/2025/10/JIMIN-FEATURE.jpeg?resize=736%2C768&ssl=1"
   },
   v: {
     name: "V",
-    description: "¡Eres V, el alma artística y única! Posees una personalidad distintiva y un espíritu libre que te permite ver el mundo de una manera muy particular. Eres creativo, artístico y no tienes miedo de mostrar tu individualidad. Te encanta la belleza en todas sus formas, desde la música clásica hasta la fotografía, y tu capacidad para soñar y vivir una vida llena de arte y amor es inspiradora. Tus amigos te ven como alguien fascinante y con un encanto especial que te hace inolvidable."
+    description: "¡Eres V, el alma artística y única! Posees una personalidad distintiva y un espíritu libre que te permite ver el mundo de una manera muy particular. Eres creativo, artístico y no tienes miedo de mostrar tu individualidad. Te encanta la belleza en todas sus formas, desde la música clásica hasta la fotografía, y tu capacidad para soñar y vivir una vida llena de arte y amor es inspiradora. Tus amigos te ven como alguien fascinante y con un encanto especial que te hace inolvidable.",
+    image: "https://cokodive.com/cdn/shop/articles/19090942-bts-v-cartier-brand-ambassador-kpop-star-kim-taehyung-jewellery-luxury_cover_1280x1599_0d187aae-7e3b-4f67-9664-1f2b056a64b7_1280x.webp?v=1693273305"
   },
   jk: {
     name: "Jungkook",
-    description: "¡Eres el 'Golden Maknae', Jungkook! Eres una persona con múltiples talentos y una sed insaciable de nuevas experiencias. Siempre estás dispuesto a enfrentar desafíos y a aprender cosas nuevas, destacando en todo lo que te propones. Eres competitivo, trabajador y te esfuerzas por ser el mejor en cada área. Tus amigos admiran tu determinación, tu espíritu aventurero y tu capacidad para dominar cualquier habilidad, lo que te convierte en una persona verdaderamente excepcional."
+    description: "¡Eres el 'Golden Maknae', Jungkook! Eres una persona con múltiples talentos y una sed insaciable de nuevas experiencias. Siempre estás dispuesto a enfrentar desafíos y a aprender cosas nuevas, destacando en todo lo que te propones. Eres competitivo, trabajador y te esfuerzas por ser el mejor en cada área. Tus amigos admiran tu determinación, tu espíritu aventurero y tu capacidad para dominar cualquier habilidad, lo que te convierte en una persona verdaderamente excepcional.",
+    image: "https://i.pinimg.com/originals/90/7e/7c/907e7c150d4b655517b81841296b40ae.jpg"
   },
 };
 
@@ -621,9 +628,20 @@ export default function Quizzes() {
                 
                 <CardContent className="p-6 bg-white">
                   {activeQuiz.type === "personality" && (
-                    <p className="text-muted-foreground mb-6 italic">
-                      "{getPersonalityResult()?.description}"
-                    </p>
+                    <div className="space-y-4">
+                      {getPersonalityResult()?.image && (
+                        <div className="flex justify-center">
+                          <img 
+                            src={getPersonalityResult()?.image} 
+                            alt={getPersonalityResult()?.name}
+                            className="w-48 h-48 object-cover rounded-lg shadow-md"
+                          />
+                        </div>
+                      )}
+                      <p className="text-muted-foreground mb-6 italic">
+                        "{getPersonalityResult()?.description}"
+                      </p>
+                    </div>
                   )}
 
                   {activeQuiz.type === "trivia" && (
