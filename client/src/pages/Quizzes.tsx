@@ -425,7 +425,6 @@ export default function Quizzes() {
     onSuccess: () => {
       toast.success("¡Puntaje guardado en el ranking global!");
       utils.quizzes.getLeaderboard.invalidate();
-      setView("leaderboard");
     },
     onError: () => {
       toast.error("Error al guardar en el ranking global");
@@ -462,7 +461,7 @@ export default function Quizzes() {
       setShowResults(true);
       setView("results");
       
-      // Auto-save para trivia
+      // Auto-save para trivia (sin redirigir)
       if (activeQuiz?.type === "trivia") {
         const score = calculateScore();
         const total = activeQuiz.questions.length;
@@ -474,7 +473,7 @@ export default function Quizzes() {
             quizId: activeQuiz.id || "unknown",
             date: new Date().toLocaleDateString(),
           });
-        }, 500);
+        }, 300);
       }
     }
   };
